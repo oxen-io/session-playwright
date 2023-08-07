@@ -7,10 +7,9 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.36.2",
-    "@types/lodash": "^4.14.196"
+    "@types/lodash": "^4.14.196",
+    "lodash": "^4.17.21"
   },
   "scripts": {},
-  "dependencies": {
-    "lodash": "^4.17.21"
-  }
+  "dependencies": {}
 }
