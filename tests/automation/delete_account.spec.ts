@@ -2,15 +2,22 @@ import { test } from '@playwright/test';
 import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import { sendNewMessage } from './utilities/send_message';
-import { clickOnMatchingText, clickOnTestIdWithText, typeIntoInput } from './utilities/utils';
-import { sleepFor } from '../../session/utils/Promise';
+import {
+  clickOnMatchingText,
+  clickOnTestIdWithText,
+  typeIntoInput,
+} from './utilities/utils';
+import { sleepFor } from '../promise_utils';
 import { openApp } from './setup/open';
 
 test.beforeEach(beforeAllClean);
 
 test('Delete account from swarm', async () => {
   const [windowA, windowB] = await openApp(2); // not using sessionTest here as we need to close and reopen one of the window
-  const [userA, userB] = await Promise.all([newUser(windowA, 'Alice'), newUser(windowB, 'Bob')]);
+  const [userA, userB] = await Promise.all([
+    newUser(windowA, 'Alice'),
+    newUser(windowB, 'Bob'),
+  ]);
   const testMessage = `${userA.userName} to ${userB.userName}`;
   const testReply = `${userB.userName} to ${userA.userName}`;
   // Create contact and send new message
@@ -22,9 +29,17 @@ test('Delete account from swarm', async () => {
   // Click on settings tab
   await clickOnTestIdWithText(windowA, 'settings-section');
   // Click on clear all data
-  await clickOnTestIdWithText(windowA, 'clear-data-settings-menu-item', 'Clear Data');
+  await clickOnTestIdWithText(
+    windowA,
+    'clear-data-settings-menu-item',
+    'Clear Data'
+  );
   // Select entire account
-  await clickOnTestIdWithText(windowA, 'label-device_and_network', 'Clear Device and Network');
+  await clickOnTestIdWithText(
+    windowA,
+    'label-device_and_network',
+    'Clear Device and Network'
+  );
   // Confirm deletion by clicking Clear, twice
   await clickOnMatchingText(windowA, 'Clear');
   await clickOnMatchingText(windowA, 'Clear');
@@ -35,9 +50,17 @@ test('Delete account from swarm', async () => {
   const restoringWindows = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window
   const [restoringWindow] = restoringWindows;
   // Sign in with deleted account and check that nothing restores
-  await clickOnTestIdWithText(restoringWindow, 'restore-using-recovery', 'Restore your account');
+  await clickOnTestIdWithText(
+    restoringWindow,
+    'restore-using-recovery',
+    'Restore your account'
+  );
   // Fill in recovery phrase
-  await typeIntoInput(restoringWindow, 'recovery-phrase-input', userA.recoveryPhrase);
+  await typeIntoInput(
+    restoringWindow,
+    'recovery-phrase-input',
+    userA.recoveryPhrase
+  );
   // Enter display name
   await typeIntoInput(restoringWindow, 'display-name-input', userA.userName);
   // Click continue

@@ -6,10 +6,27 @@
   "author": "Audric Ackermann <audric@loki.network>",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.36.2",
+    "@playwright/test": "1.16.3",
+    "@types/fs-extra": "^11.0.1",
     "@types/lodash": "^4.14.196",
-    "lodash": "^4.17.21"
+    "@types/semver": "^7.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.0.0",
+    "electron": "^25.4.0",
+    "eslint": "^8.46.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-more": "^1.0.5",
+    "fs-extra": "^11.1.1",
+    "lodash": "^4.17.21",
+    "semver": "^7.5.4",
+    "typescript": "^5.1.6"
   },
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint .",
+    "test": "npx playwright test"
+  },
   "dependencies": {}
 }

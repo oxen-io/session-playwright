@@ -9,7 +9,7 @@ const config: PlaywrightTestConfig = {
   reporter: 'list',
   testDir: './tests/automation',
   testIgnore: '*.js',
-  outputDir: './ts/tests/automation/test-results',
+  outputDir: './tests/automation/test-results',
   retries: process.env.PLAYWRIGHT_RETRIES_COUNT
     ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
     : 1,

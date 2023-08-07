@@ -1,4 +1,4 @@
-import { sleepFor } from '../../session/utils/Promise';
+import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import { sessionTestOneWindow } from './setup/sessionTest';
 import {
@@ -45,7 +45,11 @@ sessionTestOneWindow('Set Password', async ([window]) => {
   await clickOnTestIdWithText(window, 'settings-section');
 
   // Change password
-  await clickOnTestIdWithText(window, 'change-password-settings-button', 'Change Password');
+  await clickOnTestIdWithText(
+    window,
+    'change-password-settings-button',
+    'Change Password'
+  );
 
   console.warn('clicked Change Password');
   // Enter old password

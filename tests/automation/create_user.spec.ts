@@ -1,4 +1,4 @@
-import { sleepFor } from '../../session/utils/Promise';
+import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
   clickOnMatchingText,
@@ -24,7 +24,11 @@ sessionTestOneWindow('Create User', async ([window]) => {
   await clickOnTestIdWithText(window, 'settings-section');
   // check recovery phrase matches
   await clickOnMatchingText(window, 'Recovery Phrase');
-  await waitForTestIdWithText(window, 'recovery-phrase-seed-modal', userA.recoveryPhrase);
+  await waitForTestIdWithText(
+    window,
+    'recovery-phrase-seed-modal',
+    userA.recoveryPhrase
+  );
   // Exit profile module
   await window.click('.session-icon-button.small');
 });

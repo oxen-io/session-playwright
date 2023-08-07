@@ -1,5 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
-import { sleepFor } from '../../session/utils/Promise';
+import { sleepFor } from '../promise_utils';
 import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import { openApp } from './setup/open';

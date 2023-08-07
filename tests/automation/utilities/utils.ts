@@ -2,12 +2,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
 import { ElementHandle, Page } from '@playwright/test';
-import { sleepFor } from '../../../session/utils/Promise';
 import { loaderType, Strategy } from '../types/testing';
+import { sleepFor } from '../../promise_utils';
 
 // WAIT FOR FUNCTIONS
 
-export async function waitForTestIdWithText(window: Page, dataTestId: string, text?: string) {
+export async function waitForTestIdWithText(
+  window: Page,
+  dataTestId: string,
+  text?: string
+) {
   let builtSelector = `css=[data-testid=${dataTestId}]`;
   if (text) {
     // " =>  \\\"
@@ -37,7 +41,11 @@ export async function waitForElement(
   return window.waitForSelector(builtSelector, { timeout: maxWaitMs });
 }
 
-export async function waitForTextMessage(window: Page, text: string, maxWait?: number) {
+export async function waitForTextMessage(
+  window: Page,
+  text: string,
+  maxWait?: number
+) {
   let builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
   if (text) {
     // " =>  \\\"
@@ -54,11 +62,18 @@ export async function waitForTextMessage(window: Page, text: string, maxWait?: n
   return el;
 }
 
-export async function waitForControlMessageWithText(window: Page, text: string) {
+export async function waitForControlMessageWithText(
+  window: Page,
+  text: string
+) {
   return waitForTestIdWithText(window, 'control-message', text);
 }
 
-export async function waitForMatchingText(window: Page, text: string, maxWait?: number) {
+export async function waitForMatchingText(
+  window: Page,
+  text: string,
+  maxWait?: number
+) {
   const builtSelector = `css=:has-text("${text}")`;
   const maxTimeout = maxWait ?? 55000;
   console.info(`waitForMatchingText: ${text}`);
@@ -76,7 +91,9 @@ export async function waitForMatchingPlaceholder(
 ) {
   let found = false;
   const start = Date.now();
-  console.info(`waitForMatchingPlaceholder: ${placeholder} with datatestId: ${dataTestId}`);
+  console.info(
+    `waitForMatchingPlaceholder: ${placeholder} with datatestId: ${dataTestId}`
+  );
 
   do {
     try {
@@ -91,12 +108,16 @@ export async function waitForMatchingPlaceholder(
       }
     } catch (e) {
       await sleepFor(1000, true);
-      console.info(`waitForMatchingPlaceholder failed with ${e.message}, retrying in 1s`);
+      console.info(
+        `waitForMatchingPlaceholder failed with ${e.message}, retrying in 1s`
+      );
     }
   } while (!found && Date.now() - start <= maxWait);
 
   if (!found) {
-    throw new Error(`Failed to find datatestid:"${dataTestId}" with placeholder: "${placeholder}"`);
+    throw new Error(
+      `Failed to find datatestid:"${dataTestId}" with placeholder: "${placeholder}"`
+    );
   }
 }
 export async function waitForLoadingAnimationToFinish(
@@ -110,7 +131,12 @@ export async function waitForLoadingAnimationToFinish(
 
   do {
     try {
-      loadingAnimation = await waitForElement(window, 'data-testid', `${loader}`, 100);
+      loadingAnimation = await waitForElement(
+        window,
+        'data-testid',
+        `${loader}`,
+        100
+      );
       await sleepFor(500);
       console.info(`${loader} was found, waiting for it to be gone`);
     } catch (e) {
@@ -133,9 +159,16 @@ export async function clickOnElement(
   await window.click(builtSelector);
 }
 
-export async function clickOnMatchingText(window: Page, text: string, rightButton = false) {
+export async function clickOnMatchingText(
+  window: Page,
+  text: string,
+  rightButton = false
+) {
   console.info(`clickOnMatchingText: "${text}"`);
-  return window.click(`"${text}"`, rightButton ? { button: 'right' } : undefined);
+  return window.click(
+    `"${text}"`,
+    rightButton ? { button: 'right' } : undefined
+  );
 }
 
 export async function clickOnTestIdWithText(
@@ -145,34 +178,51 @@ export async function clickOnTestIdWithText(
   rightButton?: boolean,
   maxWait?: number
 ) {
-  console.info(`clickOnTestIdWithText with testId:${dataTestId} and text:${text || 'none'}`);
+  console.info(
+    `clickOnTestIdWithText with testId:${dataTestId} and text:${text || 'none'}`
+  );
 
   const builtSelector = !text
     ? `css=[data-testid=${dataTestId}]`
     : `css=[data-testid=${dataTestId}]:has-text("${text}")`;
 
   await window.waitForSelector(builtSelector, { timeout: maxWait });
-  return window.click(builtSelector, rightButton ? { button: 'right' } : undefined);
+  return window.click(
+    builtSelector,
+    rightButton ? { button: 'right' } : undefined
+  );
 }
 
 export function getMessageTextContentNow() {
   return `Test message timestamp: ${Date.now()}`;
 }
 
-export async function typeIntoInput(window: Page, dataTestId: string, text: string) {
+export async function typeIntoInput(
+  window: Page,
+  dataTestId: string,
+  text: string
+) {
   console.info(`typeIntoInput testId: ${dataTestId} : "${text}"`);
   const builtSelector = `css=[data-testid=${dataTestId}]`;
   return window.fill(builtSelector, text);
 }
 
-export async function typeIntoInputSlow(window: Page, dataTestId: string, text: string) {
+export async function typeIntoInputSlow(
+  window: Page,
+  dataTestId: string,
+  text: string
+) {
   console.info(`typeIntoInput testId: ${dataTestId} : "${text}"`);
   const builtSelector = `css=[data-testid=${dataTestId}]`;
   await window.waitForSelector(builtSelector);
   return window.type(builtSelector, text, { delay: 100 });
 }
 
-export async function hasTextElementBeenDeleted(window: Page, text: string, maxWait?: number) {
+export async function hasTextElementBeenDeleted(
+  window: Page,
+  text: string,
+  maxWait?: number
+) {
   const fakeError = `Matching text: ${text} has been found... oops`;
   try {
     await waitForMatchingText(window, text, maxWait);
@@ -185,7 +235,11 @@ export async function hasTextElementBeenDeleted(window: Page, text: string, maxW
   console.info('Element has not been found, congratulations', text);
 }
 
-export async function doesTextIncludeString(window: Page, dataTestId: string, text: string) {
+export async function doesTextIncludeString(
+  window: Page,
+  dataTestId: string,
+  text: string
+) {
   const element = await waitForTestIdWithText(window, dataTestId);
   const el = await element.innerText();
 
