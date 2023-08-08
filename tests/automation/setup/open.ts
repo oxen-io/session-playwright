@@ -1,6 +1,10 @@
 import { join } from 'path';
-import { isEmpty } from 'lodash';
 import { _electron } from '@playwright/test';
+import { isEmpty } from 'lodash';
+
+export const NODE_ENV = 'production';
+export const MULTI_PREFIX = 'test-integration-testnet-';
+const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function getAppRootPath() {
   if (isEmpty(process.env.SESSION_DESKTOP_ROOT)) {
@@ -10,10 +14,6 @@ function getAppRootPath() {
   }
   return process.env.SESSION_DESKTOP_ROOT as string;
 }
-
-export const NODE_ENV = 'production';
-export const MULTI_PREFIX = 'test-integration-testnet-';
-const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export async function openApp(windowsToCreate: number) {
   if (windowsToCreate >= multisAvailable.length) {
@@ -32,12 +32,10 @@ export const openElectronAppOnly = async (multi: string) => {
   process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-${Date.now()}-${multi}`;
   process.env.NODE_ENV = NODE_ENV;
 
-  console.info(' NODE_ENV', process.env.NODE_ENV);
-  console.info(' NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
-  const mainNode = join(getAppRootPath(), 'ts', 'mains', 'main_node.js');
-  console.info(' main_node', mainNode);
+  console.info('   NODE_ENV', process.env.NODE_ENV);
+  console.info('   NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
   const electronApp = await _electron.launch({
-    args: [mainNode],
+    args: [join(getAppRootPath(), 'ts', 'mains', 'main_node.js')],
   });
   return electronApp;
 };

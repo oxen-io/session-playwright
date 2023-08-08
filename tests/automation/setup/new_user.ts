@@ -1,6 +1,11 @@
 import { Page } from '@playwright/test';
 import { User } from '../types/testing';
-import { clickOnMatchingText, clickOnTestIdWithText, typeIntoInput } from '../utilities/utils';
+import {
+  checkPathLight,
+  clickOnMatchingText,
+  clickOnTestIdWithText,
+  typeIntoInput,
+} from '../utilities/utils';
 
 export const newUser = async (window: Page, userName: string): Promise<User> => {
   // Create User
@@ -22,5 +27,6 @@ export const newUser = async (window: Page, userName: string): Promise<User> => 
 
   console.info(`${userName}: Session ID: ${sessionid} and Recovery phrase: ${recoveryPhrase}`);
   await window.click('.session-icon-button.small');
+  await checkPathLight(window);
   return { userName, sessionid, recoveryPhrase };
 };

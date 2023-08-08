@@ -4,8 +4,8 @@ import { sessionTestTwoWindows } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { sendMessage } from './utilities/message';
 import {
-  clickOnMatchingText,
   clickOnTestIdWithText,
+  hasTextElementBeenDeleted,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
@@ -22,6 +22,8 @@ sessionTestTwoWindows('Disappearing messages', async ([windowA, windowB]) => {
   ]);
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
+  // Need to wait for contact approval
+  await sleepFor(5000);
   // Click on user's avatar to open conversation options
   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
   await waitForMatchingText(windowA, 'Your message request has been accepted');
@@ -42,69 +44,31 @@ sessionTestTwoWindows('Disappearing messages', async ([windowA, windowB]) => {
     'control-message',
     'You set the disappearing message timer to 5 seconds'
   );
-  await sleepFor(2000);
+  await waitForTestIdWithText(
+    windowB,
+    'control-message',
+    `${userA.userName} set the disappearing message timer to 5 seconds`
+  );
+  await sleepFor(500);
   // Check top right hand corner indicator
-
   await waitForTestIdWithText(
     windowA,
     'disappearing-messages-indicator',
     '5 seconds'
   );
   // Send message
-  // Wait for tick of confirmation
   await sendMessage(windowA, sentMessage);
   // Check timer is functioning
-
+  await sleepFor(6000);
   // Verify message is deleted
-  const errorDesc = 'Should not be found';
-  try {
-    const elemShouldNotBeFound = windowA.locator(sentMessage);
-    if (elemShouldNotBeFound) {
-      console.error('Sent message not found in window A');
-      throw new Error(errorDesc);
-    }
-  } catch (e) {
-    if (e.message !== errorDesc) {
-      throw e;
-    }
-  }
-  // Click on user's avatar for options
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  // Click on disappearing messages drop down
-  await clickOnMatchingText(windowA, 'Disappearing messages');
-  // Select off
-  await clickOnMatchingText(windowA, 'Off');
-  // Click chevron to close menu
-  await clickOnTestIdWithText(windowA, 'back-button-conversation-options');
-  // Check config message
-  await waitForTestIdWithText(
-    windowA,
-    'control-message',
-    'You disabled disappearing messages.'
-  );
-  // Verify message is deleted in windowB for receiver user
-  // Check config message in windowB
-  await waitForMatchingText(
+  await hasTextElementBeenDeleted(windowA, sentMessage, 3000);
+  // focus window B
+  await windowA.close();
+  await windowB.bringToFront();
+  await clickOnTestIdWithText(
     windowB,
+    'control-message',
     `${userA.userName} set the disappearing message timer to 5 seconds`
   );
-  // Wait 5 seconds
-  await sleepFor(5000);
-  await waitForMatchingText(
-    windowB,
-    `${userA.userName} has turned off disappearing messages.`
-  );
-  // verify message is deleted in windowB
-  const errorDesc2 = 'Should not be found';
-  try {
-    const elemShouldNotBeFound = windowA.locator(sentMessage);
-    if (elemShouldNotBeFound) {
-      console.error('Sent message not found in window B');
-      throw new Error(errorDesc2);
-    }
-  } catch (e) {
-    if (e.message !== errorDesc2) {
-      throw e;
-    }
-  }
+  await hasTextElementBeenDeleted(windowB, sentMessage, 5000);
 });

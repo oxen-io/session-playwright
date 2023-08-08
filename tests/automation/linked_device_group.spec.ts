@@ -1,6 +1,4 @@
-import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean } from './setup/beforeEach';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
 import { sessionTestThreeWindows } from './setup/sessionTest';
@@ -12,10 +10,8 @@ import {
   waitForTestIdWithText,
 } from './utilities/utils';
 
-test.beforeEach(beforeAllClean);
-
 sessionTestThreeWindows(
-  'Check group syncs',
+  'Check group and name syncs',
   async ([windowA, windowC, windowD]) => {
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
@@ -43,7 +39,7 @@ sessionTestThreeWindows(
 );
 
 sessionTestThreeWindows(
-  'Check leaving group syncs',
+  'Leaving group syncs',
   async ([windowA, windowC, windowD]) => {
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
