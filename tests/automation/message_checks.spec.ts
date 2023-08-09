@@ -31,7 +31,7 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
     'tests/automation/fixtures/test-image.png'
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   // Click on untrusted attachment in window B
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
@@ -58,7 +58,7 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
@@ -82,7 +82,7 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
@@ -108,7 +108,7 @@ sessionTestTwoWindows('Send voice message', async ([windowA, windowB]) => {
   await sleepFor(5000);
   await clickOnTestIdWithText(windowA, 'end-voice-message');
   await sleepFor(4000);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
@@ -127,7 +127,7 @@ sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
     'tests/automation/fixtures/test-gif.gif'
   );
   await sleepFor(100);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
 });
@@ -147,7 +147,7 @@ sessionTestTwoWindows('Send long text', async ([windowA, windowB]) => {
 
   await typeIntoInput(windowA, 'message-input-text-area', longText);
   await sleepFor(100);
-  await clickOnTestIdWithText(windowA, 'send-message-button');
+  await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await replyTo(windowB, longText, testReply);
 });
@@ -216,7 +216,7 @@ sessionTestTwoWindows('Check performance', async ([windowA, windowB]) => {
 
 //   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
 //   await sleepFor(5000);
-//   await clickOnTestIdWithText(windowA, 'send-message-button');
+//   await clickOnElement(windowA, 'data-testid', 'send-message-button');
 //   await sleepFor(1000);
 //   await replyTo(windowB, testMessage, testReply);
 // });

@@ -151,36 +151,30 @@ export async function waitForLoadingAnimationToFinish(
 }
 
 export async function checkPathLight(window: Page, maxWait?: number) {
-  let pathLight: ElementHandle<SVGElement | HTMLElement> | undefined;
   const maxWaitTime = maxWait || 100000;
   const waitPerLoop = 100;
-  let start = Date.now();
-
-  pathLight = await waitForElement(
-    window,
-    'data-testid',
-    'path-light-container',
-    maxWait
-  );
-  let pathColor = await pathLight.getAttribute('color');
-
-  while (pathColor === 'var(--button-path-error-color)') {
-    await sleepFor(waitPerLoop);
-    pathLight = await waitForElement(
+  const start = Date.now();
+  let pathColor: string | null;
+  do {
+    const pathLight = await waitForElement(
       window,
       'data-testid',
       'path-light-container',
       maxWait
     );
     pathColor = await pathLight.getAttribute('color');
-    start += waitPerLoop;
+
+    await sleepFor(waitPerLoop);
     if (Date.now() - start >= maxWaitTime / 2) {
       console.log('Path building...');
     }
+  } while (
+    pathColor === 'var(--button-path-error-color)' &&
+    Date.now() - start < maxWaitTime
+  );
 
-    if (Date.now() - start >= maxWaitTime) {
-      throw new Error('Timed out waiting for path');
-    }
+  if (pathColor === 'var(--button-path-error-color)') {
+    throw new Error('Timed out waiting for path');
   }
   console.log('Path built correctly, Yay!', pathColor);
 }
@@ -191,12 +185,36 @@ export async function clickOnElement(
   window: Page,
   strategy: Strategy,
   selector: string,
-  maxWait?: number
+  maxWait?: number,
+  rightButton?: boolean
 ) {
   const builtSelector = `css=[${strategy}=${selector}]`;
   await window.waitForSelector(builtSelector, { timeout: maxWait });
-  await window.click(builtSelector);
+  await window.click(
+    builtSelector,
+    rightButton ? { button: 'right' } : undefined
+  );
 }
+
+export async function lookForPartialTestId(
+  window: Page,
+  selector: string,
+  click?: boolean,
+  rightButton?: boolean,
+  maxWait?: number
+) {
+  const builtSelector = `css=[data-testid^="${selector}"]`;
+  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  if (click) {
+    await window.click(
+      builtSelector,
+      rightButton ? { button: 'right' } : undefined
+    );
+  }
+  return builtSelector;
+}
+
+//
 
 export async function clickOnMatchingText(
   window: Page,
