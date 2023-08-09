@@ -1,5 +1,9 @@
 import { Page } from '@playwright/test';
-import { clickOnMatchingText, clickOnTestIdWithText, waitForTestIdWithText } from './utils';
+import {
+  clickOnMatchingText,
+  clickOnTestIdWithText,
+  waitForTestIdWithText,
+} from './utils';
 
 export const leaveGroup = async (window: Page) => {
   // go to three dots menu
@@ -9,5 +13,9 @@ export const leaveGroup = async (window: Page) => {
   // Confirm leave group
   await clickOnTestIdWithText(window, 'session-confirm-ok-button', 'OK');
   // check config message
-  await waitForTestIdWithText(window, 'control-message', 'You have left the group.');
+  await waitForTestIdWithText(
+    window,
+    'control-message',
+    'You have left the group.'
+  );
 };

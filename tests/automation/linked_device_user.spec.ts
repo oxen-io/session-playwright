@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { expect, Page, test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
 import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';

@@ -28,7 +28,7 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-image.png'
+    'tests/automation/fixtures/test-image.png'
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await clickOnTestIdWithText(windowA, 'send-message-button');
@@ -54,7 +54,7 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-video.mp4'
+    'tests/automation/fixtures/test-video.mp4'
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
@@ -76,10 +76,9 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   const testMessage = `${userA.userName} sending document to ${userB.userName}`;
   const testReply = `${userB.userName} replying to document from ${userA.userName}`;
   await createContact(windowA, windowB, userA, userB);
-
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-file.pdf'
+    'tests/automation/fixtures/test-file.pdf'
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
@@ -125,7 +124,7 @@ sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-gif.gif'
+    'tests/automation/fixtures/test-gif.gif'
   );
   await sleepFor(100);
   await clickOnTestIdWithText(windowA, 'send-message-button');

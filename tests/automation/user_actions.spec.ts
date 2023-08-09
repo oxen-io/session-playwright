@@ -42,7 +42,7 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   // Navigate to contacts tab in User B's window
 
   await clickOnTestIdWithText(windowA, 'new-conversation-button');
-  await windowA.waitForTimeout(2000);
+  await sleepFor(2000);
   await waitForTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
@@ -257,7 +257,7 @@ sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
     newUser(windowB, 'Bob'),
   ]);
   await createContact(windowA, windowB, userA, userB);
-  await clickOnElement(windowA, 'data-testid', 'setting-section');
+  await clickOnElement(windowA, 'data-testid', 'settings-section');
   await clickOnElement(windowA, 'data-testid', 'enable-read-receipts');
   await clickOnElement(windowA, 'data-testid', 'message-section');
   await clickOnTestIdWithText(
@@ -265,7 +265,7 @@ sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
     'module-conversation__user__profile-name',
     userB.userName
   );
-  await clickOnElement(windowB, 'data-testid', 'setting-section');
+  await clickOnElement(windowB, 'data-testid', 'settings-section');
   await clickOnElement(windowB, 'data-testid', 'enable-read-receipts');
   await clickOnElement(windowB, 'data-testid', 'message-section');
   await clickOnTestIdWithText(
