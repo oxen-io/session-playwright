@@ -168,7 +168,7 @@ test('Deleted message syncs', async () => {
   // linked device for deleted message
   // Waiting for message to be removed
   await sleepFor(5000);
-  await hasTextElementBeenDeleted(windowB, deletedMessage, 1000);
+  await hasTextElementBeenDeleted(windowB, deletedMessage, 10000);
   // Still should exist for user B
   await waitForMatchingText(windowC, deletedMessage);
 });

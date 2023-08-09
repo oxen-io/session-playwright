@@ -308,7 +308,7 @@ export async function hasTextElementBeenDeleted(
   console.info('Element has not been found, congratulations', text);
 }
 
-export async function hasTextElementBeenDeletedNew(
+export async function hasTextElementBeenDeletedNew( // this is currently not doing what it should and so the test fails
   window: Page,
   text: string,
   maxWait?: number
