@@ -314,6 +314,7 @@ export async function hasTextElementBeenDeleted(
   text: string,
   maxWait?: number
 ) {
+  throw new Error('this function is broken and does not do what it shoul do'); // FIXME
   const fakeError = `Matching text: ${text} has been found... oops`;
   try {
     await waitForMatchingText(window, text, maxWait);
