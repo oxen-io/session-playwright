@@ -18,7 +18,7 @@ export const leaveGroup = async (window: Page, group: Group) => {
     window,
     'data-testid',
     'module-conversation__user__profile-name',
-    group.userName,
     undefined,
+    group.userName,
   );
 };

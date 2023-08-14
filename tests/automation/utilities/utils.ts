@@ -295,16 +295,34 @@ export async function hasElementBeenDeleted(
   window: Page,
   strategy: Strategy,
   selector: string,
+  maxWait: number = 30000,
   text?: string,
-  maxWait?: number,
-): Promise<boolean> {
-  try {
-    await waitForElement(window, strategy, selector, maxWait, text);
+) {
+  const start = Date.now();
 
-    return false; // Element exists
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+  do {
+    try {
+      el = await waitForElement(window, strategy, selector, maxWait, text);
+      await sleepFor(100);
+      console.info(`Element has been found, waiting for deletion`);
+    } catch (e) {
+      el = undefined;
+      console.info(`Something something`);
+    }
+  } while (Date.now() - start <= maxWait && el);
+  try {
+    el = await waitForElement(window, strategy, selector, 1000, text);
   } catch (e) {
-    return true; // Element doesn't exist or wasn't found in time
+    // if we did throw here it's actually because the element is gone, so it's ok
   }
+
+  if (el) {
+    throw new Error(
+      `hasElementBeenDeleted: element with selector ${selector} was expected to be gone but is still there`,
+    );
+  }
+  console.info(`Element has been deleted yay`);
 }
 
 export async function hasTextMessageBeenDeleted(
