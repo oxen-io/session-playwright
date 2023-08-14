@@ -10,7 +10,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   hasElementBeenDeleted,
-  hasTextElementBeenDeleted,
   typeIntoInput,
   waitForElement,
   waitForLoadingAnimationToFinish,
@@ -38,13 +37,13 @@ test('Delete account from swarm', async () => {
   await clickOnTestIdWithText(
     windowA,
     'clear-data-settings-menu-item',
-    'Clear Data'
+    'Clear Data',
   );
   // Select entire account
   await clickOnTestIdWithText(
     windowA,
     'label-device_and_network',
-    'Clear Device and Network'
+    'Clear Device and Network',
   );
   // Confirm deletion by clicking Clear, twice
   await clickOnMatchingText(windowA, 'Clear');
@@ -60,13 +59,13 @@ test('Delete account from swarm', async () => {
   await clickOnTestIdWithText(
     restoringWindow,
     'restore-using-recovery',
-    'Restore your account'
+    'Restore your account',
   );
   // Fill in recovery phrase
   await typeIntoInput(
     restoringWindow,
     'recovery-phrase-input',
-    userA.recoveryPhrase
+    userA.recoveryPhrase,
   );
   // Enter display name
   await typeIntoInput(restoringWindow, 'display-name-input', userA.userName);
@@ -80,12 +79,12 @@ test('Delete account from swarm', async () => {
   await hasElementBeenDeleted(
     restoringWindow,
     'data-testid',
-    'conversation-list-item'
+    'conversation-list-item',
   );
 
   await clickOnTestIdWithText(restoringWindow, 'new-conversation-button'); // Expect contacts list to be empty
 
-  await hasTextElementBeenDeleted(restoringWindow, 'contact');
+  await hasElementBeenDeleted(restoringWindow, 'data-testid', 'contact');
   await forceCloseAllWindows(restoringWindows);
 });
 
@@ -104,7 +103,7 @@ test('Delete account from device', async () => {
   await clickOnTestIdWithText(
     windowA,
     'clear-data-settings-menu-item',
-    'Clear Data'
+    'Clear Data',
   );
   // Keep 'Clear Device only' selection
   // Confirm deletion by clicking Clear, twice
@@ -121,13 +120,13 @@ test('Delete account from device', async () => {
   await clickOnTestIdWithText(
     restoringWindow,
     'restore-using-recovery',
-    'Restore your account'
+    'Restore your account',
   );
   // Fill in recovery phrase
   await typeIntoInput(
     restoringWindow,
     'recovery-phrase-input',
-    userA.recoveryPhrase
+    userA.recoveryPhrase,
   );
   // Enter display name
   await typeIntoInput(restoringWindow, 'display-name-input', userA.userName);
@@ -140,30 +139,30 @@ test('Delete account from device', async () => {
     'data-testid',
     'module-conversation__user__profile-name',
     10000,
-    userB.userName
+    userB.userName,
   );
   // Check if contact is available in contacts section
   await clickOnElement(
     restoringWindow,
     'data-testid',
-    'new-conversation-button'
+    'new-conversation-button',
   );
   await waitForElement(
     restoringWindow,
     'data-testid',
     'module-conversation__user__profile-name',
     1000,
-    userB.userName
+    userB.userName,
   );
 
   await hasElementBeenDeleted(
     restoringWindow,
     'data-testid',
-    'conversation-list-item'
+    'conversation-list-item',
   );
 
   await clickOnTestIdWithText(restoringWindow, 'new-conversation-button'); // Expect contacts list to be empty
 
-  await hasTextElementBeenDeleted(restoringWindow, 'contact');
+  await hasElementBeenDeleted(restoringWindow, 'data-testid', 'contact');
   await forceCloseAllWindows(restoringWindows);
 });

@@ -2,10 +2,11 @@ import { Page } from '@playwright/test';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
-  waitForTestIdWithText,
+  hasElementBeenDeleted,
 } from './utils';
+import { Group } from '../types/testing';
 
-export const leaveGroup = async (window: Page) => {
+export const leaveGroup = async (window: Page, group: Group) => {
   // go to three dots menu
   await clickOnTestIdWithText(window, 'three-dots-conversation-options');
   // Select Leave Group
@@ -13,9 +14,11 @@ export const leaveGroup = async (window: Page) => {
   // Confirm leave group
   await clickOnTestIdWithText(window, 'session-confirm-ok-button', 'OK');
   // check config message
-  await waitForTestIdWithText(
+  await hasElementBeenDeleted(
     window,
-    'control-message',
-    'You have left the group.'
+    'data-testid',
+    'module-conversation__user__profile-name',
+    group.userName,
+    undefined,
   );
 };

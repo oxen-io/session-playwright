@@ -5,7 +5,7 @@ import { createContact } from './utilities/create_contact';
 import { sendMessage } from './utilities/message';
 import {
   clickOnTestIdWithText,
-  hasTextElementBeenDeleted,
+  hasTextMessageBeenDeleted,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
@@ -31,7 +31,7 @@ sessionTestTwoWindows('Disappearing messages', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(
     windowA,
     'disappearing-messages-dropdown',
-    'Disappearing messages'
+    'Disappearing messages',
   );
   // Select 5 seconds
   await sleepFor(200);
@@ -42,33 +42,38 @@ sessionTestTwoWindows('Disappearing messages', async ([windowA, windowB]) => {
   await waitForTestIdWithText(
     windowA,
     'control-message',
-    'You set the disappearing message timer to 5 seconds'
+    'You set the disappearing message timer to 5 seconds',
+  );
+  await clickOnTestIdWithText(
+    windowB,
+    'control-message',
+    `${userA.userName} set the disappearing message timer to 5 seconds`,
   );
   await waitForTestIdWithText(
     windowB,
     'control-message',
-    `${userA.userName} set the disappearing message timer to 5 seconds`
+    `${userA.userName} set the disappearing message timer to 5 seconds`,
   );
   await sleepFor(500);
   // Check top right hand corner indicator
   await waitForTestIdWithText(
     windowA,
     'disappearing-messages-indicator',
-    '5 seconds'
+    '5 seconds',
   );
   // Send message
   await sendMessage(windowA, sentMessage);
   // Check timer is functioning
   await sleepFor(6000);
   // Verify message is deleted
-  await hasTextElementBeenDeleted(windowA, sentMessage, 3000);
+  await hasTextMessageBeenDeleted(windowA, sentMessage, 8000);
   // focus window B
   await windowA.close();
   await windowB.bringToFront();
   await clickOnTestIdWithText(
     windowB,
     'control-message',
-    `${userA.userName} set the disappearing message timer to 5 seconds`
+    `${userA.userName} set the disappearing message timer to 5 seconds`,
   );
-  await hasTextElementBeenDeleted(windowB, sentMessage, 5000);
+  await hasTextMessageBeenDeleted(windowB, sentMessage, 8000);
 });

@@ -8,7 +8,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
-  hasTextElementBeenDeletedNew,
+  hasTextMessageBeenDeleted,
   measureSendingTime,
   typeIntoInput,
   waitForLoadingAnimationToFinish,
@@ -28,7 +28,7 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-image.png'
+    'tests/automation/fixtures/test-image.png',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
@@ -54,7 +54,7 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-video.mp4'
+    'tests/automation/fixtures/test-video.mp4',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
@@ -78,7 +78,7 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   await createContact(windowA, windowB, userA, userB);
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-file.pdf'
+    'tests/automation/fixtures/test-file.pdf',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
@@ -124,7 +124,7 @@ sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
 
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-gif.gif'
+    'tests/automation/fixtures/test-gif.gif',
   );
   await sleepFor(100);
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
@@ -183,7 +183,7 @@ sessionTestTwoWindows('Delete message', async ([windowA, windowB]) => {
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextElementBeenDeletedNew(windowA, deletedMessage, 1000);
+  await hasTextMessageBeenDeleted(windowA, deletedMessage, 1000);
   // Still should exist in window B
   await waitForMatchingText(windowB, deletedMessage);
 });

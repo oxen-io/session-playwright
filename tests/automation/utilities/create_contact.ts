@@ -8,7 +8,7 @@ export const createContact = async (
   windowA: Page,
   windowB: Page,
   userA: User,
-  userB: User
+  userB: User,
 ) => {
   const testMessage = `${userA.userName} to ${userB.userName}`;
   const testReply = `${userB.userName} to ${userA.userName}`;
@@ -22,7 +22,7 @@ export const createContact = async (
   await waitForTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userA.userName
+    userA.userName,
   );
   // Navigate to contacts tab in User A's window
   await clickOnTestIdWithText(windowA, 'new-conversation-button');
