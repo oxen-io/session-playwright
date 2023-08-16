@@ -1,8 +1,9 @@
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
+import { sessionTestTwoWindows } from './setup/sessionTest';
+import { sessionTestV2 } from './setup/sessionTestV2';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
 sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
@@ -29,4 +30,9 @@ sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
   await clickOnMatchingText(windowB, 'Accept');
   await sleepFor(5000);
   await clickOnTestIdWithText(windowA, 'end-call');
+});
+
+sessionTestV2('Test with two logged in users', async ({ twoFriends }) => {
+  const { windowA, windowB } = twoFriends;
+  await Promise.all([windowA.plop(), windowB.plop()]);
 });
