@@ -5,3 +5,4 @@ test-results/
 playwright.config.js
 tests/**/*.js
 .vscode/settings.json
+tests/automation/todo
