@@ -11,8 +11,10 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  doWhileWithMax,
   hasTextMessageBeenDeleted,
   typeIntoInput,
+  waitForLoadingAnimationToFinish,
   waitForMatchingPlaceholder,
   waitForMatchingText,
   waitForTestIdWithText,
@@ -68,15 +70,34 @@ test('Changed username syncs', async () => {
   // Press enter to confirm change
   await clickOnElement(windowA, 'data-testid', 'save-button-profile-update');
   // Wait for loading animation
+  await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
+
   // Check username change in window B
   // Click on profile settings in window B
-  await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
-  await clickOnElement(windowB, 'data-testid', 'modal-close-button');
   // Waiting for the username to change
-  await sleepFor(10000, true);
-  await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
-  // Verify username has changed to new username
-  await waitForTestIdWithText(windowB, 'your-profile-name', newUsername);
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for updated username in profile dialog',
+    async () => {
+      await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
+      // Verify username has changed to new username
+      try {
+        await waitForTestIdWithText(
+          windowB,
+          'your-profile-name',
+          newUsername,
+          100,
+        );
+        return true;
+      } catch (e) {
+        // if waitForTestIdWithText doesn't find the right username, close the window and retry
+        return false;
+      } finally {
+        await clickOnElement(windowB, 'data-testid', 'modal-close-button');
+      }
+    },
+  );
 });
 
 // eslint-disable-next-line no-empty-pattern
