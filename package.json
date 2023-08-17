@@ -27,7 +27,8 @@
   },
   "scripts": {
     "lint": "yarn prettier . --write && yarn eslint .",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "watch": "yarn tsc -w"
   },
   "dependencies": {}
 }

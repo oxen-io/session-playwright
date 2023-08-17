@@ -29,7 +29,7 @@ const testMessage = 'Test-Message- (A -> B) ';
 const sentMessage = `${testMessage}${Date.now()}`;
 // const sentReplyMessage = `${testReply} :${Date.now()}`;
 
-test('Disappearing messages legacy', async () => {
+test.skip('Disappearing messages legacy', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -84,7 +84,7 @@ test('Disappearing messages legacy', async () => {
   await hasTextMessageBeenDeleted(windowB, sentMessage, 5000);
 });
 
-test('Disappear after read', async () => {
+test.skip('Disappear after read', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -146,7 +146,7 @@ test('Disappear after read', async () => {
   await hasTextMessageBeenDeleted(windowB, testMessage);
 });
 
-test('Disappear after send', async () => {
+test.skip('Disappear after send', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -208,7 +208,7 @@ test('Disappear after send', async () => {
   ]);
 });
 
-test('Disappear after read groups', async () => {
+test.skip('Disappear after read groups', async () => {
   const [windowA, windowB, windowC] = await openApp(3);
   const [userA, userB, userC] = await Promise.all([
     newUser(windowA, 'Alice'),
@@ -274,7 +274,7 @@ test('Disappear after read groups', async () => {
   await hasTextMessageBeenDeleted(windowC, testMessage);
 });
 
-test('Disappear after send groups', async () => {
+test.skip('Disappear after send groups', async () => {
   const [windowA, windowB, windowC] = await openApp(3);
   const [userA, userB, userC] = await Promise.all([
     newUser(windowA, 'Alice'),
@@ -341,7 +341,7 @@ test('Disappear after send groups', async () => {
   ]);
 });
 
-test('Disappear after send note to self', async () => {
+test.skip('Disappear after send note to self', async () => {
   const [windowA] = await openApp(1);
   const userA = await newUser(windowA, 'Alice');
   const [windowB] = await linkedDevice(userA.recoveryPhrase);

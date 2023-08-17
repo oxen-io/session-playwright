@@ -12,6 +12,7 @@ export async function waitForTestIdWithText(
   window: Page,
   dataTestId: string,
   text?: string,
+  maxWait?: number,
 ) {
   let builtSelector = `css=[data-testid=${dataTestId}]`;
   if (text) {
@@ -25,7 +26,9 @@ export async function waitForTestIdWithText(
     // console.warn('Text is tiny bubble: ', escapedText);
   }
   // console.info('looking for selector', builtSelector);
-  const found = await window.waitForSelector(builtSelector, { timeout: 55000 });
+  const found = await window.waitForSelector(builtSelector, {
+    timeout: maxWait,
+  });
   // console.info('found selector', builtSelector);
 
   return found;
@@ -152,8 +155,9 @@ export async function checkPathLight(window: Page, maxWait?: number) {
   const maxWaitTime = maxWait || 100000;
   const waitPerLoop = 100;
   const start = Date.now();
-  let pathColor: string | null;
-  do {
+  let pathColor: string | null = null;
+
+  await doWhileWithMax(maxWaitTime, waitPerLoop, 'checkPathLight', async () => {
     const pathLight = await waitForElement(
       window,
       'data-testid',
@@ -162,18 +166,13 @@ export async function checkPathLight(window: Page, maxWait?: number) {
     );
     pathColor = await pathLight.getAttribute('color');
 
-    await sleepFor(waitPerLoop);
-    if (Date.now() - start >= maxWaitTime / 2) {
+    if (Date.now() - start >= maxWaitTime / 10) {
       console.log('Path building...');
     }
-  } while (
-    pathColor === 'var(--button-path-error-color)' &&
-    Date.now() - start < maxWaitTime
-  );
 
-  if (pathColor === 'var(--button-path-error-color)') {
-    throw new Error('Timed out waiting for path');
-  }
+    return pathColor === 'var(--button-path-default-color)';
+  });
+
   console.log('Path built correctly, Yay!', pathColor);
 }
 
@@ -372,4 +371,32 @@ export async function measureSendingTime(window: Page, messageNumber: number) {
 
   console.log(`Message ${messageNumber}: ${timeMs}`);
   return timeMs;
+}
+
+export async function doWhileWithMax(
+  maxWaitMs: number,
+  waitBetweenMs: number,
+  label: string,
+  actionTodo: () => Promise<boolean>,
+) {
+  const start = Date.now();
+  let iteration = 0;
+  let wasSuccess = false;
+  do {
+    try {
+      wasSuccess = await actionTodo();
+    } catch (e) {
+      console.error(
+        `doWhileWithMax with label:"${label}" iteration:${iteration} failed with: ${e.message}`,
+        e,
+      );
+    }
+    await sleepFor(waitBetweenMs);
+  } while (!wasSuccess && Date.now() - start < maxWaitMs);
+
+  if (!wasSuccess) {
+    throw new Error(
+      `doWhileWithMax with label:"${label}" still failing after ${maxWaitMs}ms`,
+    );
+  }
 }
