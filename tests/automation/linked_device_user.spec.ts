@@ -71,6 +71,10 @@ test('Changed username syncs', async () => {
   // Check username change in window B
   // Click on profile settings in window B
   await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
+  await clickOnElement(windowB, 'data-testid', 'modal-close-button');
+  // Waiting for the username to change
+  await sleepFor(10000, true);
+  await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
   // Verify username has changed to new username
   await waitForTestIdWithText(windowB, 'your-profile-name', newUsername);
 });
