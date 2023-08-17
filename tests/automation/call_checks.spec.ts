@@ -19,7 +19,7 @@ sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(
     windowA,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   await clickOnTestIdWithText(windowA, 'call-button');
   // Enable calls in window B

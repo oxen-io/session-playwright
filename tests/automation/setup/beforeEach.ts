@@ -34,13 +34,13 @@ function cleanUpOtherTest() {
 
   if (!parentFolderOfAllDataPath || parentFolderOfAllDataPath.length < 9) {
     throw new Error(
-      `parentFolderOfAllDataPath not found or invalid: ${parentFolderOfAllDataPath}`
+      `parentFolderOfAllDataPath not found or invalid: ${parentFolderOfAllDataPath}`,
     );
   }
   console.info('cleaning other tests leftovers...', parentFolderOfAllDataPath);
 
   const allAppDataPath = getDirectoriesOfSessionDataPath(
-    parentFolderOfAllDataPath
+    parentFolderOfAllDataPath,
   );
   console.info('allAppDataPath', allAppDataPath);
 

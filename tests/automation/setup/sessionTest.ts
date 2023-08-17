@@ -21,7 +21,7 @@ type CountWindows = 1 | 2 | 3 | 4 | 5;
 function sessionTest<T extends CountWindows, N extends Tuple<Page, T>>(
   testName: string,
   testCallback: (windows: N) => Promise<void>,
-  count: T
+  count: T,
 ) {
   return test(testName, async () => {
     beforeAllClean();
@@ -29,7 +29,9 @@ function sessionTest<T extends CountWindows, N extends Tuple<Page, T>>(
 
     try {
       if (windows.length !== count) {
-        throw new Error(`openApp should have opened ${count} windows but did not.`);
+        throw new Error(
+          `openApp should have opened ${count} windows but did not.`,
+        );
       }
       await testCallback(windows as N);
       // eslint-disable-next-line no-useless-catch
@@ -47,37 +49,50 @@ function sessionTest<T extends CountWindows, N extends Tuple<Page, T>>(
 
 export function sessionTestOneWindow(
   testName: string,
-  testCallback: (windows: Tuple<Page, 1>) => Promise<void>
+  testCallback: (windows: Tuple<Page, 1>) => Promise<void>,
 ) {
   return sessionTest(testName, testCallback, 1);
 }
 
 export function sessionTestTwoWindows(
   testName: string,
-  testCallback: ([windowA, windowB]: [Page, Page]) => Promise<void>
+  testCallback: ([windowA, windowB]: [Page, Page]) => Promise<void>,
 ) {
   return sessionTest(testName, testCallback, 2);
 }
 
 export function sessionTestThreeWindows(
   testName: string,
-  testCallback: ([windowA, windowB, windowC]: [Page, Page, Page]) => Promise<void>
+  testCallback: ([windowA, windowB, windowC]: [
+    Page,
+    Page,
+    Page,
+  ]) => Promise<void>,
 ) {
   return sessionTest(testName, testCallback, 3);
 }
 
 export function sessionTestFourWindows(
   testName: string,
-  testCallback: ([windowA, windowB, windowC, windowD]: [Page, Page, Page, Page]) => Promise<void>
+  testCallback: ([windowA, windowB, windowC, windowD]: [
+    Page,
+    Page,
+    Page,
+    Page,
+  ]) => Promise<void>,
 ) {
   return sessionTest(testName, testCallback, 4);
 }
 
 export function sessionTestFiveWindows(
   testName: string,
-  testCallback: ([windowA, windowB, windowC, windowD]: [Page, Page, Page, Page, Page]) => Promise<
-    void
-  >
+  testCallback: ([windowA, windowB, windowC, windowD]: [
+    Page,
+    Page,
+    Page,
+    Page,
+    Page,
+  ]) => Promise<void>,
 ) {
   return sessionTest(testName, testCallback, 5);
 }

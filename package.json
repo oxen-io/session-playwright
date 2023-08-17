@@ -21,11 +21,12 @@
     "eslint-plugin-more": "^1.0.5",
     "fs-extra": "^11.1.1",
     "lodash": "^4.17.21",
+    "prettier": "^3.0.1",
     "semver": "^7.5.4",
     "typescript": "^5.1.6"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "yarn prettier . --write && yarn eslint .",
     "test": "npx playwright test"
   },
   "dependencies": {}

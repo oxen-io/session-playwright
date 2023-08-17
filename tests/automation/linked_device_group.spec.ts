@@ -16,26 +16,26 @@ sessionTestThreeWindows(
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
       newUser(windowB, 'Bob'),
-      newUser(windowC, 'Chloe'),
+      newUser(windowC, 'Charlie'),
     ]);
     const [windowD] = await linkedDevice(userA.recoveryPhrase);
 
     const group = await createGroup(
-      'Tiny Bubble Gang',
+      'Testing group creation',
       userA,
       windowA,
       userB,
       windowB,
       userC,
-      windowC
+      windowC,
     );
     // Check group conversation is in conversation list on linked device
     await waitForTestIdWithText(
       windowD,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
-  }
+  },
 );
 
 sessionTestThreeWindows(
@@ -44,52 +44,52 @@ sessionTestThreeWindows(
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
       newUser(windowC, 'Bob'),
-      newUser(windowD, 'Chloe'),
+      newUser(windowD, 'Charlie'),
     ]);
     const [windowB] = await linkedDevice(userA.recoveryPhrase);
 
     const group = await createGroup(
-      'Tiny Bubble Gang',
+      'Testing leaving a group',
       userA,
       windowA,
       userB,
       windowC,
       userC,
-      windowD
+      windowD,
     );
     // Check group conversation is in conversation list
     await waitForTestIdWithText(
       windowB,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     // User C to leave group
-    await leaveGroup(windowD);
+    await leaveGroup(windowD, group);
     // Check for user A
     await sleepFor(1000);
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     await waitForControlMessageWithText(
       windowA,
-      `"${userC.userName}" has left the group.`
+      `"${userC.userName}" has left the group.`,
     );
     // Check for linked device (userA)
     await clickOnTestIdWithText(
       windowB,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     await waitForControlMessageWithText(
       windowB,
-      `"${userC.userName}" has left the group.`
+      `"${userC.userName}" has left the group.`,
     );
     // Check for user B
     await waitForControlMessageWithText(
       windowC,
-      `"${userC.userName}" has left the group.`
+      `"${userC.userName}" has left the group.`,
     );
-  }
+  },
 );

@@ -9,7 +9,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
-  hasTextElementBeenDeleted,
+  hasTextMessageBeenDeleted,
   lookForPartialTestId,
   typeIntoInput,
   waitForLoadingAnimationToFinish,
@@ -35,13 +35,13 @@ test.skip('Send image to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const testMessage = `${userA.userName} sending image to ${group.userName}`;
   const testReply = `${userB.userName} replying to image from ${userA.userName} in ${group.userName}`;
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-image.png'
+    'tests/automation/fixtures/test-image.png',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
@@ -64,13 +64,13 @@ test.skip('Send video to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const testMessage = `${userA.userName} sending video to ${group.userName}`;
   const testReply = `${userB.userName} replying to video from ${userA.userName} in ${group.userName}`;
   await windowA.setInputFiles(
     "input[type='file']",
-    'tests/automation/fixtures/test-video.mp4'
+    'tests/automation/fixtures/test-video.mp4',
   );
   await sleepFor(1000);
 
@@ -95,13 +95,13 @@ test.skip('Send document to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const testMessage = `${userA.userName} sending document to ${group.userName}`;
   const testReply = `${userB.userName} replying to document from ${userA.userName} in ${group.userName}`;
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-file.pdf'
+    'ts/test/automation/fixtures/test-file.pdf',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
@@ -123,7 +123,7 @@ test.skip('Send voice message to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const testReply = `${userB.userName} replying to voice message from ${userA.userName} in ${group.userName}`;
   await clickOnElement(windowA, 'data-testid', 'microphone-button');
@@ -157,14 +157,14 @@ test.skip('Send GIF to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const testMessage = `${userA.userName} sending GIF to ${group.userName}`;
 
   const testReply = `${userB.userName} replying to GIF from ${userA.userName} in ${group.userName}`;
   await windowA.setInputFiles(
     "input[type='file']",
-    'ts/test/automation/fixtures/test-gif.gif'
+    'ts/test/automation/fixtures/test-gif.gif',
   );
   await sleepFor(100);
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
@@ -189,7 +189,7 @@ test.skip('Send long text to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const longText =
     // eslint-disable-next-line max-len
@@ -218,7 +218,7 @@ test.skip('Unsend message to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const unsendMessage = `Testing unsend functionality in ${group.userName}`;
   await sendMessage(windowA, unsendMessage);
@@ -247,7 +247,7 @@ test.skip('Delete message to group', async () => {
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   const deletedMessage = `Testing delete message functionality in ${group.userName}`;
   await sendMessage(windowA, deletedMessage);
@@ -257,7 +257,7 @@ test.skip('Delete message to group', async () => {
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextElementBeenDeleted(windowA, deletedMessage, 5000);
+  await hasTextMessageBeenDeleted(windowA, deletedMessage, 5000);
   await waitForMatchingText(windowB, deletedMessage);
   await waitForMatchingText(windowC, deletedMessage);
 });

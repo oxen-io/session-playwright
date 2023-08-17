@@ -17,7 +17,7 @@ export const createGroup = async (
   userTwo: User,
   windowB: Page,
   userThree: User,
-  windowC: Page
+  windowC: Page,
 ): Promise<Group> => {
   const group: Group = { userName, userOne, userTwo, userThree };
   const emptyStateGroupText = `You have no messages from ${group.userName}. Send a message to start the conversation!`;
@@ -30,11 +30,27 @@ export const createGroup = async (
   const msgBToGroup = `${userTwo.userName} -> ${group.userName}`;
   const msgCToGroup = `${userThree.userName} -> ${group.userName}`;
   // Add contacts
-  await sendNewMessage(windowA, userThree.sessionid, `${messageAC} Time: ${Date.now()}`);
+  await sendNewMessage(
+    windowA,
+    userThree.sessionid,
+    `${messageAC} Time: ${Date.now()}`,
+  );
   await Promise.all([
-    sendNewMessage(windowA, userTwo.sessionid, `${messageAB} Time: ${Date.now()}`),
-    sendNewMessage(windowB, userOne.sessionid, `${messageBA} Time: ${Date.now()}`),
-    sendNewMessage(windowC, userOne.sessionid, `${messageCA} Time: ${Date.now()}`),
+    sendNewMessage(
+      windowA,
+      userTwo.sessionid,
+      `${messageAB} Time: ${Date.now()}`,
+    ),
+    sendNewMessage(
+      windowB,
+      userOne.sessionid,
+      `${messageBA} Time: ${Date.now()}`,
+    ),
+    sendNewMessage(
+      windowC,
+      userOne.sessionid,
+      `${messageCA} Time: ${Date.now()}`,
+    ),
   ]);
   // Focus screen on window C to allow user C to become contact
   await clickOnTestIdWithText(windowC, 'messages-container');
@@ -53,9 +69,17 @@ export const createGroup = async (
   await clickOnTestIdWithText(windowA, 'next-button');
   // Check group was successfully created
   await clickOnMatchingText(windowB, group.userName);
-  await waitForTestIdWithText(windowB, 'header-conversation-name', group.userName);
+  await waitForTestIdWithText(
+    windowB,
+    'header-conversation-name',
+    group.userName,
+  );
   // Make sure the empty state is in windowA
-  await waitForTestIdWithText(windowA, 'empty-conversation-notification', emptyStateGroupText);
+  await waitForTestIdWithText(
+    windowA,
+    'empty-conversation-notification',
+    emptyStateGroupText,
+  );
 
   await Promise.all([
     (async () => {
@@ -64,7 +88,11 @@ export const createGroup = async (
       // Click on test group
       await clickOnMatchingText(windowB, group.userName);
       // Make sure the empty state is in windowB
-      return waitForTestIdWithText(windowB, 'empty-conversation-notification', emptyStateGroupText);
+      return waitForTestIdWithText(
+        windowB,
+        'empty-conversation-notification',
+        emptyStateGroupText,
+      );
     })(),
     (async () => {
       // Navigate to group in window C
@@ -72,7 +100,11 @@ export const createGroup = async (
       // Click on test group
       await clickOnMatchingText(windowC, group.userName);
       // Make sure the empty state is in windowC
-      return waitForTestIdWithText(windowC, 'empty-conversation-notification', emptyStateGroupText);
+      return waitForTestIdWithText(
+        windowC,
+        'empty-conversation-notification',
+        emptyStateGroupText,
+      );
     })(),
   ]);
 

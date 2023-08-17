@@ -31,13 +31,13 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   await sendNewMessage(
     windowA,
     userB.sessionid,
-    `${testMessage} Time: '${Date.now()}'`
+    `${testMessage} Time: '${Date.now()}'`,
   );
   // User B sends message to User B to USER A
   await sendNewMessage(
     windowB,
     userA.sessionid,
-    `${testReply} Time: '${Date.now()}'`
+    `${testReply} Time: '${Date.now()}'`,
   );
   // Navigate to contacts tab in User B's window
 
@@ -46,7 +46,7 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   await waitForTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userA.userName
+    userA.userName,
   );
 
   // Navigate to contacts tab in User A's window
@@ -69,19 +69,19 @@ sessionTestTwoWindows(
     await sendNewMessage(
       windowA,
       userB.sessionid,
-      `${testMessage} Time: '${Date.now()}'`
+      `${testMessage} Time: '${Date.now()}'`,
     );
     await sendNewMessage(
       windowB,
       userA.sessionid,
-      `${testReply} Time: '${Date.now()}'`
+      `${testReply} Time: '${Date.now()}'`,
     );
     // Check to see if User B is a contact
     await clickOnTestIdWithText(windowA, 'new-conversation-button');
     await waitForTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
-      userB.userName
+      userB.userName,
     );
     // Click on three dots menu
     await clickOnTestIdWithText(windowA, 'message-section');
@@ -105,7 +105,7 @@ sessionTestTwoWindows(
     // Verify toast notification says unblocked
     await waitForTestIdWithText(windowA, 'session-toast', 'Unblocked');
     await waitForMatchingText(windowA, 'No blocked contacts');
-  }
+  },
 );
 
 sessionTestTwoWindows(
@@ -124,19 +124,19 @@ sessionTestTwoWindows(
     await sendNewMessage(
       windowA,
       userB.sessionid,
-      `${testMessage} Time: '${Date.now()}'`
+      `${testMessage} Time: '${Date.now()}'`,
     );
     await sendNewMessage(
       windowB,
       userA.sessionid,
-      `${testReply} Time: '${Date.now()}'`
+      `${testReply} Time: '${Date.now()}'`,
     );
     // Check to see if User B is a contact
     await clickOnTestIdWithText(windowA, 'new-conversation-button');
     await waitForTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
-      userB.userName
+      userB.userName,
     );
     // Click on three dots menu
     await clickOnTestIdWithText(windowA, 'message-section');
@@ -145,7 +145,7 @@ sessionTestTwoWindows(
       windowA,
       'module-conversation__user__profile-name',
       userB.userName,
-      true
+      true,
     );
     // Select block
     await clickOnMatchingText(windowA, 'Block');
@@ -165,7 +165,7 @@ sessionTestTwoWindows(
     // Verify toast notification says unblocked
     await waitForTestIdWithText(windowA, 'session-toast', 'Unblocked');
     await waitForMatchingText(windowA, 'No blocked contacts');
-  }
+  },
 );
 sessionTestOneWindow('Change username', async ([window]) => {
   // Create user
@@ -184,7 +184,7 @@ sessionTestOneWindow('Change username', async ([window]) => {
   await window.isVisible("'Copy'");
   // verify name change
   expect(await window.innerText('[data-testid=your-profile-name]')).toBe(
-    newUsername
+    newUsername,
   );
   // Exit profile module
   await window.click('.session-icon-button.small');
@@ -207,7 +207,7 @@ sessionTestOneWindow('Change avatar', async ([window]) => {
   await sleepFor(500);
   const leftpaneAvatarContainer = await waitForTestIdWithText(
     window,
-    'leftpane-primary-avatar'
+    'leftpane-primary-avatar',
   );
   await sleepFor(500);
   const screenshot = await leftpaneAvatarContainer.screenshot({
@@ -235,7 +235,7 @@ sessionTestTwoWindows('Set nickname', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(windowA, 'confirm-nickname', 'OK');
   const headerUsername = await waitForTestIdWithText(
     windowA,
-    'header-conversation-name'
+    'header-conversation-name',
   );
   const headerUsernameText = await headerUsername.innerText();
   console.warn('Innertext ', headerUsernameText);
@@ -244,7 +244,7 @@ sessionTestTwoWindows('Set nickname', async ([windowA, windowB]) => {
   // Check conversation list name also
   const conversationListUsernameText = await waitForTestIdWithText(
     windowA,
-    'module-conversation__user__profile-name'
+    'module-conversation__user__profile-name',
   );
   const conversationListUsername =
     await conversationListUsernameText.innerText();
@@ -263,7 +263,7 @@ sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(
     windowA,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   await clickOnElement(windowB, 'data-testid', 'settings-section');
   await clickOnElement(windowB, 'data-testid', 'enable-read-receipts');
@@ -271,7 +271,7 @@ sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userA.userName
+    userA.userName,
   );
   await sendMessage(windowA, 'Testing read receipts');
 });

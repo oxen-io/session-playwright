@@ -9,7 +9,7 @@ import {
 export const replyTo = async (
   window: Page,
   textMessage: string,
-  replyText: string
+  replyText: string,
 ) => {
   await waitForTextMessage(window, textMessage);
   await clickOnTestIdWithText(window, 'control-message', textMessage, true);

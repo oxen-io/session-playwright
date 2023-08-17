@@ -7,7 +7,11 @@ import {
   waitForTestIdWithText,
 } from './utils';
 
-export const renameGroup = async (window: Page, oldGroupName: string, newGroupName: string) => {
+export const renameGroup = async (
+  window: Page,
+  oldGroupName: string,
+  newGroupName: string,
+) => {
   await clickOnMatchingText(window, oldGroupName);
   await clickOnTestIdWithText(window, 'conversation-options-avatar');
   await clickOnMatchingText(window, 'Edit group name');

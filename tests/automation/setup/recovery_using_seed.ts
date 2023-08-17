@@ -1,7 +1,11 @@
 import { Page } from '@playwright/test';
 import { clickOnTestIdWithText, typeIntoInput } from '../utilities/utils';
 
-export async function recoverFromSeed(window: Page, userName: string, recoveryPhrase: string) {
+export async function recoverFromSeed(
+  window: Page,
+  userName: string,
+  recoveryPhrase: string,
+) {
   await clickOnTestIdWithText(window, 'restore-using-recovery');
   await typeIntoInput(window, 'recovery-phrase-input', recoveryPhrase);
   await typeIntoInput(window, 'display-name-input', userName);
