@@ -170,7 +170,7 @@ sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
   await waitForMatchingText(windowB, 'This message has been deleted');
 });
 
-sessionTestTwoWindows('Delete message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Delete message user', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),

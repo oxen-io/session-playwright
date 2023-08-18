@@ -307,7 +307,7 @@ export async function hasElementBeenDeleted(
       console.info(`Element has been found, waiting for deletion`);
     } catch (e) {
       el = undefined;
-      console.info(`Something something`);
+      console.info(`Element has been deleted, woohoo!`);
     }
   } while (Date.now() - start <= maxWait && el);
   try {
@@ -327,21 +327,51 @@ export async function hasElementBeenDeleted(
 export async function hasTextMessageBeenDeleted(
   window: Page,
   text: string,
-  maxWait?: number,
-): Promise<boolean> {
-  try {
-    await waitForElement(
-      window,
-      'data-testid',
-      'control-message',
-      maxWait,
-      text,
-    );
-    return false; // Text message was found
-  } catch (e) {
-    return true; // Text message doesn't exist or wasn't found in time
-  }
+  maxWait: number = 30000,
+) {
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for text message to be deleted',
+    async () => {
+      try {
+        el = await waitForElement(
+          window,
+          'data-testid',
+          'control-message',
+          maxWait,
+          text,
+        );
+        return false;
+      } catch (e) {
+        el = undefined;
+        console.info(`Text message not found, yay!`);
+        return true;
+      }
+    },
+  );
 }
+
+// export async function hasTextMessageBeenDeleted(
+//   window: Page,
+//   text: string,
+//   maxWait?: number,
+// ): Promise<boolean> {
+//   try {
+//     await waitForElement(
+//       window,
+//       'data-testid',
+//       'control-message',
+//       maxWait,
+//       text,
+//     );
+//     return false; // Text message was found
+//   } catch (e) {
+//     return true; // Text message doesn't exist or wasn't found in time
+//   }
+// }
 
 export async function hasElementPoppedUpThatShouldnt(
   window: Page,
