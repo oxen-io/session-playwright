@@ -11,8 +11,10 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
-  hasTextElementBeenDeleted,
+  doWhileWithMax,
+  hasTextMessageBeenDeleted,
   typeIntoInput,
+  waitForLoadingAnimationToFinish,
   waitForMatchingPlaceholder,
   waitForMatchingText,
   waitForTestIdWithText,
@@ -39,11 +41,11 @@ test('Link a device', async () => {
   const errorDesc = 'Should not be found';
   try {
     const elemShouldNotBeFound = windowB.locator(
-      '[data-testid=reveal-recovery-phrase]'
+      '[data-testid=reveal-recovery-phrase]',
     );
     if (elemShouldNotBeFound) {
       console.error(
-        'Continue to save recovery phrase not found, excellent news'
+        'Continue to save recovery phrase not found, excellent news',
       );
       throw new Error(errorDesc);
     }
@@ -68,11 +70,34 @@ test('Changed username syncs', async () => {
   // Press enter to confirm change
   await clickOnElement(windowA, 'data-testid', 'save-button-profile-update');
   // Wait for loading animation
+  await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
+
   // Check username change in window B
   // Click on profile settings in window B
-  await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
-  // Verify username has changed to new username
-  await waitForTestIdWithText(windowB, 'your-profile-name', newUsername);
+  // Waiting for the username to change
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for updated username in profile dialog',
+    async () => {
+      await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
+      // Verify username has changed to new username
+      try {
+        await waitForTestIdWithText(
+          windowB,
+          'your-profile-name',
+          newUsername,
+          100,
+        );
+        return true;
+      } catch (e) {
+        // if waitForTestIdWithText doesn't find the right username, close the window and retry
+        return false;
+      } finally {
+        await clickOnElement(windowB, 'data-testid', 'modal-close-button');
+      }
+    },
+  );
 });
 
 // eslint-disable-next-line no-empty-pattern
@@ -98,7 +123,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
   await clickOnTestIdWithText(windowA, 'modal-close-button');
   const leftpaneAvatarContainer = await waitForTestIdWithText(
     windowB,
-    'leftpane-primary-avatar'
+    'leftpane-primary-avatar',
   );
   const start = Date.now();
   let correctScreenshot = false;
@@ -114,11 +139,11 @@ test('Profile picture syncs', async ({}, testinfo) => {
       expect(screenshot).toMatchSnapshot({ name: 'avatar-updated-blue.jpeg' });
       correctScreenshot = true;
       console.warn(
-        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`
+        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
       );
     } catch (e) {
       console.warn(
-        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${e.message}`
+        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${e.message}`,
       );
     }
     tryNumber++;
@@ -137,7 +162,7 @@ test('Contacts syncs', async () => {
   await waitForTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   console.info('Contacts correctly synced');
 });
@@ -156,7 +181,7 @@ test('Deleted message syncs', async () => {
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   await waitForTextMessage(windowB, deletedMessage);
   await waitForTextMessage(windowC, deletedMessage);
@@ -164,11 +189,11 @@ test('Deleted message syncs', async () => {
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextElementBeenDeleted(windowA, deletedMessage, 1000);
+  await hasTextMessageBeenDeleted(windowA, deletedMessage, 6000);
   // linked device for deleted message
   // Waiting for message to be removed
-  await sleepFor(5000);
-  await hasTextElementBeenDeleted(windowB, deletedMessage, 10000);
+  // Check for linked device
+  await hasTextMessageBeenDeleted(windowB, deletedMessage, 10000);
   // Still should exist for user B
   await waitForMatchingText(windowC, deletedMessage);
 });
@@ -187,7 +212,7 @@ test('Unsent message syncs', async () => {
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   await waitForTextMessage(windowB, unsentMessage);
   await waitForTextMessage(windowC, unsentMessage);
@@ -195,10 +220,10 @@ test('Unsent message syncs', async () => {
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement(windowA, 'data-testid', 'session-confirm-ok-button');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextElementBeenDeleted(windowA, unsentMessage, 1000);
+  await hasTextMessageBeenDeleted(windowA, unsentMessage, 1000);
   await waitForMatchingText(windowC, 'This message has been deleted');
   // linked device for deleted message
-  await hasTextElementBeenDeleted(windowB, unsentMessage, 1000);
+  await hasTextMessageBeenDeleted(windowB, unsentMessage, 1000);
 });
 
 test('Blocked user syncs', async () => {
@@ -216,24 +241,24 @@ test('Blocked user syncs', async () => {
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
-    userB.userName
+    userB.userName,
   );
   await clickOnElement(
     windowA,
     'data-testid',
-    'three-dots-conversation-options'
+    'three-dots-conversation-options',
   );
   await clickOnMatchingText(windowA, 'Block');
   await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
   await waitForMatchingPlaceholder(
     windowA,
     'message-input-text-area',
-    'Unblock this contact to send a message.'
+    'Unblock this contact to send a message.',
   );
   await waitForMatchingPlaceholder(
     windowB,
     'message-input-text-area',
-    'Unblock this contact to send a message.'
+    'Unblock this contact to send a message.',
   ); // reveal-blocked-user-settings is not updated once opened
   // Check linked device for blocked contact in settings screen
   await clickOnTestIdWithText(windowB, 'settings-section');
@@ -244,7 +269,7 @@ test('Blocked user syncs', async () => {
     'reveal-blocked-user-settings',
     undefined,
     undefined,
-    50000
+    50000,
   );
   // Check if user B is in blocked contact list
   await waitForMatchingText(windowB, userB.userName);

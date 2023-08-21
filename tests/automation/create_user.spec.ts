@@ -27,7 +27,7 @@ sessionTestOneWindow('Create User', async ([window]) => {
   await waitForTestIdWithText(
     window,
     'recovery-phrase-seed-modal',
-    userA.recoveryPhrase
+    userA.recoveryPhrase,
   );
   // Exit profile module
   await window.click('.session-icon-button.small');

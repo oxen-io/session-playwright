@@ -31,7 +31,7 @@ sessionTestOneWindow('Set Password', async ([window]) => {
   await waitForTestIdWithText(
     window,
     'session-toast',
-    'Your password has been set. Please keep it safe.'
+    'Your password has been set. Please keep it safe.',
   );
   // Click on settings tab
   await sleepFor(300);
@@ -48,7 +48,7 @@ sessionTestOneWindow('Set Password', async ([window]) => {
   await clickOnTestIdWithText(
     window,
     'change-password-settings-button',
-    'Change Password'
+    'Change Password',
   );
 
   console.warn('clicked Change Password');
@@ -65,7 +65,7 @@ sessionTestOneWindow('Set Password', async ([window]) => {
   await waitForTestIdWithText(
     window,
     'session-toast',
-    'Your password has been changed. Please keep it safe.'
+    'Your password has been changed. Please keep it safe.',
   );
 });
 

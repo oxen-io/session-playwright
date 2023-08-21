@@ -25,17 +25,17 @@ sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
   const [userA, userB, userC] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
-    newUser(windowC, 'Chloe'),
+    newUser(windowC, 'Charlie'),
   ]);
 
   await createGroup(
-    'Tiny Bubble Gang',
+    'Test for group creation',
     userA,
     windowA,
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
   // Check config messages in all windows
   await sleepFor(1000);
@@ -48,17 +48,17 @@ sessionTestFourWindows(
     const [userA, userB, userC, userD] = await Promise.all([
       newUser(windowA, 'Alice'),
       newUser(windowB, 'Bob'),
-      newUser(windowC, 'Chloe'),
+      newUser(windowC, 'Charlie'),
       newUser(windowD, 'Dracula'),
     ]);
     const testGroup = await createGroup(
-      'Tiny Bubble Gang',
+      'Add contact to group',
       userA,
       windowA,
       userB,
       windowB,
       userC,
-      windowC
+      windowC,
     );
     // Check config messages in all windows
     await sleepFor(1000);
@@ -66,7 +66,7 @@ sessionTestFourWindows(
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
-      testGroup.userName
+      testGroup.userName,
     );
     await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
     await clickOnElement(windowA, 'data-testid', 'add-user-button');
@@ -76,28 +76,28 @@ sessionTestFourWindows(
     await clickOnMatchingText(windowA, 'OK');
     await waitForControlMessageWithText(
       windowA,
-      `"${userD.userName}" joined the group.`
+      `"${userD.userName}" joined the group.`,
     );
     await waitForControlMessageWithText(
       windowB,
-      `${userD.sessionid} joined the group.`
+      `${userD.sessionid} joined the group.`,
     );
     await waitForControlMessageWithText(
       windowC,
-      `${userD.sessionid} joined the group.`
+      `${userD.sessionid} joined the group.`,
     );
     await clickOnTestIdWithText(
       windowD,
       'module-conversation__user__profile-name',
-      testGroup.userName
+      testGroup.userName,
     );
     const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
     await waitForTestIdWithText(
       windowD,
       'empty-conversation-notification',
-      emptyStateGroupText
+      emptyStateGroupText,
     );
-  }
+  },
 );
 
 sessionTestThreeWindows(
@@ -106,17 +106,17 @@ sessionTestThreeWindows(
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
       newUser(windowB, 'Bob'),
-      newUser(windowC, 'Chloe'),
+      newUser(windowC, 'Charlie'),
     ]);
-    const newGroupName = 'Otter lovers';
+    const newGroupName = 'New group name';
     const group = await createGroup(
-      'Tiny Bubble Gang',
+      'Group name change',
       userA,
       windowA,
       userB,
       windowB,
       userC,
-      windowC
+      windowC,
     );
     // Change the name of the group and check that it syncs to all devices (config messages)
     // Click on already created group
@@ -135,7 +135,7 @@ sessionTestThreeWindows(
     await expect(errorMessage).toContainText('Please enter a group name');
     await clickOnMatchingText(windowA, 'Cancel');
     await clickOnTestIdWithText(windowA, 'back-button-conversation-options');
-  }
+  },
 );
 
 sessionTestThreeWindows(
@@ -144,16 +144,16 @@ sessionTestThreeWindows(
     const [userA, userB, userC] = await Promise.all([
       newUser(windowA, 'Alice'),
       newUser(windowB, 'Bob'),
-      newUser(windowC, 'Chloe'),
+      newUser(windowC, 'Charlie'),
     ]);
     const group = await createGroup(
-      'Tiny Bubble Gang',
+      'Testing mentions',
       userA,
       windowA,
       userB,
       windowB,
       userC,
-      windowC
+      windowC,
     );
 
     // in windowA we should be able to mentions userB and userC
@@ -161,7 +161,7 @@ sessionTestThreeWindows(
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     await typeIntoInput(windowA, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
@@ -173,7 +173,7 @@ sessionTestThreeWindows(
     await clickOnTestIdWithText(
       windowB,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     await typeIntoInput(windowB, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
@@ -185,31 +185,31 @@ sessionTestThreeWindows(
     await clickOnTestIdWithText(
       windowC,
       'module-conversation__user__profile-name',
-      group.userName
+      group.userName,
     );
     await typeIntoInput(windowC, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
     await waitForTestIdWithText(windowC, 'mentions-popup-row');
     await waitForTestIdWithText(windowC, 'mentions-popup-row', userA.userName);
     await waitForTestIdWithText(windowC, 'mentions-popup-row', userB.userName);
-  }
+  },
 );
 
 sessionTestThreeWindows('Leave group', async ([windowA, windowB, windowC]) => {
   const [userA, userB, userC] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
-    newUser(windowC, 'Chloe'),
+    newUser(windowC, 'Charlie'),
   ]);
-  await createGroup(
-    'Tiny Bubble Gang',
+  const group = await createGroup(
+    'Testing leaving group',
     userA,
     windowA,
     userB,
     windowB,
     userC,
-    windowC
+    windowC,
   );
 
-  await leaveGroup(windowC);
+  await leaveGroup(windowC, group);
 });

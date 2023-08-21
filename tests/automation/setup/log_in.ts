@@ -15,6 +15,6 @@ export async function logIn(window: Page, recoveryPhrase: string) {
     window,
     'data-testid',
     'session-toast',
-    'Could not find your display name. Please Sign In by Restoring Your Account instead.'
+    'Could not find your display name. Please Sign In by Restoring Your Account instead.',
   );
 }

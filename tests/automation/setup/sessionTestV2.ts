@@ -6,6 +6,7 @@ import { Page, test } from '@playwright/test';
 import {
   OpenWindowsType,
   beforeAllClean,
+  forceCloseAllWindows,
   forceCloseAllWindowsObj,
 } from './beforeEach';
 
@@ -92,7 +93,11 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
   },
   userCreated: async ({ oneEmpty, firstDisplayName }, use) => {
     const user = await newUser(oneEmpty.page, firstDisplayName)
-    await use({page: oneEmpty.page, user});
+    try {
+      await use({ page: oneEmpty.page, user });
+    } finally {
+      await forceCloseAllWindows([oneEmpty.page]);
+    }
   },
   twoEmpty: async ({}, use) => {
     let windows: OpenWindowsType = {};
@@ -119,29 +124,38 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
     use,
   ) => {
     const { page1, page2 } = twoEmpty;
-    const users = await Promise.all([
-      newUser(page1, firstDisplayName),
-      newUser(page2, secondDisplayName),
-    ]);
+    try {
+      const users = await Promise.all([
+        newUser(page1, firstDisplayName),
+        newUser(page2, secondDisplayName),
+      ]);
 
-    await use({
-      a: {page: page1, user: users[0]},
-      b: {page: page2, user: users[1]},
-    });
+      await use({
+        a: {page: page1, user: users[0]},
+        b: {page: page2, user: users[1]},
+      });
+    } finally {
+      await forceCloseAllWindows([page1, page2]);
+    }
   },
 
   twoFriends: async ({ twoUsersCreated }, use) => {
-    const { a,b } = twoUsersCreated;
-    await createContact(
-      a.page,
-      b.page,
-      a.user,
-      b.user,
-    );
+    const { a, b } = twoUsersCreated;
+    try {
 
-    await use({
-      a,
-      b,
-    });
+      await createContact(
+        a.page,
+        b.page,
+        a.user,
+        b.user,
+      );
+
+      await use({
+        a,
+        b,
+      });
+  } finally {
+    await forceCloseAllWindows([a.page, b.page]);
+  }
   },
 });

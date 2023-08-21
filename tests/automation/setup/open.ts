@@ -9,7 +9,7 @@ const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 function getAppRootPath() {
   if (isEmpty(process.env.SESSION_DESKTOP_ROOT)) {
     throw new Error(
-      "You need to set the 'SESSION_DESKTOP_ROOT' env variable to the session folder you want to test first"
+      "You need to set the 'SESSION_DESKTOP_ROOT' env variable to the session folder you want to test first",
     );
   }
   return process.env.SESSION_DESKTOP_ROOT as string;
@@ -24,7 +24,7 @@ export async function openApp(windowsToCreate: number) {
   return Promise.all(
     [...multisToUse].map(async (m) => {
       return openAppAndWait(`${m}`);
-    })
+    }),
   );
 }
 

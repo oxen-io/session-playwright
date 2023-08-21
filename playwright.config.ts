@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
   outputDir: './tests/automation/test-results',
   retries: process.env.PLAYWRIGHT_RETRIES_COUNT
     ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
-    : 1,
+    : 0,
 
   workers: toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) || 1,
   reportSlowTests: null,

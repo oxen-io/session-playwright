@@ -2,7 +2,11 @@ import { Page } from '@playwright/test';
 import { sendMessage } from './message';
 import { clickOnTestIdWithText, typeIntoInput } from './utils';
 
-export const sendNewMessage = async (window: Page, sessionid: string, message: string) => {
+export const sendNewMessage = async (
+  window: Page,
+  sessionid: string,
+  message: string,
+) => {
   await clickOnTestIdWithText(window, 'new-conversation-button');
   await clickOnTestIdWithText(window, 'chooser-new-conversation-button');
   // Enter session ID of USER B

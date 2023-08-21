@@ -16,6 +16,6 @@ export const sendMessage = async (window: Page, message: string) => {
   console.error(
     'found the tick of message sent: ',
     message,
-    Boolean(tickMessageSent)
+    Boolean(tickMessageSent),
   );
 };
