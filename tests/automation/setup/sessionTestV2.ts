@@ -8,30 +8,33 @@ import {
   beforeAllClean,
   forceCloseAllWindowsObj,
 } from './beforeEach';
-import {
-  EmptyWindow,
-  NewUserWindow,
-  OneFriendWindow,
-} from './fixtures/EmptyPage';
+
 import { openApp } from './open';
 import { createContact } from '../utilities/create_contact';
+import { User } from '../types/testing';
+import { newUser } from './new_user';
+
+type PageAndUser = {
+  page: Page;
+  user: User
+}
 
 type SessionFixtures = {
-  oneEmpty: { windowA: EmptyWindow };
-  twoEmpty: { windowA: EmptyWindow; windowB: EmptyWindow };
-  userCreated: { windowA: NewUserWindow };
+  oneEmpty: { page: Page };
+  twoEmpty: { page1: Page; page2: Page };
+  userCreated: PageAndUser;
   twoUsersCreated: {
-    windowA: NewUserWindow;
-    windowB: NewUserWindow;
+    a: PageAndUser,
+    b: PageAndUser,
   };
   twoFriends: {
-    windowA: OneFriendWindow;
-    windowB: OneFriendWindow;
+    a: PageAndUser,
+    b: PageAndUser,
   };
 };
 
 async function openWindows<T extends 1 | 2 | 3 | 4 | 5>(
-  count: T
+  count: T,
 ): Promise<OpenWindowsType> {
   beforeAllClean();
   const windows = await openApp(count);
@@ -82,16 +85,14 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
         throw new Error('Failed to create windowA');
       }
 
-      await use({ windowA: new EmptyWindow(windows.windowA) });
+      await use({ page: windows.windowA });
     } finally {
       await forceCloseAllWindowsObj(windows);
     }
   },
   userCreated: async ({ oneEmpty, firstDisplayName }, use) => {
-    const user = await oneEmpty.windowA.createUser(firstDisplayName);
-    const loggedInWindow = new NewUserWindow(oneEmpty.windowA, user);
-
-    await use({ windowA: loggedInWindow });
+    const user = await newUser(oneEmpty.page, firstDisplayName)
+    await use({page: oneEmpty.page, user});
   },
   twoEmpty: async ({}, use) => {
     let windows: OpenWindowsType = {};
@@ -105,8 +106,8 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
       }
 
       await use({
-        windowA: new EmptyWindow(windows.windowA),
-        windowB: new EmptyWindow(windows.windowB),
+        page1: windows.windowA,
+        page2: windows.windowB,
       });
     } finally {
       await forceCloseAllWindowsObj(windows);
@@ -115,32 +116,32 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
 
   twoUsersCreated: async (
     { twoEmpty, firstDisplayName, secondDisplayName },
-    use
+    use,
   ) => {
-    const { windowA, windowB } = twoEmpty;
+    const { page1, page2 } = twoEmpty;
     const users = await Promise.all([
-      windowA.createUser(firstDisplayName),
-      windowB.createUser(secondDisplayName),
+      newUser(page1, firstDisplayName),
+      newUser(page2, secondDisplayName),
     ]);
 
     await use({
-      windowA: new NewUserWindow(windowA, users[0]),
-      windowB: new NewUserWindow(windowB, users[1]),
+      a: {page: page1, user: users[0]},
+      b: {page: page2, user: users[1]},
     });
   },
 
   twoFriends: async ({ twoUsersCreated }, use) => {
-    const { windowA, windowB } = twoUsersCreated;
+    const { a,b } = twoUsersCreated;
     await createContact(
-      windowA.window.page,
-      windowB.window.page,
-      windowA.user,
-      windowB.user
+      a.page,
+      b.page,
+      a.user,
+      b.user,
     );
 
     await use({
-      windowA: new OneFriendWindow(windowA),
-      windowB: new OneFriendWindow(windowB),
+      a,
+      b,
     });
   },
 });
