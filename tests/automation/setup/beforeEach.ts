@@ -23,6 +23,8 @@ function cleanUpOtherTest() {
 
   alreadyCleanedWaiting = true;
 
+  try {
+
   const parentFolderOfAllDataPath = isMacOS()
     ? join(homedir(), 'Library', 'Application Support')
     : isLinux()
@@ -48,7 +50,10 @@ function cleanUpOtherTest() {
     const pathToRemove = join(parentFolderOfAllDataPath, folder);
     rmdirSync(pathToRemove, { recursive: true });
   });
-  console.info('...done');
+    console.info('...done');
+  } catch (e) {
+    console.error(`failed to cleanup old files: ${e.message}`)
+  }
 }
 
 export const beforeAllClean = cleanUpOtherTest;

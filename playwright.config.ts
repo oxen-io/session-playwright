@@ -13,8 +13,7 @@ const config: PlaywrightTestConfig = {
   retries: process.env.PLAYWRIGHT_RETRIES_COUNT
     ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
     : 1,
-
-  workers: toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) || 1,
+  workers: process.env.PLAYWRIGHT_WORKER_COUNT ? toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) : 1,
   reportSlowTests: null,
 };
 
