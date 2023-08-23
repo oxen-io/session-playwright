@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/array-type */
+/* eslint-disable no-useless-catch */
+/* eslint-disable no-empty-pattern */
+/* eslint-disable @typescript-eslint/array-type  */
 import { Page, test } from '@playwright/test';
 import { beforeAllClean, forceCloseAllWindows } from './beforeEach';
 import { openApp } from './open';
@@ -7,7 +9,7 @@ import { openApp } from './open';
 // This file contains a bunch of utility function to use to open those windows and clean them afterwards.
 // Note: those function only keep track (and close) the windows they open. If you open a new window or need to close and reopen an existing one, this won't take of it.
 
-type Tuple<T, N extends number> = N extends N
+export type Tuple<T, N extends number> = N extends N
   ? number extends N
     ? T[]
     : _TupleOf<T, N, []>

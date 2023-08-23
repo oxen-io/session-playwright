@@ -2,6 +2,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { Page } from '@playwright/test';
 import { readdirSync, rmdirSync } from 'fs-extra';
+import { compact } from 'lodash';
 import { isLinux, isMacOS } from '../../os_utils';
 import { MULTI_PREFIX, NODE_ENV } from './open';
 
@@ -53,6 +54,28 @@ function cleanUpOtherTest() {
 
 export const beforeAllClean = cleanUpOtherTest;
 
-export const forceCloseAllWindows = async (windows: Array<Page>) => {
-  return Promise.all(windows.map((w) => w.close()));
+export const forceCloseAllWindows = async (
+  windows: Array<Page | undefined>
+) => {
+  return Promise.all(compact(windows).map((w) => w.close()));
+};
+
+export const forceCloseAllWindowsObj = async (windows: OpenWindowsType) => {
+  return Promise.all(
+    compact([
+      windows.windowA,
+      windows.windowB,
+      windows.windowC,
+      windows.windowD,
+      windows.windowE,
+    ]).map((w) => w.close())
+  );
+};
+
+export type OpenWindowsType = {
+  windowA?: Page | undefined;
+  windowB?: Page | undefined;
+  windowC?: Page | undefined;
+  windowD?: Page | undefined;
+  windowE?: Page | undefined;
 };
