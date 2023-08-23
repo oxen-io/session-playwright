@@ -93,11 +93,7 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
   },
   userCreated: async ({ oneEmpty, firstDisplayName }, use) => {
     const user = await newUser(oneEmpty.page, firstDisplayName)
-    try {
-      await use({ page: oneEmpty.page, user });
-    } finally {
-      await forceCloseAllWindows([oneEmpty.page]);
-    }
+    await use({ page: oneEmpty.page, user }); // no need to close the window, it is already done in oneEmpty
   },
   twoEmpty: async ({}, use) => {
     let windows: OpenWindowsType = {};
@@ -124,38 +120,30 @@ export const sessionTestV2 = test.extend<SessionOptions & SessionFixtures>({
     use,
   ) => {
     const { page1, page2 } = twoEmpty;
-    try {
-      const users = await Promise.all([
-        newUser(page1, firstDisplayName),
-        newUser(page2, secondDisplayName),
-      ]);
+    const users = await Promise.all([
+      newUser(page1, firstDisplayName),
+      newUser(page2, secondDisplayName),
+    ]);
 
-      await use({
-        a: {page: page1, user: users[0]},
-        b: {page: page2, user: users[1]},
-      });
-    } finally {
-      await forceCloseAllWindows([page1, page2]);
-    }
+    await use({
+      a: {page: page1, user: users[0]},
+      b: {page: page2, user: users[1]},
+    }); // no need to close the windows it is already done in twoEmpty
   },
 
   twoFriends: async ({ twoUsersCreated }, use) => {
     const { a, b } = twoUsersCreated;
-    try {
+    await createContact(
+      a.page,
+      b.page,
+      a.user,
+      b.user,
+    );
 
-      await createContact(
-        a.page,
-        b.page,
-        a.user,
-        b.user,
-      );
+    await use({
+      a,
+      b,
+    }); // no need to close the windows it is already done in twoEmpty
 
-      await use({
-        a,
-        b,
-      });
-  } finally {
-    await forceCloseAllWindows([a.page, b.page]);
-  }
   },
 });
