@@ -6,7 +6,7 @@ import { toNumber } from 'lodash';
 const config: PlaywrightTestConfig = {
   timeout: 350000,
   globalTimeout: 6000000,
-  reporter: 'list',
+  reporter: [['list'], ['allure-playwright']],
   testDir: './tests/automation',
   testIgnore: '*.js',
   outputDir: './tests/automation/test-results',
