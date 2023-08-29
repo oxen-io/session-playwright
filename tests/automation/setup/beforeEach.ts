@@ -13,7 +13,7 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
     })
     .filter((n) => n.includes(`${NODE_ENV}-${MULTI_PREFIX}`));
 
-const alreadyCleaned = false;
+const alreadyCleaned = true;
 let alreadyCleanedWaiting = false;
 
 function cleanUpOtherTest() {

@@ -14,8 +14,9 @@ const config: PlaywrightTestConfig = {
     ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
     : 0,
 
-  workers: toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) || 1,
+  workers: toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) || 3,
   reportSlowTests: null,
+  // recordHar: recordVideo,
 };
 
 module.exports = config;
