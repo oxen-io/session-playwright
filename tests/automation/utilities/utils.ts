@@ -327,7 +327,7 @@ export async function hasElementBeenDeleted(
 export async function hasTextMessageBeenDeleted(
   window: Page,
   text: string,
-  maxWait: number = 30000,
+  maxWait: number = 5000,
 ) {
   let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
 
@@ -353,25 +353,6 @@ export async function hasTextMessageBeenDeleted(
     },
   );
 }
-
-// export async function hasTextMessageBeenDeleted(
-//   window: Page,
-//   text: string,
-//   maxWait?: number,
-// ): Promise<boolean> {
-//   try {
-//     await waitForElement(
-//       window,
-//       'data-testid',
-//       'control-message',
-//       maxWait,
-//       text,
-//     );
-//     return false; // Text message was found
-//   } catch (e) {
-//     return true; // Text message doesn't exist or wasn't found in time
-//   }
-// }
 
 export async function hasElementPoppedUpThatShouldnt(
   window: Page,
