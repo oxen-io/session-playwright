@@ -51,7 +51,7 @@ test('Delete account from swarm', async () => {
   await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
   // await sleepFor(7500);
   // Wait for window to close and reopen
-  await sleepFor(10000, true);
+
   // await windowA.close();
   const restoringWindows = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window
   const [restoringWindow] = restoringWindows;
@@ -72,7 +72,7 @@ test('Delete account from swarm', async () => {
   // Click continue
   await clickOnTestIdWithText(restoringWindow, 'continue-session-button');
 
-  await sleepFor(20000, true); // just to allow any messages from our swarm to show up
+  await sleepFor(5000, true); // just to allow any messages from our swarm to show up
 
   // Need to verify that no conversation is found at all
 
@@ -110,9 +110,7 @@ test('Delete account from device', async () => {
   await clickOnMatchingText(windowA, 'Clear');
   await clickOnMatchingText(windowA, 'Clear');
   await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
-  await sleepFor(7500);
   // Wait for window to close and reopen
-  await sleepFor(10000, true);
   // await windowA.close();
   const restoringWindows = await openApp(1);
   const [restoringWindow] = restoringWindows;
