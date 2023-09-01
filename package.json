@@ -30,9 +30,9 @@
   "scripts": {
     "lint": "yarn prettier . --write && yarn eslint .",
     "test": "npx playwright test",
-    "watch": "yarn tsc -w",
-    "allure-create": "yarn allure generate ./allure-results",
-    "allure-open": "yarn allure open ./allure-report"
+    "watch": "tsc -w",
+    "allure-create": "allure generate ./allure-results",
+    "allure-open": "allure open ./allure-report"
   },
   "dependencies": {}
 }
