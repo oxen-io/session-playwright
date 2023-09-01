@@ -3,7 +3,9 @@ local playwright_shard(shard_number) = {
   type: 'docker',
   name: 'session-integration-tests-' + shard_number,
   platform: { arch: 'amd64' },
+  depends_on: ['restore-cache'],
   steps: [
+
     {
       name: 'playwright tests',
       image: 'registry.oxen.rocks/lokinet-ci-playwrightv1.37.0-jammy',
@@ -22,7 +24,7 @@ local playwright_shard(shard_number) = {
       commands: [
         'export PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH"',
         'git clone https://github.com/oxen-io/session-desktop/ --single-branch --depth=1 -b $SESSION_BRANCH $SESSION_DESKTOP_ROOT',
-        'cd $SESSION_DESKTOP_ROOT && yarn install --frozen && yarn build-everything',
+        'cd $SESSION_DESKTOP_ROOT &&  yarn build-everything', // yarn install --frozen &&
         'cd $DRONE_WORKSPACE && yarn install --frozen && cd -',
         'cd $DRONE_WORKSPACE && time xvfb-run --auto-servernum yarn test --shard=' + shard_number,
       ],
@@ -31,6 +33,59 @@ local playwright_shard(shard_number) = {
 
   ], node:
         {session: 'playwright'},
+};
+
+
+
+local restore_cache(shard_number) = {
+  kind: 'pipeline',
+  type: 'docker',
+  name: 'restore-cache',
+  platform: { arch: 'amd64' },
+  steps: [
+    {
+      name: 'restore-cache',
+      image: 'meltwater/drone-cache',
+      pull: true,
+      environment: {
+        'AWS_ACCESS_KEY_ID': {from_secret: 'aws_access_key_id'},
+        'AWS_SECRET_ACCESS_KEY': {from_secret: 'aws_secret_access_key'},
+      },
+      settings: {
+        restore: true,
+        cache_key: '{{ .Repo.Name }}_{{ checksum "session-desktop/node_modules/yarn.lock" }}_{{ arch }}_{{ os }}',
+        archive_format: "gzip",
+        bucket: 'session-playwright-test',
+        region: 'ap-southeast-2',
+        mount: ['session-desktop/node_modules'],
+      }
+    },
+  ],
+};
+
+local rebuild_cache(shard_number) = {
+  kind: 'pipeline',
+  type: 'docker',
+  name: 'rebuild-cache-' + shard_number,
+  platform: { arch: 'amd64' },
+  steps: [
+    {
+    name: 'rebuild-cache',
+    image: 'meltwater/drone-cache',
+    pull: true,
+    environment: {
+      'AWS_ACCESS_KEY_ID': {from_secret: 'aws_access_key_id'},
+      'AWS_SECRET_ACCESS_KEY': {from_secret: 'aws_secret_access_key'},
+        },
+    settings: {
+      rebuild: true,
+      archive_format: "gzip",
+      bucket: 'session-playwright-test',
+      region: 'ap-southeast-2',
+      mount: ['session-desktop/node_modules'],
+        }
+    },
+  ],
 };
 
 
