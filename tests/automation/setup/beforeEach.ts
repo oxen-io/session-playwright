@@ -22,6 +22,13 @@ function cleanUpOtherTest() {
   }
 
   alreadyCleanedWaiting = true;
+  if (process.env.CI) {
+    console.info('We are on CI, no need to clean up other tests (so we can run them in parallel)');
+
+    return
+  }
+
+  try {
 
   const parentFolderOfAllDataPath = isMacOS()
     ? join(homedir(), 'Library', 'Application Support')
@@ -48,7 +55,10 @@ function cleanUpOtherTest() {
     const pathToRemove = join(parentFolderOfAllDataPath, folder);
     rmdirSync(pathToRemove, { recursive: true });
   });
-  console.info('...done');
+    console.info('...done');
+  } catch (e) {
+    console.error(`failed to cleanup old files: ${e.message}`)
+  }
 }
 
 export const beforeAllClean = cleanUpOtherTest;
