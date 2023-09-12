@@ -6,14 +6,18 @@ import { toNumber } from 'lodash';
 const config: PlaywrightTestConfig = {
   timeout: 350000,
   globalTimeout: 6000000,
-  reporter: 'list',
+  reporter: [['list'], ['allure-playwright']],
   testDir: './tests/automation',
   testIgnore: '*.js',
   outputDir: './tests/automation/test-results',
   retries: process.env.PLAYWRIGHT_RETRIES_COUNT
-    ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT): 0,
-  workers: process.env.PLAYWRIGHT_WORKER_COUNT ? toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) : 1,
+    ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
+    : 0,
+  workers: process.env.PLAYWRIGHT_WORKER_COUNT
+    ? toNumber(process.env.PLAYWRIGHT_WORKER_COUNT)
+    : 1,
   reportSlowTests: null,
+  // recordHar: recordVideo,
 };
 
 module.exports = config;

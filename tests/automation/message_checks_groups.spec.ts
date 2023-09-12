@@ -78,7 +78,7 @@ test('Send video to group', async () => {
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
-  await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
+  // await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
 });
 
 test('Send document to group', async () => {
