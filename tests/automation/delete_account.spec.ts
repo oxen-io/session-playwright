@@ -130,7 +130,7 @@ test('Delete account from device', async () => {
   await typeIntoInput(restoringWindow, 'display-name-input', userA.userName);
   // Click continue
   await clickOnTestIdWithText(restoringWindow, 'continue-session-button');
-  await sleepFor(5000, true); // just to allow any messages from our swarm to show up
+  await sleepFor(2000, true); // just to allow any messages from our swarm to show up
   // Check if message from user B is restored
   await waitForElement(
     restoringWindow,
