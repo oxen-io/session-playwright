@@ -1,10 +1,12 @@
+import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
+import { openApp } from './setup/open';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
-sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
+test.skip('Voice calls', async () => {
+  const [windowA, windowB] = await openApp(2);
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),

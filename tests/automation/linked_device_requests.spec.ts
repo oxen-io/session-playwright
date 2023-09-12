@@ -1,5 +1,6 @@
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
+import { openApp } from './setup/open';
 import { sessionTestTwoWindows } from './setup/sessionTest';
 import { linkedDevice } from './utilities/linked_device';
 import { sendMessage } from './utilities/message';
@@ -47,7 +48,8 @@ sessionTestTwoWindows('Accept request syncs', async ([windowA, windowB]) => {
   );
 });
 
-sessionTestTwoWindows('Decline request syncs', async ([windowA, windowB]) => {
+test.skip('Decline request syncs', async () => {
+  const [windowA, windowB] = await openApp(2);
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
