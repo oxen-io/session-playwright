@@ -18,6 +18,7 @@ local playwright_shard(shard_number) = {
         'SESSION_BRANCH': 'unstable',
         'PLAYWRIGHT_RETRIES_COUNT': '0',
         'PLAYWRIGHT_WORKER_COUNT': '1',
+        'TIMEOUT': '350000'
         'CI': '1',
 
         },
