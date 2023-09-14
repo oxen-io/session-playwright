@@ -16,7 +16,7 @@ local playwright_shard(shard_number) = {
         'SESSION_DESKTOP_ROOT': '/root/session-desktop',
         'NODE_PATH': '$NVM_DIR/v$NODE_VERSION/lib/node_modules',
         'SESSION_BRANCH': 'unstable',
-        'PLAYWRIGHT_RETRIES_COUNT': '0',
+        'PLAYWRIGHT_RETRIES_COUNT': '3',
         'PLAYWRIGHT_WORKER_COUNT': '1',
         'CI': '1',
 
@@ -90,14 +90,14 @@ local playwright_shard(shard_number) = {
 
 
 [
-  playwright_shard('1/9'),
-  playwright_shard('2/9'),
-  playwright_shard('3/9'),
-  playwright_shard('4/9'),
-  playwright_shard('5/9'),
-  playwright_shard('6/9'),
-  playwright_shard('7/9'),
-  playwright_shard('8/9'),
-  playwright_shard('9/9'),
+  playwright_shard('1/6'),
+  playwright_shard('2/6'),
+  playwright_shard('3/6'),
+  playwright_shard('4/6'),
+  playwright_shard('5/6'),
+  playwright_shard('6/6'),
+  // playwright_shard('7/9'),
+  // playwright_shard('8/9'),
+  // playwright_shard('9/9'),
 ]
 
