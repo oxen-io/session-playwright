@@ -5,7 +5,7 @@ import { openApp } from './setup/open';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
 
-test.skip('Voice calls', async () => {
+test('Voice calls', async () => {
   const [windowA, windowB] = await openApp(2);
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
