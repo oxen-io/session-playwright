@@ -10,10 +10,9 @@ export type Group = {
   userTwo: User;
   userThree: User;
 };
+export type loaderType = 'loading-animation' | 'loading-spinner';
 
 export type Strategy = 'data-testid' | 'class' | ':has-text';
-
-export type loaderType = 'loading-animation' | 'loading-spinner';
 
 export type DataTestId =
   | 'session-id-signup'
