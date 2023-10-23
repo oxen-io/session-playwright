@@ -68,8 +68,16 @@ sessionTestFourWindows(
       'module-conversation__user__profile-name',
       testGroup.userName,
     );
-    await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
-    await clickOnElement(windowA, 'data-testid', 'add-user-button');
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'conversation-options-avatar',
+    });
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'add-user-button',
+    });
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
     await clickOnMatchingText(windowA, userD.userName);

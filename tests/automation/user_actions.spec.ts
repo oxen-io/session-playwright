@@ -257,17 +257,41 @@ sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
     newUser(windowB, 'Bob'),
   ]);
   await createContact(windowA, windowB, userA, userB);
-  await clickOnElement(windowA, 'data-testid', 'settings-section');
-  await clickOnElement(windowA, 'data-testid', 'enable-read-receipts');
-  await clickOnElement(windowA, 'data-testid', 'message-section');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'settings-section',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'enable-read-receipts',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'message-section',
+  });
   await clickOnTestIdWithText(
     windowA,
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await clickOnElement(windowB, 'data-testid', 'settings-section');
-  await clickOnElement(windowB, 'data-testid', 'enable-read-receipts');
-  await clickOnElement(windowB, 'data-testid', 'message-section');
+  await clickOnElement({
+    window: windowB,
+    strategy: 'data-testid',
+    selector: 'settings-section',
+  });
+  await clickOnElement({
+    window: windowB,
+    strategy: 'data-testid',
+    selector: 'enable-read-receipts',
+  });
+  await clickOnElement({
+    window: windowB,
+    strategy: 'data-testid',
+    selector: 'message-section',
+  });
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',

@@ -1,3 +1,5 @@
+import { Page } from '@playwright/test';
+
 export type User = {
   userName: string;
   sessionid: string;
@@ -10,6 +12,23 @@ export type Group = {
   userTwo: User;
   userThree: User;
 };
+
+export type ConversationType = '1:1' | 'Group' | 'Community' | 'Note to Self';
+
+export type StrategyExtractionObj =
+  | {
+      strategy: Extract<Strategy, ':has-text' | 'class'>;
+      selector: string;
+    }
+  | {
+      strategy: Extract<Strategy, 'data-testid'>;
+      selector: DataTestId;
+    };
+
+export type WithPage = { window: Page };
+export type WithMaxWait = { maxWait?: number };
+export type WithRightButton = { rightButton?: boolean };
+
 export type loaderType = 'loading-animation' | 'loading-spinner';
 
 export type Strategy = 'data-testid' | 'class' | ':has-text';
@@ -75,4 +94,20 @@ export type DataTestId =
   | 'new-closed-group-name'
   | 'next-button'
   | 'link-device'
-  | 'group-name-input';
+  | 'group-name-input'
+  | 'right-panel-group-name'
+  | 'header-conversation-name'
+  | 'copy-button-profile-update'
+  | 'loading-spinner'
+  | 'empty-conversation-notification'
+  | 'your-profile-name'
+  | 'your-session-id'
+  | 'mentions-popup-row'
+  | 'disappear-set-button'
+  | 'disappear-time-1-minute-option'
+  | 'disappearing-after-read-option'
+  | 'disappearing-messages'
+  | 'enable-read-receipts'
+  | 'disappearing-after-send-options'
+  | 'disappear-time-10-seconds-option'
+  | 'add-user-button';

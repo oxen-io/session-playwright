@@ -68,7 +68,11 @@ test('Changed username syncs', async () => {
   // Replace old username with new username
   await typeIntoInput(windowA, 'profile-name-input', newUsername);
   // Press enter to confirm change
-  await clickOnElement(windowA, 'data-testid', 'save-button-profile-update');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'save-button-profile-update',
+  });
   // Wait for loading animation
   await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
 
@@ -94,7 +98,11 @@ test('Changed username syncs', async () => {
         // if waitForTestIdWithText doesn't find the right username, close the window and retry
         return false;
       } finally {
-        await clickOnElement(windowB, 'data-testid', 'modal-close-button');
+        await clickOnElement({
+          window: windowB,
+          strategy: 'data-testid',
+          selector: 'modal-close-button',
+        });
       }
     },
   );
@@ -218,7 +226,11 @@ test('Unsent message syncs', async () => {
   await waitForTextMessage(windowC, unsentMessage);
   await clickOnTestIdWithText(windowA, 'control-message', unsentMessage, true);
   await clickOnMatchingText(windowA, 'Delete for everyone');
-  await clickOnElement(windowA, 'data-testid', 'session-confirm-ok-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await hasTextMessageBeenDeleted(windowA, unsentMessage, 1000);
   await waitForMatchingText(windowC, 'This message has been deleted');
@@ -243,11 +255,11 @@ test('Blocked user syncs', async () => {
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'three-dots-conversation-options',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'three-dots-conversation-options',
+  });
   await clickOnMatchingText(windowA, 'Block');
   await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
   await waitForMatchingPlaceholder(

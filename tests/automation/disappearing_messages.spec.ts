@@ -106,12 +106,16 @@ test.skip('Disappear after read', async () => {
     userB.userName,
   );
   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  await clickOnElement(windowA, 'data-testid', 'disappearing-messages');
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappearing-after-read-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-messages',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-after-read-option',
+  });
   // Check that 1 Day default is automatically selected
   const defaultTime = await waitForElement(
     windowA,
@@ -125,11 +129,11 @@ test.skip('Disappear after read', async () => {
     throw new Error('Default timer not set correctly');
   }
   // Change timer to testing duration (10 seconds)
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappear-time-1-minute-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-time-1-minute-option',
+  });
   // Check control message is visible
   await doesTextIncludeString(windowA, 'control-message', controlMessage);
   await sleepFor(60000);
@@ -168,12 +172,16 @@ test.skip('Disappear after send', async () => {
     userB.userName,
   );
   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  await clickOnElement(windowA, 'data-testid', 'disappearing-messages');
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappearing-after-send-options',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-messages',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-after-send-options',
+  });
   const defaultTime = await waitForElement(
     windowA,
     'data-testid',
@@ -186,11 +194,11 @@ test.skip('Disappear after send', async () => {
     throw new Error('Default timer is NOT set correctly');
   }
   // Change timer to 1 minute
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappear-time-10-seconds-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-time-10-seconds-option',
+  });
   // Check control message is correct and appearing
   await waitForControlMessageWithText(windowA, controlMessage);
   await sendMessage(windowA, testMessage);
@@ -233,8 +241,16 @@ test.skip('Disappear after read groups', async () => {
     'module-conversation__user__profile-name',
     group.userName,
   );
-  await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
-  await clickOnElement(windowA, 'data-testid', 'disappearing-messages');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'conversation-options-avatar',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-messages',
+  });
   // Check if default is set
   const defaultTime = await waitForElement(
     windowA,
@@ -249,11 +265,11 @@ test.skip('Disappear after read groups', async () => {
   }
   await waitForControlMessageWithText(windowA, controlMessageText);
   // Change disappearing message timer to 10 seconds
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappear-time-10-seconds-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-time-10-seconds-option',
+  });
   await sendMessage(windowA, testMessage);
   // Has message been received by all group members and linked device?
   // Read message in window B and linked device
@@ -299,13 +315,21 @@ test.skip('Disappear after send groups', async () => {
     'module-conversation__user__profile-name',
     group.userName,
   );
-  await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
-  await clickOnElement(windowA, 'data-testid', 'disappearing-messages');
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappearing-after-send-options',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'conversation-options-avatar',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-messages',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-after-send-options',
+  });
   const defaultTime = await waitForElement(
     windowA,
     'data-testid',
@@ -318,11 +342,11 @@ test.skip('Disappear after send groups', async () => {
     throw new Error('Default timer is NOT set correctly');
   }
   // Select 10 seconds timer
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappear-time-10-seconds-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-time-10-seconds-option',
+  });
   // Check control message is visible and correct
   await waitForControlMessageWithText(windowA, controlMessageText);
   await sendMessage(windowA, testMessage);
@@ -353,13 +377,21 @@ test.skip('Disappear after send note to self', async () => {
   await sendMessage(windowA, testMessage);
   await waitForTextMessage(windowB, testMessage);
   // Enable disappearing messages
-  await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
-  await clickOnElement(windowA, 'data-testid', 'disappearing-messages');
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappearing-after-send-options',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'conversation-options-avatar',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-messages',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappearing-after-send-options',
+  });
   // Check default time is correct
   const defaultTime = await waitForElement(
     windowA,
@@ -372,11 +404,11 @@ test.skip('Disappear after send note to self', async () => {
   } else {
     throw new Error('Default timer is NOT set correctly');
   }
-  await clickOnElement(
-    windowA,
-    'data-testid',
-    'disappear-time-10-seconds-option',
-  );
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-time-10-seconds-option',
+  });
   // Check control message is visible and correct
   await waitForControlMessageWithText(windowA, testMessageDisappear);
   await sendMessage(windowA, testMessage);

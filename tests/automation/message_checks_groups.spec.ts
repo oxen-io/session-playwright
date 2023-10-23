@@ -44,7 +44,11 @@ test('Send image to group', async () => {
     'tests/automation/fixtures/test-image.png',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
   await waitForTextMessage(windowC, testMessage);
@@ -75,7 +79,11 @@ test('Send video to group', async () => {
   await sleepFor(1000);
 
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
   await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
@@ -104,7 +112,11 @@ test('Send document to group', async () => {
     'tests/automation/fixtures/test-file.pdf',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
 });
@@ -126,15 +138,43 @@ test('Send voice message to group', async () => {
     windowC,
   );
   const testReply = `${userB.userName} replying to voice message from ${userA.userName} in ${group.userName}`;
-  await clickOnElement(windowA, 'data-testid', 'microphone-button');
-  await clickOnElement(windowA, 'data-testid', 'session-toast');
-  await clickOnElement(windowA, 'data-testid', 'enable-microphone');
-  await clickOnElement(windowA, 'data-testid', 'message-section');
-  await clickOnElement(windowA, 'data-testid', 'microphone-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'microphone-button',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-toast',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'enable-microphone',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'message-section',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'microphone-button',
+  });
   await sleepFor(5000);
-  await clickOnElement(windowA, 'data-testid', 'end-voice-message');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'end-voice-message',
+  });
   await sleepFor(2000);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await lookForPartialTestId(windowB, 'audio-', true, true);
   await lookForPartialTestId(windowC, 'audio-');
@@ -169,7 +209,11 @@ test('Send GIF to group', async () => {
   await sleepFor(100);
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
 
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
   await waitForTextMessage(windowA, testReply);
@@ -197,7 +241,11 @@ test('Send long text to group', async () => {
   const testReply = `${userB.userName} replying to long text message from ${userA.userName} in ${group.userName}`;
   await typeIntoInput(windowA, 'message-input-text-area', longText);
   await sleepFor(100);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, longText, testReply);
   await waitForTextMessage(windowC, longText);
@@ -226,7 +274,11 @@ test('Unsend message to group', async () => {
   await waitForTextMessage(windowC, unsendMessage);
   await clickOnTestIdWithText(windowA, 'control-message', unsendMessage, true);
   await clickOnMatchingText(windowA, 'Delete for everyone');
-  await clickOnElement(windowA, 'data-testid', 'session-confirm-ok-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await sleepFor(1000);
   await waitForMatchingText(windowB, 'This message has been deleted');

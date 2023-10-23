@@ -140,11 +140,11 @@ test('Delete account from device', async () => {
     userB.userName,
   );
   // Check if contact is available in contacts section
-  await clickOnElement(
-    restoringWindow,
-    'data-testid',
-    'new-conversation-button',
-  );
+  await clickOnElement({
+    window: restoringWindow,
+    strategy: 'data-testid',
+    selector: 'new-conversation-button',
+  });
   await waitForElement(
     restoringWindow,
     'data-testid',

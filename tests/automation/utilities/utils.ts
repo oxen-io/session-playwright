@@ -3,14 +3,22 @@
 /* eslint-disable no-await-in-loop */
 import { ElementHandle, Page } from '@playwright/test';
 import { sleepFor } from '../../promise_utils';
-import { DataTestId, loaderType, Strategy } from '../types/testing';
+import {
+  DataTestId,
+  loaderType,
+  Strategy,
+  StrategyExtractionObj,
+  WithMaxWait,
+  WithPage,
+  WithRightButton,
+} from '../types/testing';
 import { sendMessage } from './message';
 
 // WAIT FOR FUNCTIONS
 
 export async function waitForTestIdWithText(
   window: Page,
-  dataTestId: string,
+  dataTestId: DataTestId,
   text?: string,
   maxWait?: number,
 ) {
@@ -178,14 +186,13 @@ export async function checkPathLight(window: Page, maxWait?: number) {
 
 // ACTIONS
 
-export async function clickOnElement(
-  window: Page,
-  strategy: Strategy,
-  selector: string,
-  maxWait?: number,
-  rightButton?: boolean,
-) {
-  const builtSelector = `css=[${strategy}=${selector}]`;
+export async function clickOnElement({
+  window,
+  maxWait,
+  rightButton,
+  ...obj
+}: WithPage & StrategyExtractionObj & WithMaxWait & WithRightButton) {
+  const builtSelector = `css=[${obj.strategy}=${obj.selector}]`;
   await window.waitForSelector(builtSelector, { timeout: maxWait });
   await window.click(
     builtSelector,
