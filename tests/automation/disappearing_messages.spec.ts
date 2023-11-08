@@ -13,11 +13,11 @@ import {
   clickOnTestIdWithText,
   doesTextIncludeString,
   hasTextMessageBeenDeleted,
-  waitForControlMessageWithText,
   waitForElement,
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
+import { sendNewMessage } from './utilities/send_message';
 
 test.beforeEach(beforeAllClean);
 
@@ -29,7 +29,7 @@ const testMessage = 'Test-Message- (A -> B) ';
 const sentMessage = `${testMessage}${Date.now()}`;
 // const sentReplyMessage = `${testReply} :${Date.now()}`;
 
-test.skip('Disappearing messages legacy', async () => {
+test('Disappearing messages legacy', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -84,7 +84,7 @@ test.skip('Disappearing messages legacy', async () => {
   await hasTextMessageBeenDeleted(windowB, sentMessage, 5000);
 });
 
-test.skip('Disappear after read', async () => {
+test('Disappear after read 1:1', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -96,7 +96,7 @@ test.skip('Disappear after read', async () => {
   const testMessage =
     'Testing disappearing messages timer is working correctly';
   const controlMessage =
-    'has set messages to disappear 1 minute after they have been read';
+    'set messages to disappear 1 minute after they have been read';
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
   // Click on conversation in linked device
@@ -114,13 +114,13 @@ test.skip('Disappear after read', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappearing-after-read-option',
+    selector: 'disappear-after-read-option',
   });
   // Check that 1 Day default is automatically selected
   const defaultTime = await waitForElement(
     windowA,
     'data-testid',
-    'disappear-time-1-day-option',
+    'input-12-hours',
   );
   const checked = await defaultTime.isChecked();
   if (checked) {
@@ -132,10 +132,19 @@ test.skip('Disappear after read', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappear-time-1-minute-option',
+    selector: 'time-option-1-minute',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-set-button',
   });
   // Check control message is visible
-  await doesTextIncludeString(windowA, 'control-message', controlMessage);
+  await doesTextIncludeString(
+    windowA,
+    'disappear-control-message',
+    controlMessage,
+  );
   await sleepFor(60000);
   // Control message should also disappearing after 10 seconds
   await hasTextMessageBeenDeleted(windowA, controlMessage);
@@ -150,7 +159,7 @@ test.skip('Disappear after read', async () => {
   await hasTextMessageBeenDeleted(windowB, testMessage);
 });
 
-test.skip('Disappear after send', async () => {
+test('Disappear after send 1:1', async () => {
   // Open App
   // Create User
   const [windowA, windowB] = await openApp(2);
@@ -162,7 +171,7 @@ test.skip('Disappear after send', async () => {
   const testMessage =
     'Testing disappearing messages timer is working correctly';
   const controlMessage =
-    'has set messages to disappear 10 seconds after they have been sent';
+    'set messages to disappear 10 seconds after they have been sent';
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
   // Click on conversation in linked device
@@ -180,12 +189,12 @@ test.skip('Disappear after send', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappearing-after-send-options',
+    selector: 'disappear-after-send-option',
   });
   const defaultTime = await waitForElement(
     windowA,
     'data-testid',
-    'disappear-time-1-day-option',
+    'input-1-day',
   );
   const checked = await defaultTime.isChecked();
   if (checked) {
@@ -197,10 +206,19 @@ test.skip('Disappear after send', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappear-time-10-seconds-option',
+    selector: 'time-option-10-seconds',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-set-button',
   });
   // Check control message is correct and appearing
-  await waitForControlMessageWithText(windowA, controlMessage);
+  await doesTextIncludeString(
+    windowA,
+    'disappear-control-message',
+    controlMessage,
+  );
   await sendMessage(windowA, testMessage);
   // Check message has appeared in receivers window and linked device
   await Promise.all([
@@ -216,7 +234,7 @@ test.skip('Disappear after send', async () => {
   ]);
 });
 
-test.skip('Disappear after read groups', async () => {
+test('Disappear after send groups', async () => {
   const [windowA, windowB, windowC] = await openApp(3);
   const [userA, userB, userC] = await Promise.all([
     newUser(windowA, 'Alice'),
@@ -225,7 +243,7 @@ test.skip('Disappear after read groups', async () => {
   ]);
   const [windowD] = await linkedDevice(userA.recoveryPhrase);
   const controlMessageText =
-    'has set messages to disappear 10 seconds after they have been sent';
+    'set messages to disappear 10 seconds after they have been sent';
   const testMessage = 'Testing disappearing messages in groups';
   const group = await createGroup(
     'Disappearing messages test',
@@ -251,104 +269,23 @@ test.skip('Disappear after read groups', async () => {
     strategy: 'data-testid',
     selector: 'disappearing-messages',
   });
-  // Check if default is set
-  const defaultTime = await waitForElement(
-    windowA,
-    'data-testid',
-    'disappear-time-1-day-option',
-  );
-  const checked = await defaultTime.isChecked();
-  if (checked) {
-    console.warn('Default time is correct');
-  } else {
-    throw new Error('Default timer is NOT set correctly');
-  }
-  await waitForControlMessageWithText(windowA, controlMessageText);
-  // Change disappearing message timer to 10 seconds
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'disappear-time-10-seconds-option',
-  });
-  await sendMessage(windowA, testMessage);
-  // Has message been received by all group members and linked device?
-  // Read message in window B and linked device
-  await Promise.all([
-    waitForTextMessage(windowB, testMessage),
-    waitForTextMessage(windowD, testMessage),
-  ]);
-  // Therefore message in window A and B (plus window D, linked device) should delete after 10 seconds (plus buffer)
-  await sleepFor(15000);
-  await Promise.all([
-    hasTextMessageBeenDeleted(windowA, testMessage),
-    hasTextMessageBeenDeleted(windowB, testMessage),
-    hasTextMessageBeenDeleted(windowD, testMessage),
-  ]);
-  // Next read message in window C, wait 10 seconds and then check for deletion
-  await waitForTextMessage(windowC, testMessage);
-  await sleepFor(10000);
-  await hasTextMessageBeenDeleted(windowC, testMessage);
-});
-
-test.skip('Disappear after send groups', async () => {
-  const [windowA, windowB, windowC] = await openApp(3);
-  const [userA, userB, userC] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-    newUser(windowC, 'Chloe'),
-  ]);
-  const [windowD] = await linkedDevice(userA.recoveryPhrase);
-  const controlMessageText =
-    'has set messages to disappear 10 seconds after they have been sent';
-  const testMessage = 'Testing disappearing messages in groups';
-  const group = await createGroup(
-    'Disappearing messages test',
-    userA,
-    windowA,
-    userB,
-    windowB,
-    userC,
-    windowC,
-  );
-  await clickOnTestIdWithText(
-    windowD,
-    'module-conversation__user__profile-name',
-    group.userName,
-  );
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'conversation-options-avatar',
-  });
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'disappearing-messages',
-  });
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'disappearing-after-send-options',
-  });
-  const defaultTime = await waitForElement(
-    windowA,
-    'data-testid',
-    'disappear-time-1-day-option',
-  );
-  const checked = await defaultTime.isChecked();
-  if (checked) {
-    console.warn('Default time is correct');
-  } else {
-    throw new Error('Default timer is NOT set correctly');
-  }
   // Select 10 seconds timer
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappear-time-10-seconds-option',
+    selector: 'time-option-10-seconds',
+  });
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'disappear-set-button',
   });
   // Check control message is visible and correct
-  await waitForControlMessageWithText(windowA, controlMessageText);
+  await doesTextIncludeString(
+    windowA,
+    'disappear-control-message',
+    controlMessageText,
+  );
   await sendMessage(windowA, testMessage);
   await Promise.all([
     waitForTextMessage(windowB, testMessage),
@@ -365,16 +302,22 @@ test.skip('Disappear after send groups', async () => {
   ]);
 });
 
-test.skip('Disappear after send note to self', async () => {
+test('Disappear after send note to self', async () => {
   const [windowA] = await openApp(1);
   const userA = await newUser(windowA, 'Alice');
   const [windowB] = await linkedDevice(userA.recoveryPhrase);
   const testMessage = 'Message to test note to self';
   const testMessageDisappear = 'Message testing disappearing messages';
+  const controlMessageText =
+    'set messages to disappear 10 seconds after they have been sent';
   // Open Note to self conversation
-  await createContact(windowA, windowB, userA, userA);
+  await sendNewMessage(windowA, userA.sessionid, testMessage);
   // Check messages are syncing across linked devices
-  await sendMessage(windowA, testMessage);
+  await clickOnTestIdWithText(
+    windowB,
+    'module-conversation__user__profile-name',
+    'Note to Self',
+  );
   await waitForTextMessage(windowB, testMessage);
   // Enable disappearing messages
   await clickOnElement({
@@ -390,27 +333,19 @@ test.skip('Disappear after send note to self', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappearing-after-send-options',
+    selector: 'time-option-10-seconds',
   });
-  // Check default time is correct
-  const defaultTime = await waitForElement(
-    windowA,
-    'data-testid',
-    'disappear-time-1-day-option',
-  );
-  const checked = await defaultTime.isChecked();
-  if (checked) {
-    console.warn('Default time is correct');
-  } else {
-    throw new Error('Default timer is NOT set correctly');
-  }
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'disappear-time-10-seconds-option',
+    selector: 'disappear-set-button',
   });
   // Check control message is visible and correct
-  await waitForControlMessageWithText(windowA, testMessageDisappear);
+  await doesTextIncludeString(
+    windowA,
+    'disappear-control-message',
+    controlMessageText,
+  );
   await sendMessage(windowA, testMessage);
   await waitForTextMessage(windowB, testMessage);
   await sleepFor(10000);

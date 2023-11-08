@@ -61,7 +61,7 @@ export async function waitForTextMessage(
   text: string,
   maxWait?: number,
 ) {
-  let builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
+  let builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
   if (text) {
     // " =>  \\\"
     /* prettier-ignore */

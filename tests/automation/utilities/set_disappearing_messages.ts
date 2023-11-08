@@ -8,18 +8,15 @@ export const setDisappearingMessages = async (window: Page) => {
     strategy: 'data-testid',
     selector: 'disappearing-messages',
   });
-  if ('1o1')
+  if ('1o1') {
     await clickOnElement({
       window,
       strategy: 'data-testid',
-      selector: 'disappearing-after-read-option',
+      selector: 'disappear-after-read-option',
     });
+  }
   // Check that 1 Day default is automatically selected
-  const defaultTime = await waitForElement(
-    window,
-    'data-testid',
-    'disappear-time-1-day-option',
-  );
+  const defaultTime = await waitForElement(window, 'data-testid', '1-day');
   await clickOnElement({
     window,
     strategy: 'data-testid',
@@ -35,7 +32,7 @@ export const setDisappearingMessages = async (window: Page) => {
   await clickOnElement({
     window,
     strategy: 'data-testid',
-    selector: 'disappear-time-1-minute-option',
+    selector: 'time-option-1-minute',
   });
   await clickOnElement({
     window,

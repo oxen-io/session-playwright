@@ -1,14 +1,14 @@
 import { Page } from '@playwright/test';
+import { Group, User } from '../types/testing';
 import { sendMessage } from '../utilities/message';
 import { sendNewMessage } from '../utilities/send_message';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForControlMessageWithText,
   waitForTestIdWithText,
+  waitForTextMessage,
 } from '../utilities/utils';
-import { Group, User } from '../types/testing';
 
 export const createGroup = async (
   userName: string,
@@ -131,18 +131,18 @@ export const createGroup = async (
   await Promise.all([
     (async () => {
       // windowA should see the message from B and the message from C
-      await waitForControlMessageWithText(windowA, msgBToGroup);
-      await waitForControlMessageWithText(windowA, msgCToGroup);
+      await waitForTextMessage(windowA, msgBToGroup);
+      await waitForTextMessage(windowA, msgCToGroup);
     })(),
     (async () => {
       // windowB should see the message from A and the message from C
-      await waitForControlMessageWithText(windowB, msgAToGroup);
-      await waitForControlMessageWithText(windowB, msgCToGroup);
+      await waitForTextMessage(windowB, msgAToGroup);
+      await waitForTextMessage(windowB, msgCToGroup);
     })(),
     (async () => {
       // windowC must see the message from A and the message from B
-      await waitForControlMessageWithText(windowC, msgAToGroup);
-      await waitForControlMessageWithText(windowC, msgBToGroup);
+      await waitForTextMessage(windowC, msgAToGroup);
+      await waitForTextMessage(windowC, msgBToGroup);
     })(),
   ]);
 
