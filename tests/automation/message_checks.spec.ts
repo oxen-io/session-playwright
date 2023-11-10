@@ -8,6 +8,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  clickOnTextMessage,
   hasTextMessageBeenDeleted,
   measureSendingTime,
   typeIntoInput,
@@ -17,7 +18,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send image 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -47,7 +48,7 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send video 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -76,7 +77,7 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send document 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -104,7 +105,7 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send voice message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send voice message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -130,7 +131,7 @@ sessionTestTwoWindows('Send voice message', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
 });
 
-sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send GIF 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -152,7 +153,7 @@ sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
   await clickOnMatchingText(windowB, 'Click to download media');
 });
 
-sessionTestTwoWindows('Send long text', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send long text 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -176,7 +177,7 @@ sessionTestTwoWindows('Send long text', async ([windowA, windowB]) => {
   await replyTo(windowB, longText, testReply);
 });
 
-sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Unsend message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -186,7 +187,7 @@ sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
 
   await sendMessage(windowA, unsendMessage);
   await waitForTextMessage(windowB, unsendMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', unsendMessage, true);
+  await clickOnTextMessage(windowA, unsendMessage, true);
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -198,7 +199,7 @@ sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
   await waitForMatchingText(windowB, 'This message has been deleted');
 });
 
-sessionTestTwoWindows('Delete message user', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Delete message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -207,7 +208,7 @@ sessionTestTwoWindows('Delete message user', async ([windowA, windowB]) => {
   await createContact(windowA, windowB, userA, userB);
   await sendMessage(windowA, deletedMessage);
   await waitForTextMessage(windowB, deletedMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', deletedMessage, true);
+  await clickOnTextMessage(windowA, deletedMessage, true);
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');

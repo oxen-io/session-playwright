@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { sendMessage } from './message';
 import {
   clickOnMatchingText,
-  clickOnTestIdWithText,
+  clickOnTextMessage,
   waitForTextMessage,
 } from './utils';
 
@@ -12,7 +12,7 @@ export const replyTo = async (
   replyText: string,
 ) => {
   await waitForTextMessage(window, textMessage);
-  await clickOnTestIdWithText(window, 'control-message', textMessage, true);
+  await clickOnTextMessage(window, textMessage, true);
   await clickOnMatchingText(window, 'Reply to message');
   await sendMessage(window, replyText);
 };

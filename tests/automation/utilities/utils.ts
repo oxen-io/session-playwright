@@ -256,6 +256,20 @@ export async function clickOnTestIdWithText(
   );
 }
 
+export async function clickOnTextMessage(
+  window: Page,
+  text: string,
+  rightButton?: boolean,
+  maxWait?: number,
+) {
+  const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
+  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  await window.click(
+    builtSelector,
+    rightButton ? { button: 'right' } : undefined,
+  );
+}
+
 export function getMessageTextContentNow() {
   return `Test message timestamp: ${Date.now()}`;
 }

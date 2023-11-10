@@ -198,23 +198,44 @@ sessionTestOneWindow('Change avatar', async ([window]) => {
   await waitForTestIdWithText(window, 'copy-button-profile-update', 'Copy');
 
   await clickOnTestIdWithText(window, 'image-upload-section');
+  await clickOnTestIdWithText(window, 'image-upload-click');
   await clickOnTestIdWithText(window, 'save-button-profile-update');
   await waitForTestIdWithText(window, 'loading-spinner');
-
-  await waitForTestIdWithText(window, 'copy-button-profile-update', 'Copy');
-  await clickOnTestIdWithText(window, 'modal-close-button');
 
   await sleepFor(500);
   const leftpaneAvatarContainer = await waitForTestIdWithText(
     window,
     'leftpane-primary-avatar',
   );
-  await sleepFor(500);
-  const screenshot = await leftpaneAvatarContainer.screenshot({
-    type: 'jpeg',
-    // path: 'avatar-updated-blue',
-  });
-  expect(screenshot).toMatchSnapshot({ name: 'avatar-updated-blue.jpeg' });
+  const start = Date.now();
+  let correctScreenshot = false;
+  let tryNumber = 0;
+  let lastError: Error | undefined;
+  do {
+    try {
+      await sleepFor(500);
+
+      const screenshot = await leftpaneAvatarContainer.screenshot({
+        type: 'jpeg',
+        // path: 'avatar-updated-blue',
+      });
+      expect(screenshot).toMatchSnapshot({ name: 'avatar-updated-blue.jpeg' });
+      correctScreenshot = true;
+      console.warn(
+        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+      );
+    } catch (e) {
+      lastError = e;
+    }
+    tryNumber++;
+  } while (Date.now() - start <= 20000 && !correctScreenshot);
+
+  if (!correctScreenshot) {
+    console.warn(
+      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+    );
+    throw new Error('waiting 20s and still the screenshot is not right');
+  }
 });
 
 sessionTestTwoWindows('Set nickname', async ([windowA, windowB]) => {

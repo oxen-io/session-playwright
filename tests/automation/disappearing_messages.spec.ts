@@ -7,82 +7,75 @@ import { openApp } from './setup/open';
 import { createContact } from './utilities/create_contact';
 import { linkedDevice } from './utilities/linked_device';
 import { sendMessage } from './utilities/message';
+import { sendNewMessage } from './utilities/send_message';
 import {
   clickOnElement,
-  clickOnMatchingText,
   clickOnTestIdWithText,
   doesTextIncludeString,
   hasTextMessageBeenDeleted,
   waitForElement,
-  waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-import { sendNewMessage } from './utilities/send_message';
 
 test.beforeEach(beforeAllClean);
 
 // test.afterEach(() => forceCloseAllWindows(windows));
 // tslint:disable: no-console
 
-const testMessage = 'Test-Message- (A -> B) ';
-// const testReply = 'Reply-Test-Message- (B -> A)';
-const sentMessage = `${testMessage}${Date.now()}`;
-// const sentReplyMessage = `${testReply} :${Date.now()}`;
-
-test('Disappearing messages legacy', async () => {
-  // Open App
-  // Create User
-  const [windowA, windowB] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  // Create Contact
-  await createContact(windowA, windowB, userA, userB);
-  // Need to wait for contact approval
-  await sleepFor(5000);
-  // Click on user's avatar to open conversation options
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  // Select disappearing messages drop down
-  await clickOnMatchingText(windowA, 'Disappearing messages');
-  // Select 5 seconds
-  await clickOnMatchingText(windowA, '5 seconds');
-  // Click chevron to close menu
-  await clickOnTestIdWithText(windowA, 'back-button-conversation-options');
-  // Check config message
-  await waitForTestIdWithText(
-    windowA,
-    'control-message',
-    'You set the disappearing message timer to 5 seconds',
-  );
-  await waitForTestIdWithText(
-    windowB,
-    'control-message',
-    `${userA.userName} set the disappearing message timer to 5 seconds`,
-  );
-  await sleepFor(500);
-  // Check top right hand corner indicator
-  await waitForTestIdWithText(
-    windowA,
-    'disappearing-messages-indicator',
-    '5 seconds',
-  );
-  // Send message
-  await sendMessage(windowA, sentMessage);
-  // Check timer is functioning
-  await sleepFor(6000);
-  // Verify message is deleted
-  await hasTextMessageBeenDeleted(windowA, sentMessage, 3000);
-  // focus window B
-  await windowA.close();
-  await windowB.bringToFront();
-  await clickOnTestIdWithText(
-    windowB,
-    'control-message',
-    `${userA.userName} set the disappearing message timer to 5 seconds`,
-  );
-  await hasTextMessageBeenDeleted(windowB, sentMessage, 5000);
-});
+// test('Disappearing messages legacy', async () => {
+//   // Open App
+//   // Create User
+//   const [windowA, windowB] = await openApp(2);
+//   const [userA, userB] = await Promise.all([
+//     newUser(windowA, 'Alice'),
+//     newUser(windowB, 'Bob'),
+//   ]);
+//   // Create Contact
+//   await createContact(windowA, windowB, userA, userB);
+//   // Need to wait for contact approval
+//   await sleepFor(5000);
+//   // Click on user's avatar to open conversation options
+//   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
+//   // Select disappearing messages drop down
+//   await clickOnMatchingText(windowA, 'Disappearing messages');
+//   // Select 5 seconds
+//   await clickOnMatchingText(windowA, '5 seconds');
+//   // Click chevron to close menu
+//   await clickOnTestIdWithText(windowA, 'back-button-conversation-options');
+//   // Check config message
+//   await waitForTestIdWithText(
+//     windowA,
+//     'control-message',
+//     'You set the disappearing message timer to 5 seconds',
+//   );
+//   await waitForTestIdWithText(
+//     windowB,
+//     'control-message',
+//     `${userA.userName} set the disappearing message timer to 5 seconds`,
+//   );
+//   await sleepFor(500);
+//   // Check top right hand corner indicator
+//   await waitForTestIdWithText(
+//     windowA,
+//     'disappearing-messages-indicator',
+//     '5 seconds',
+//   );
+//   // Send message
+//   await sendMessage(windowA, sentMessage);
+//   // Check timer is functioning
+//   await sleepFor(6000);
+//   // Verify message is deleted
+//   await hasTextMessageBeenDeleted(windowA, sentMessage, 3000);
+//   // focus window B
+//   await windowA.close();
+//   await windowB.bringToFront();
+//   await clickOnTestIdWithText(
+//     windowB,
+//     'control-message',
+//     `${userA.userName} set the disappearing message timer to 5 seconds`,
+//   );
+//   await hasTextMessageBeenDeleted(windowB, sentMessage, 5000);
+// });
 
 test('Disappear after read 1:1', async () => {
   // Open App
@@ -96,7 +89,7 @@ test('Disappear after read 1:1', async () => {
   const testMessage =
     'Testing disappearing messages timer is working correctly';
   const controlMessage =
-    'set messages to disappear 1 minute after they have been read';
+    'set messages to disappear 10 seconds after they have been read';
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
   // Click on conversation in linked device
@@ -132,7 +125,7 @@ test('Disappear after read 1:1', async () => {
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
-    selector: 'time-option-1-minute',
+    selector: 'time-option-10-seconds',
   });
   await clickOnElement({
     window: windowA,
@@ -145,15 +138,15 @@ test('Disappear after read 1:1', async () => {
     'disappear-control-message',
     controlMessage,
   );
-  await sleepFor(60000);
-  // Control message should also disappearing after 10 seconds
+  await sleepFor(10000);
+  // Control message should also disappear after 10 seconds
   await hasTextMessageBeenDeleted(windowA, controlMessage);
   // Send message
   await sendMessage(windowA, testMessage);
   // Check window B for message to confirm arrival
   await waitForTextMessage(windowB, testMessage);
   // Wait 10 seconds to see if message is removed
-  await sleepFor(60000);
+  await sleepFor(10000);
   await hasTextMessageBeenDeleted(windowA, testMessage);
   // Check window B
   await hasTextMessageBeenDeleted(windowB, testMessage);

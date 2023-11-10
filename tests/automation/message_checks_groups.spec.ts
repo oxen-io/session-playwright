@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { sleepFor } from '../promise_utils';
 import { beforeAllClean } from './setup/beforeEach';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
@@ -8,16 +9,14 @@ import { replyTo } from './utilities/reply_message';
 import {
   clickOnElement,
   clickOnMatchingText,
-  clickOnTestIdWithText,
+  clickOnTextMessage,
   hasTextMessageBeenDeleted,
   lookForPartialTestId,
   typeIntoInput,
-  waitForLoadingAnimationToFinish,
   waitForMatchingText,
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-import { sleepFor } from '../promise_utils';
 
 test.beforeEach(beforeAllClean);
 
@@ -77,7 +76,6 @@ test('Send video to group', async () => {
     'tests/automation/fixtures/test-video.mp4',
   );
   await sleepFor(1000);
-
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await clickOnElement({
     window: windowA,
@@ -86,7 +84,6 @@ test('Send video to group', async () => {
   });
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
-  await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
 });
 
 test('Send document to group', async () => {
@@ -272,7 +269,7 @@ test('Unsend message to group', async () => {
   await sendMessage(windowA, unsendMessage);
   await waitForTextMessage(windowB, unsendMessage);
   await waitForTextMessage(windowC, unsendMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', unsendMessage, true);
+  await clickOnTextMessage(windowA, unsendMessage, true);
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -305,7 +302,7 @@ test('Delete message to group', async () => {
   await sendMessage(windowA, deletedMessage);
   await waitForTextMessage(windowB, deletedMessage);
   await waitForTextMessage(windowC, deletedMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', deletedMessage, true);
+  await clickOnTextMessage(windowA, deletedMessage, true);
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');

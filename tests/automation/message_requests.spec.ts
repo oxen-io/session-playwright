@@ -36,7 +36,7 @@ sessionTestTwoWindows('Message requests accept', async ([windowA, windowB]) => {
   // Check config message of message request acceptance
   await waitForTestIdWithText(
     windowB,
-    'control-message',
+    'message-request-response-message',
     `You have accepted ${userA.userName}'s message request`,
   );
   await waitForMatchingText(windowB, 'No pending message requests');
@@ -65,7 +65,7 @@ sessionTestTwoWindows(
     // Check config message of message request acceptance
     await waitForTestIdWithText(
       windowB,
-      'control-message',
+      'message-request-response-message',
       `You have accepted ${userA.userName}'s message request`,
     );
     await waitForMatchingText(windowB, 'No pending message requests');

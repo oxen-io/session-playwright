@@ -1,4 +1,3 @@
-import { sleepFor } from '../promise_utils';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
 import { sessionTestThreeWindows } from './setup/sessionTest';
@@ -6,7 +5,6 @@ import { leaveGroup } from './utilities/leave_group';
 import { linkedDevice } from './utilities/linked_device';
 import {
   clickOnTestIdWithText,
-  waitForControlMessageWithText,
   waitForTestIdWithText,
 } from './utilities/utils';
 
@@ -66,14 +64,15 @@ sessionTestThreeWindows(
     // User C to leave group
     await leaveGroup(windowD, group);
     // Check for user A
-    await sleepFor(1000);
+    // await sleepFor(1000);
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
       group.userName,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowA,
+      'group-update-message',
       `"${userC.userName}" has left the group.`,
     );
     // Check for linked device (userA)
@@ -82,13 +81,15 @@ sessionTestThreeWindows(
       'module-conversation__user__profile-name',
       group.userName,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowB,
+      'group-update-message',
       `"${userC.userName}" has left the group.`,
     );
     // Check for user B
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowC,
+      'group-update-message',
       `"${userC.userName}" has left the group.`,
     );
   },

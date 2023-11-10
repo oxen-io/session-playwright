@@ -6,7 +6,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForControlMessageWithText,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
@@ -82,16 +81,19 @@ sessionTestFourWindows(
     await sleepFor(1000);
     await clickOnMatchingText(windowA, userD.userName);
     await clickOnMatchingText(windowA, 'OK');
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowA,
+      'group-update-message',
       `"${userD.userName}" joined the group.`,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowB,
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowC,
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
     await clickOnTestIdWithText(

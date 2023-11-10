@@ -112,4 +112,8 @@ export type DataTestId =
   | 'time-option-1-minute'
   | 'time-option-10-seconds'
   | 'disappear-set-button'
-  | 'add-user-button';
+  | 'add-user-button'
+  | 'message-content'
+  | 'group-update-message'
+  | 'message-request-response-message'
+  | 'image-upload-click';

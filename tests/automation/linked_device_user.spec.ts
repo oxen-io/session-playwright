@@ -11,6 +11,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  clickOnTextMessage,
   doWhileWithMax,
   hasTextMessageBeenDeleted,
   typeIntoInput,
@@ -118,6 +119,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
   await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
 
   await clickOnTestIdWithText(windowA, 'image-upload-section');
+  await clickOnTestIdWithText(windowA, 'image-upload-click');
   await clickOnTestIdWithText(windowA, 'save-button-profile-update');
   await waitForTestIdWithText(windowA, 'loading-spinner');
 
@@ -126,9 +128,6 @@ test('Profile picture syncs', async ({}, testinfo) => {
   } else {
     await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
   }
-
-  await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
-  await clickOnTestIdWithText(windowA, 'modal-close-button');
   const leftpaneAvatarContainer = await waitForTestIdWithText(
     windowB,
     'leftpane-primary-avatar',
@@ -136,6 +135,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
   const start = Date.now();
   let correctScreenshot = false;
   let tryNumber = 0;
+  let lastError: Error | undefined;
   do {
     try {
       await sleepFor(500);
@@ -150,12 +150,17 @@ test('Profile picture syncs', async ({}, testinfo) => {
         `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
       );
     } catch (e) {
-      console.warn(
-        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${e.message}`,
-      );
+      lastError = e;
     }
     tryNumber++;
   } while (Date.now() - start <= 20000 && !correctScreenshot);
+
+  if (!correctScreenshot) {
+    console.warn(
+      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+    );
+    throw new Error('waiting 20s and still the screenshot is not right');
+  }
 });
 
 test('Contacts syncs', async () => {
@@ -193,7 +198,7 @@ test('Deleted message syncs', async () => {
   );
   await waitForTextMessage(windowB, deletedMessage);
   await waitForTextMessage(windowC, deletedMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', deletedMessage, true);
+  await clickOnTextMessage(windowA, deletedMessage, true);
   await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
@@ -224,7 +229,7 @@ test('Unsent message syncs', async () => {
   );
   await waitForTextMessage(windowB, unsentMessage);
   await waitForTextMessage(windowC, unsentMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', unsentMessage, true);
+  await clickOnTextMessage(windowA, unsentMessage, true);
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -254,12 +259,8 @@ test('Blocked user syncs', async () => {
     windowB,
     'module-conversation__user__profile-name',
     userB.userName,
+    true,
   );
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'three-dots-conversation-options',
-  });
   await clickOnMatchingText(windowA, 'Block');
   await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
   await waitForMatchingPlaceholder(
