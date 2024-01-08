@@ -29,6 +29,7 @@ export async function openApp(windowsToCreate: number) {
     const openedWindow = await openAppAndWait(`${element}`);
     toRet.push(openedWindow);
   }
+  console.log(`Pathway to app: `, process.env.SESSION_DESKTOP_ROOT);
   return toRet;
 }
 

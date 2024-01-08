@@ -236,16 +236,23 @@ sessionTestTwoWindows('Check performance', async ([windowA, windowB]) => {
 });
 
 // *************** NEED TO WAIT FOR LINK PREVIEW FIX *************************************************
-// sessionTestTwoWindows('Send link and reply test', async ([windowA, windowB]) => {
-//   const [userA, userB] = await Promise.all([newUser(windowA, 'Alice'), newUser(windowB, 'Bob')]);
-//   const testMessage = 'https://nerdlegame.com/';
-//   const testReply = `${userB.userName} replying to link from ${userA.userName}`;
+sessionTestTwoWindows('Send link 1:1', async ([windowA, windowB]) => {
+  const [userA, userB] = await Promise.all([
+    newUser(windowA, 'Alice'),
+    newUser(windowB, 'Bob'),
+  ]);
+  const testMessage = 'https://example.net';
+  const testReply = `${userB.userName} replying to link from ${userA.userName}`;
 
-//   await createContact(windowA, windowB, userA, userB);
+  await createContact(windowA, windowB, userA, userB);
 
-//   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-//   await sleepFor(5000);
-//   await clickOnElement({window: windowA,strategy: 'data-testid',selector: 'send-message-button');
-//   await sleepFor(1000);
-//   await replyTo(windowB, testMessage, testReply);
-// });
+  await typeIntoInput(windowA, 'message-input-text-area', testMessage);
+  await sleepFor(5000);
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
+  await sleepFor(1000);
+  await replyTo(windowB, testMessage, testReply);
+});
