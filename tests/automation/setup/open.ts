@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { _electron as electron } from '@playwright/test';
 
 export const NODE_ENV = 'production';
-export const MULTI_PREFIX = 'test-integration-testnet-';
+export const MULTI_PREFIX = 'test-integration-';
 const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function getAppRootPath() {

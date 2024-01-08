@@ -261,18 +261,18 @@ test('Blocked user syncs', async () => {
     userB.userName,
     true,
   );
-  await clickOnMatchingText(windowA, 'Block');
-  await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
+  // Select block
+  await clickOnMatchingText(windowB, 'Block');
+  // Verify toast notification 'blocked'
+  await waitForTestIdWithText(windowB, 'session-toast', 'Blocked');
+  // Verify the user was moved to the blocked contact list
+  // Click on settings tab
   await waitForMatchingPlaceholder(
     windowA,
     'message-input-text-area',
     'Unblock this contact to send a message.',
   );
-  await waitForMatchingPlaceholder(
-    windowB,
-    'message-input-text-area',
-    'Unblock this contact to send a message.',
-  ); // reveal-blocked-user-settings is not updated once opened
+  // reveal-blocked-user-settings is not updated once opened
   // Check linked device for blocked contact in settings screen
   await clickOnTestIdWithText(windowB, 'settings-section');
   await clickOnTestIdWithText(windowB, 'conversations-settings-menu-item');

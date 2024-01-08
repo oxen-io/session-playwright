@@ -30,9 +30,10 @@ sessionTestTwoWindows('Accept request syncs', async ([windowA, windowB]) => {
     userA.userName,
   );
   await clickOnTestIdWithText(windowB, 'accept-message-request');
+  // 'message-request-response-message' needs to replace 'control-message'
   await waitForTestIdWithText(
     windowB,
-    'message-request-response-message',
+    'control-message',
     `You have accepted ${userA.userName}'s message request`,
   );
   await waitForMatchingText(windowB, 'No pending message requests');

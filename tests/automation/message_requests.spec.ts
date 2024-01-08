@@ -34,9 +34,10 @@ sessionTestTwoWindows('Message requests accept', async ([windowA, windowB]) => {
   // Check that using the accept button has intended use
   await clickOnTestIdWithText(windowB, 'accept-message-request');
   // Check config message of message request acceptance
+  // 'message-request-response-message' needs to replace 'control-message'
   await waitForTestIdWithText(
     windowB,
-    'message-request-response-message',
+    'control-message',
     `You have accepted ${userA.userName}'s message request`,
   );
   await waitForMatchingText(windowB, 'No pending message requests');
@@ -63,9 +64,10 @@ sessionTestTwoWindows(
     // Check that using the accept button has intended use
     await sendMessage(windowB, testReply);
     // Check config message of message request acceptance
+
     await waitForTestIdWithText(
       windowB,
-      'message-request-response-message',
+      'control-message',
       `You have accepted ${userA.userName}'s message request`,
     );
     await waitForMatchingText(windowB, 'No pending message requests');

@@ -81,19 +81,20 @@ sessionTestFourWindows(
     await sleepFor(1000);
     await clickOnMatchingText(windowA, userD.userName);
     await clickOnMatchingText(windowA, 'OK');
+    // 'group-update-message' needs to replace 'control-message'
     await waitForTestIdWithText(
       windowA,
-      'group-update-message',
+      'control-message',
       `"${userD.userName}" joined the group.`,
     );
     await waitForTestIdWithText(
       windowB,
-      'group-update-message',
+      'control-message',
       `${userD.sessionid} joined the group.`,
     );
     await waitForTestIdWithText(
       windowC,
-      'group-update-message',
+      'control-message',
       `${userD.sessionid} joined the group.`,
     );
     await clickOnTestIdWithText(

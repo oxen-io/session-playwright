@@ -159,7 +159,7 @@ test('Disappear after send 1:1', async () => {
   const testMessage =
     'Testing disappearing messages timer is working correctly';
   const controlMessage =
-    'set messages to disappear 10 seconds after they have been sent';
+    'set your messages to disappear 10 seconds after they have been sent';
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
   // Click on conversation in linked device

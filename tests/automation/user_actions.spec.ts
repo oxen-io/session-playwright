@@ -167,6 +167,7 @@ sessionTestTwoWindows(
     await waitForMatchingText(windowA, 'No blocked contacts');
   },
 );
+
 sessionTestOneWindow('Change username', async ([window]) => {
   // Create user
   const newUsername = 'Tiny bubble';

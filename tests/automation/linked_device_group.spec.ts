@@ -70,9 +70,10 @@ sessionTestThreeWindows(
       'module-conversation__user__profile-name',
       group.userName,
     );
+    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       windowA,
-      'group-update-message',
+      'control-message',
       `"${userC.userName}" has left the group.`,
     );
     // Check for linked device (userA)
@@ -81,15 +82,17 @@ sessionTestThreeWindows(
       'module-conversation__user__profile-name',
       group.userName,
     );
+    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       windowB,
-      'group-update-message',
+      'control-message',
       `"${userC.userName}" has left the group.`,
     );
     // Check for user B
+    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       windowC,
-      'group-update-message',
+      'control-message',
       `"${userC.userName}" has left the group.`,
     );
   },

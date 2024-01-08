@@ -81,7 +81,7 @@ export async function waitForControlMessageWithText(
   window: Page,
   text: string,
 ) {
-  return waitForTestIdWithText(window, 'control-message', text);
+  return waitForTestIdWithText(window, 'message-content', text);
 }
 
 export async function waitForMatchingText(
@@ -262,7 +262,7 @@ export async function clickOnTextMessage(
   rightButton?: boolean,
   maxWait?: number,
 ) {
-  const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
+  const builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
   await window.waitForSelector(builtSelector, { timeout: maxWait });
   await window.click(
     builtSelector,
