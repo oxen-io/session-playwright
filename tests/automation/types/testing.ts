@@ -76,4 +76,5 @@ export type DataTestId =
   | 'new-closed-group-name'
   | 'next-button'
   | 'link-device'
-  | 'group-name-input';
+  | 'group-name-input'
+  | 'image-upload-click';

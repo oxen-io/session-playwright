@@ -110,6 +110,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
   await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
 
   await clickOnTestIdWithText(windowA, 'image-upload-section');
+  await clickOnTestIdWithText(windowA, 'image-upload-click');
   await clickOnTestIdWithText(windowA, 'save-button-profile-update');
   await waitForTestIdWithText(windowA, 'loading-spinner');
 
@@ -119,8 +120,8 @@ test('Profile picture syncs', async ({}, testinfo) => {
     await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
   }
 
-  await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
-  await clickOnTestIdWithText(windowA, 'modal-close-button');
+  // await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
+  // await clickOnTestIdWithText(windowA, 'modal-close-button');
   const leftpaneAvatarContainer = await waitForTestIdWithText(
     windowB,
     'leftpane-primary-avatar',

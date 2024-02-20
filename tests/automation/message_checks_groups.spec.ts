@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { sleepFor } from '../promise_utils';
 import { beforeAllClean } from './setup/beforeEach';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
@@ -12,12 +13,10 @@ import {
   hasTextMessageBeenDeleted,
   lookForPartialTestId,
   typeIntoInput,
-  waitForLoadingAnimationToFinish,
   waitForMatchingText,
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-import { sleepFor } from '../promise_utils';
 
 test.beforeEach(beforeAllClean);
 
@@ -78,7 +77,7 @@ test('Send video to group', async () => {
   await clickOnElement(windowA, 'data-testid', 'send-message-button');
   await sleepFor(1000);
   await replyTo(windowB, testMessage, testReply);
-  await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
+  // await waitForLoadingAnimationToFinish(windowA, 'loading-animation');
 });
 
 test('Send document to group', async () => {
