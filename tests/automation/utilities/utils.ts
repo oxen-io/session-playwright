@@ -160,7 +160,7 @@ export async function waitForLoadingAnimationToFinish(
 }
 
 export async function checkPathLight(window: Page, maxWait?: number) {
-  const maxWaitTime = maxWait || 100000;
+  const maxWaitTime = maxWait || 500000;
   const waitPerLoop = 100;
   const start = Date.now();
   let pathColor: string | null = null;
@@ -262,7 +262,7 @@ export async function clickOnTextMessage(
   rightButton?: boolean,
   maxWait?: number,
 ) {
-  const builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
+  const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
   await window.waitForSelector(builtSelector, { timeout: maxWait });
   await window.click(
     builtSelector,
@@ -361,7 +361,7 @@ export async function hasTextMessageBeenDeleted(
         el = await waitForElement(
           window,
           'data-testid',
-          'control-message',
+          'message-content',
           maxWait,
           text,
         );

@@ -1,10 +1,10 @@
 import { Page } from '@playwright/test';
+import { Group } from '../types/testing';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   hasElementBeenDeleted,
 } from './utils';
-import { Group } from '../types/testing';
 
 export const leaveGroup = async (window: Page, group: Group) => {
   // go to three dots menu
@@ -12,7 +12,7 @@ export const leaveGroup = async (window: Page, group: Group) => {
   // Select Leave Group
   await clickOnMatchingText(window, 'Leave Group');
   // Confirm leave group
-  await clickOnTestIdWithText(window, 'session-confirm-ok-button', 'OK');
+  await clickOnTestIdWithText(window, 'session-confirm-ok-button', 'Leave');
   // check config message
   await hasElementBeenDeleted(
     window,

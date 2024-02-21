@@ -34,8 +34,8 @@ export async function openApp(windowsToCreate: number) {
 }
 
 const openElectronAppOnly = async (multi: string) => {
-  process.env.MULTI = `${multi}_disappear_v2`;
-  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-${Date.now()}-${
+  process.env.MULTI = `${multi}`;
+  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-testnet-devprod-${Date.now()}-${
     process.env.MULTI
   }`;
   process.env.NODE_ENV = NODE_ENV;

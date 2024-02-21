@@ -13,6 +13,6 @@ export const replyTo = async (
 ) => {
   await waitForTextMessage(window, textMessage);
   await clickOnTextMessage(window, textMessage, true);
-  await clickOnMatchingText(window, 'Reply to message');
+  await clickOnMatchingText(window, 'Reply');
   await sendMessage(window, replyText);
 };

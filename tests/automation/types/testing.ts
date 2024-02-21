@@ -13,7 +13,33 @@ export type Group = {
   userThree: User;
 };
 
-export type ConversationType = '1:1' | 'Group' | 'Community' | 'Note to Self';
+export type ConversationType = '1:1' | 'group' | 'community' | 'note-to-self';
+
+export type DMTimeOption =
+  | 'input-10-seconds'
+  | 'time-option-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks';
+
+export type DisappearOpts1o1 = [
+  '1:1',
+  'disappear-after-read-option' | 'disappear-after-send-option',
+  DMTimeOption,
+];
+
+export type DisappearOptsGroup = [
+  'group' | 'note-to-self',
+  'disappear-after-send-option',
+  DMTimeOption,
+];
+
+export type MergedOptions = DisappearOpts1o1 | DisappearOptsGroup;
 
 export type StrategyExtractionObj =
   | {
@@ -116,4 +142,14 @@ export type DataTestId =
   | 'message-content'
   | 'group-update-message'
   | 'message-request-response-message'
-  | 'image-upload-click';
+  | 'image-upload-click'
+  | 'input-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks'
+  | 'leave-group-button';

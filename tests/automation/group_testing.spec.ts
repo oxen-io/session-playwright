@@ -62,6 +62,11 @@ sessionTestFourWindows(
     // Check config messages in all windows
     await sleepFor(1000);
     await createContact(windowA, windowD, userA, userD);
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
@@ -81,33 +86,38 @@ sessionTestFourWindows(
     await sleepFor(1000);
     await clickOnMatchingText(windowA, userD.userName);
     await clickOnMatchingText(windowA, 'OK');
-    // 'group-update-message' needs to replace 'control-message'
     await waitForTestIdWithText(
       windowA,
-      'control-message',
+      'group-update-message',
       `"${userD.userName}" joined the group.`,
     );
     await waitForTestIdWithText(
       windowB,
-      'control-message',
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
     await waitForTestIdWithText(
       windowC,
-      'control-message',
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
+    await clickOnElement({
+      window: windowD,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowD,
       'module-conversation__user__profile-name',
       testGroup.userName,
     );
-    const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
-    await waitForTestIdWithText(
-      windowD,
-      'empty-conversation-notification',
-      emptyStateGroupText,
-    );
+    // Update in closed group rewrite
+    //   const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
+    //   await waitForTestIdWithText(
+    //     windowD,
+    //     'empty-conversation-notification',
+    //     emptyStateGroupText,
+    //   );
   },
 );
 

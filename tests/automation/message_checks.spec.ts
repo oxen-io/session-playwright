@@ -188,6 +188,7 @@ sessionTestTwoWindows('Unsend message 1:1', async ([windowA, windowB]) => {
   await sendMessage(windowA, unsendMessage);
   await waitForTextMessage(windowB, unsendMessage);
   await clickOnTextMessage(windowA, unsendMessage, true);
+  await clickOnMatchingText(windowA, 'Delete');
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -209,8 +210,12 @@ sessionTestTwoWindows('Delete message 1:1', async ([windowA, windowB]) => {
   await sendMessage(windowA, deletedMessage);
   await waitForTextMessage(windowB, deletedMessage);
   await clickOnTextMessage(windowA, deletedMessage, true);
-  await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await hasTextMessageBeenDeleted(windowA, deletedMessage, 1000);
   // Still should exist in window B

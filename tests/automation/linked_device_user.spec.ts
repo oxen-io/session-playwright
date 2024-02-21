@@ -187,28 +187,30 @@ test('Deleted message syncs', async () => {
     newUser(windowC, 'Bob'),
   ]);
   const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const deletedMessage = 'Testing deletion functionality for linked device';
+  const messageToDelete = 'Testing deletion functionality for linked device';
   await createContact(windowA, windowC, userA, userB);
-  await sendMessage(windowA, deletedMessage);
+  await sendMessage(windowA, messageToDelete);
   // Navigate to conversation on linked device and for message from user A to user B
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await waitForTextMessage(windowB, deletedMessage);
-  await waitForTextMessage(windowC, deletedMessage);
-  await clickOnTextMessage(windowA, deletedMessage, true);
-  await clickOnMatchingText(windowA, 'Delete just for me');
+  await Promise.all([
+    waitForTextMessage(windowB, messageToDelete),
+    waitForTextMessage(windowC, messageToDelete),
+  ]);
+  await clickOnTextMessage(windowA, messageToDelete, true);
   await clickOnMatchingText(windowA, 'Delete');
+  await clickOnTestIdWithText(windowA, 'session-confirm-ok-button', 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextMessageBeenDeleted(windowA, deletedMessage, 6000);
+  await hasTextMessageBeenDeleted(windowA, messageToDelete, 6000);
   // linked device for deleted message
   // Waiting for message to be removed
   // Check for linked device
-  await hasTextMessageBeenDeleted(windowB, deletedMessage, 10000);
+  await hasTextMessageBeenDeleted(windowB, messageToDelete, 10000);
   // Still should exist for user B
-  await waitForMatchingText(windowC, deletedMessage);
+  await waitForMatchingText(windowC, messageToDelete);
 });
 
 test('Unsent message syncs', async () => {
@@ -227,9 +229,12 @@ test('Unsent message syncs', async () => {
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await waitForTextMessage(windowB, unsentMessage);
-  await waitForTextMessage(windowC, unsentMessage);
+  await Promise.all([
+    waitForTextMessage(windowB, unsentMessage),
+    waitForTextMessage(windowC, unsentMessage),
+  ]);
   await clickOnTextMessage(windowA, unsentMessage, true);
+  await clickOnMatchingText(windowA, 'Delete');
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
