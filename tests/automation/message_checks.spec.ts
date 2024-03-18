@@ -8,6 +8,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  clickOnTextMessage,
   hasTextMessageBeenDeleted,
   measureSendingTime,
   typeIntoInput,
@@ -17,7 +18,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send image 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -31,7 +32,11 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
     'tests/automation/fixtures/test-image.png',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   // Click on untrusted attachment in window B
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
@@ -43,7 +48,7 @@ sessionTestTwoWindows('Send image', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send video 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -58,7 +63,11 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
@@ -68,7 +77,7 @@ sessionTestTwoWindows('Send video', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send document 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -82,7 +91,11 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
   await sleepFor(100);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
@@ -92,7 +105,7 @@ sessionTestTwoWindows('Send document', async ([windowA, windowB]) => {
   await replyTo(windowB, testMessage, testReply);
 });
 
-sessionTestTwoWindows('Send voice message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send voice message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -108,13 +121,17 @@ sessionTestTwoWindows('Send voice message', async ([windowA, windowB]) => {
   await sleepFor(5000);
   await clickOnTestIdWithText(windowA, 'end-voice-message');
   await sleepFor(4000);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
 });
 
-sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send GIF 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -127,12 +144,16 @@ sessionTestTwoWindows('Send GIF', async ([windowA, windowB]) => {
     'tests/automation/fixtures/test-gif.gif',
   );
   await sleepFor(100);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
 });
 
-sessionTestTwoWindows('Send long text', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Send long text 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -147,12 +168,16 @@ sessionTestTwoWindows('Send long text', async ([windowA, windowB]) => {
 
   await typeIntoInput(windowA, 'message-input-text-area', longText);
   await sleepFor(100);
-  await clickOnElement(windowA, 'data-testid', 'send-message-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
   await sleepFor(1000);
   await replyTo(windowB, longText, testReply);
 });
 
-sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Unsend message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -162,15 +187,20 @@ sessionTestTwoWindows('Unsend message', async ([windowA, windowB]) => {
 
   await sendMessage(windowA, unsendMessage);
   await waitForTextMessage(windowB, unsendMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', unsendMessage, true);
+  await clickOnTextMessage(windowA, unsendMessage, true);
+  await clickOnMatchingText(windowA, 'Delete');
   await clickOnMatchingText(windowA, 'Delete for everyone');
-  await clickOnElement(windowA, 'data-testid', 'session-confirm-ok-button');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await sleepFor(1000);
   await waitForMatchingText(windowB, 'This message has been deleted');
 });
 
-sessionTestTwoWindows('Delete message', async ([windowA, windowB]) => {
+sessionTestTwoWindows('Delete message 1:1', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -179,9 +209,13 @@ sessionTestTwoWindows('Delete message', async ([windowA, windowB]) => {
   await createContact(windowA, windowB, userA, userB);
   await sendMessage(windowA, deletedMessage);
   await waitForTextMessage(windowB, deletedMessage);
-  await clickOnTestIdWithText(windowA, 'control-message', deletedMessage, true);
-  await clickOnMatchingText(windowA, 'Delete just for me');
+  await clickOnTextMessage(windowA, deletedMessage, true);
   await clickOnMatchingText(windowA, 'Delete');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await hasTextMessageBeenDeleted(windowA, deletedMessage, 1000);
   // Still should exist in window B
@@ -207,16 +241,23 @@ sessionTestTwoWindows('Check performance', async ([windowA, windowB]) => {
 });
 
 // *************** NEED TO WAIT FOR LINK PREVIEW FIX *************************************************
-// sessionTestTwoWindows('Send link and reply test', async ([windowA, windowB]) => {
-//   const [userA, userB] = await Promise.all([newUser(windowA, 'Alice'), newUser(windowB, 'Bob')]);
-//   const testMessage = 'https://nerdlegame.com/';
-//   const testReply = `${userB.userName} replying to link from ${userA.userName}`;
+sessionTestTwoWindows('Send link 1:1', async ([windowA, windowB]) => {
+  const [userA, userB] = await Promise.all([
+    newUser(windowA, 'Alice'),
+    newUser(windowB, 'Bob'),
+  ]);
+  const testMessage = 'https://example.net';
+  const testReply = `${userB.userName} replying to link from ${userA.userName}`;
 
-//   await createContact(windowA, windowB, userA, userB);
+  await createContact(windowA, windowB, userA, userB);
 
-//   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-//   await sleepFor(5000);
-//   await clickOnElement(windowA, 'data-testid', 'send-message-button');
-//   await sleepFor(1000);
-//   await replyTo(windowB, testMessage, testReply);
-// });
+  await typeIntoInput(windowA, 'message-input-text-area', testMessage);
+  await sleepFor(5000);
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
+  });
+  await sleepFor(1000);
+  await replyTo(windowB, testMessage, testReply);
+});

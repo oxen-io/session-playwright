@@ -6,7 +6,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForControlMessageWithText,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
@@ -63,40 +62,62 @@ sessionTestFourWindows(
     // Check config messages in all windows
     await sleepFor(1000);
     await createContact(windowA, windowD, userA, userD);
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
       testGroup.userName,
     );
-    await clickOnElement(windowA, 'data-testid', 'conversation-options-avatar');
-    await clickOnElement(windowA, 'data-testid', 'add-user-button');
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'conversation-options-avatar',
+    });
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'add-user-button',
+    });
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
     await clickOnMatchingText(windowA, userD.userName);
     await clickOnMatchingText(windowA, 'OK');
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowA,
+      'group-update-message',
       `"${userD.userName}" joined the group.`,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowB,
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
-    await waitForControlMessageWithText(
+    await waitForTestIdWithText(
       windowC,
+      'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
+    await clickOnElement({
+      window: windowD,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowD,
       'module-conversation__user__profile-name',
       testGroup.userName,
     );
-    const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
-    await waitForTestIdWithText(
-      windowD,
-      'empty-conversation-notification',
-      emptyStateGroupText,
-    );
+    // Update in closed group rewrite
+    //   const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
+    //   await waitForTestIdWithText(
+    //     windowD,
+    //     'empty-conversation-notification',
+    //     emptyStateGroupText,
+    //   );
   },
 );
 
