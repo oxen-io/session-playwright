@@ -159,7 +159,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
     console.warn(
       `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
     );
-    throw new Error('waiting 20s and still the screenshot is not right');
+    throw new Error('waited 20s and still the screenshot is not right');
   }
 });
 
