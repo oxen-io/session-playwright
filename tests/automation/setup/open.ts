@@ -59,7 +59,7 @@ const openElectronAppOnly = async (multi: string) => {
     process.env.HOME = fakeHome;
 
     return electron.launch({
-      executablePath: '/usr/bin/session-desktop',
+      executablePath: sessionBinPath,
     });
   }
   console.info(`   NON CI RUN`);
