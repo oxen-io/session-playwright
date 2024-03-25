@@ -13,6 +13,7 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  clickOnTextMessage,
   doesTextIncludeString,
   hasTextMessageBeenDeleted,
   waitForTestIdWithText,
@@ -111,11 +112,21 @@ test('Disappear after read 1:1', async () => {
   // Send message
   await sendMessage(windowA, testMessage);
   // Check window B for message to confirm arrival
+  // await clickOnTextMessage(windowB, testMessage);
   await waitForTextMessage(windowB, testMessage);
   // Wait 10 seconds to see if message is removed
   await sleepFor(10000);
   await hasTextMessageBeenDeleted(windowA, testMessage);
   // Check window B
+  await windowB.bringToFront();
+  await clickOnElement({
+    strategy: 'data-testid',
+    selector: 'message-input-text-area',
+    window: windowB,
+  });
+  await sleepFor(10000);
+  // Need to refocus window B to trigger read receipt
+  // await windowB.focus();
   await hasTextMessageBeenDeleted(windowB, testMessage);
 });
 
