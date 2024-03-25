@@ -1,9 +1,9 @@
 import { join } from 'path';
-import { _electron } from '@playwright/test';
 import { isEmpty } from 'lodash';
+import { _electron as electron } from '@playwright/test';
 
 export const NODE_ENV = 'production';
-export const MULTI_PREFIX = 'test-integration-testnet-';
+export const MULTI_PREFIX = 'test-integration-';
 const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function getAppRootPath() {
@@ -21,20 +21,28 @@ export async function openApp(windowsToCreate: number) {
   }
   // if windowToCreate = 3, this array will be ABC. If windowToCreate = 5, this array will be ABCDE
   const multisToUse = multisAvailable.slice(0, windowsToCreate);
-  return Promise.all(
-    [...multisToUse].map(async (m) => {
-      return openAppAndWait(`${m}`);
-    }),
-  );
+
+  const array = [...multisToUse];
+  const toRet = [];
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+    const openedWindow = await openAppAndWait(`${element}`);
+    toRet.push(openedWindow);
+  }
+  console.log(`Pathway to app: `, process.env.SESSION_DESKTOP_ROOT);
+  return toRet;
 }
 
-export const openElectronAppOnly = async (multi: string) => {
-  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-${Date.now()}-${multi}`;
+const openElectronAppOnly = async (multi: string) => {
+  process.env.MULTI = `${multi}`;
+  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-testnet-devprod-${Date.now()}-${
+    process.env.MULTI
+  }`;
   process.env.NODE_ENV = NODE_ENV;
 
   console.info('   NODE_ENV', process.env.NODE_ENV);
   console.info('   NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
-  const electronApp = await _electron.launch({
+  const electronApp = await electron.launch({
     args: [join(getAppRootPath(), 'ts', 'mains', 'main_node.js')],
   });
   return electronApp;

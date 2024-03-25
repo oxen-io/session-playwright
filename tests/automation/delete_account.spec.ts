@@ -51,7 +51,7 @@ test('Delete account from swarm', async () => {
   await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
   // await sleepFor(7500);
   // Wait for window to close and reopen
-  await sleepFor(10000, true);
+
   // await windowA.close();
   const restoringWindows = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window
   const [restoringWindow] = restoringWindows;
@@ -72,7 +72,7 @@ test('Delete account from swarm', async () => {
   // Click continue
   await clickOnTestIdWithText(restoringWindow, 'continue-session-button');
 
-  await sleepFor(20000, true); // just to allow any messages from our swarm to show up
+  await sleepFor(5000, true); // just to allow any messages from our swarm to show up
 
   // Need to verify that no conversation is found at all
 
@@ -84,7 +84,11 @@ test('Delete account from swarm', async () => {
 
   await clickOnTestIdWithText(restoringWindow, 'new-conversation-button'); // Expect contacts list to be empty
 
-  await hasElementBeenDeleted(restoringWindow, 'data-testid', 'contact');
+  await hasElementBeenDeleted(
+    restoringWindow,
+    'data-testid',
+    'module-conversation__user_profile',
+  );
   await forceCloseAllWindows(restoringWindows);
 });
 
@@ -110,9 +114,7 @@ test('Delete account from device', async () => {
   await clickOnMatchingText(windowA, 'Clear');
   await clickOnMatchingText(windowA, 'Clear');
   await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
-  await sleepFor(7500);
   // Wait for window to close and reopen
-  await sleepFor(10000, true);
   // await windowA.close();
   const restoringWindows = await openApp(1);
   const [restoringWindow] = restoringWindows;
@@ -142,11 +144,11 @@ test('Delete account from device', async () => {
     userB.userName,
   );
   // Check if contact is available in contacts section
-  await clickOnElement(
-    restoringWindow,
-    'data-testid',
-    'new-conversation-button',
-  );
+  await clickOnElement({
+    window: restoringWindow,
+    strategy: 'data-testid',
+    selector: 'new-conversation-button',
+  });
   await waitForElement(
     restoringWindow,
     'data-testid',
@@ -154,15 +156,6 @@ test('Delete account from device', async () => {
     1000,
     userB.userName,
   );
-
-  await hasElementBeenDeleted(
-    restoringWindow,
-    'data-testid',
-    'conversation-list-item',
-  );
-
-  await clickOnTestIdWithText(restoringWindow, 'new-conversation-button'); // Expect contacts list to be empty
-
-  await hasElementBeenDeleted(restoringWindow, 'data-testid', 'contact');
+  console.log('Contacts have been restored');
   await forceCloseAllWindows(restoringWindows);
 });

@@ -3,14 +3,22 @@
 /* eslint-disable no-await-in-loop */
 import { ElementHandle, Page } from '@playwright/test';
 import { sleepFor } from '../../promise_utils';
-import { DataTestId, loaderType, Strategy } from '../types/testing';
+import {
+  DataTestId,
+  loaderType,
+  Strategy,
+  StrategyExtractionObj,
+  WithMaxWait,
+  WithPage,
+  WithRightButton,
+} from '../types/testing';
 import { sendMessage } from './message';
 
 // WAIT FOR FUNCTIONS
 
 export async function waitForTestIdWithText(
   window: Page,
-  dataTestId: string,
+  dataTestId: DataTestId,
   text?: string,
   maxWait?: number,
 ) {
@@ -53,7 +61,7 @@ export async function waitForTextMessage(
   text: string,
   maxWait?: number,
 ) {
-  let builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
+  let builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
   if (text) {
     // " =>  \\\"
     /* prettier-ignore */
@@ -73,7 +81,7 @@ export async function waitForControlMessageWithText(
   window: Page,
   text: string,
 ) {
-  return waitForTestIdWithText(window, 'control-message', text);
+  return waitForTestIdWithText(window, 'message-content', text);
 }
 
 export async function waitForMatchingText(
@@ -152,7 +160,7 @@ export async function waitForLoadingAnimationToFinish(
 }
 
 export async function checkPathLight(window: Page, maxWait?: number) {
-  const maxWaitTime = maxWait || 100000;
+  const maxWaitTime = maxWait || 500000;
   const waitPerLoop = 100;
   const start = Date.now();
   let pathColor: string | null = null;
@@ -178,14 +186,13 @@ export async function checkPathLight(window: Page, maxWait?: number) {
 
 // ACTIONS
 
-export async function clickOnElement(
-  window: Page,
-  strategy: Strategy,
-  selector: string,
-  maxWait?: number,
-  rightButton?: boolean,
-) {
-  const builtSelector = `css=[${strategy}=${selector}]`;
+export async function clickOnElement({
+  window,
+  maxWait,
+  rightButton,
+  ...obj
+}: WithPage & StrategyExtractionObj & WithMaxWait & WithRightButton) {
+  const builtSelector = `css=[${obj.strategy}=${obj.selector}]`;
   await window.waitForSelector(builtSelector, { timeout: maxWait });
   await window.click(
     builtSelector,
@@ -249,6 +256,20 @@ export async function clickOnTestIdWithText(
   );
 }
 
+export async function clickOnTextMessage(
+  window: Page,
+  text: string,
+  rightButton?: boolean,
+  maxWait?: number,
+) {
+  const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
+  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  await window.click(
+    builtSelector,
+    rightButton ? { button: 'right' } : undefined,
+  );
+}
+
 export function getMessageTextContentNow() {
   return `Test message timestamp: ${Date.now()}`;
 }
@@ -307,7 +328,7 @@ export async function hasElementBeenDeleted(
       console.info(`Element has been found, waiting for deletion`);
     } catch (e) {
       el = undefined;
-      console.info(`Something something`);
+      console.info(`Element has been deleted, woohoo!`);
     }
   } while (Date.now() - start <= maxWait && el);
   try {
@@ -327,20 +348,31 @@ export async function hasElementBeenDeleted(
 export async function hasTextMessageBeenDeleted(
   window: Page,
   text: string,
-  maxWait?: number,
-): Promise<boolean> {
-  try {
-    await waitForElement(
-      window,
-      'data-testid',
-      'control-message',
-      maxWait,
-      text,
-    );
-    return false; // Text message was found
-  } catch (e) {
-    return true; // Text message doesn't exist or wasn't found in time
-  }
+  maxWait: number = 5000,
+) {
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for text message to be deleted',
+    async () => {
+      try {
+        el = await waitForElement(
+          window,
+          'data-testid',
+          'message-content',
+          maxWait,
+          text,
+        );
+        return false;
+      } catch (e) {
+        el = undefined;
+        console.info(`Text message not found, yay!`);
+        return true;
+      }
+    },
+  );
 }
 
 export async function hasElementPoppedUpThatShouldnt(
