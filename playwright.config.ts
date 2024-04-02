@@ -11,7 +11,6 @@ const config: PlaywrightTestConfig = {
   testIgnore: '*.js',
   outputDir: './tests/automation/test-results',
   retries: process.env.PLAYWRIGHT_RETRIES_COUNT
-
     ? toNumber(process.env.PLAYWRIGHT_RETRIES_COUNT)
     : 0,
 

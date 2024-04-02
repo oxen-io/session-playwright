@@ -13,9 +13,9 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
-  clickOnTextMessage,
   doesTextIncludeString,
   hasTextMessageBeenDeleted,
+  typeIntoInput,
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
@@ -117,16 +117,17 @@ test('Disappear after read 1:1', async () => {
   // Wait 10 seconds to see if message is removed
   await sleepFor(10000);
   await hasTextMessageBeenDeleted(windowA, testMessage);
-  // Check window B
-  await windowB.bringToFront();
+  // Check window B (need to refocus window)
+  console.log(`Bring window B to front`);
+  const message = 'Forcing window to front';
+  await typeIntoInput(windowB, 'message-input-text-area', message);
+  // click up arrow (send)
   await clickOnElement({
-    strategy: 'data-testid',
-    selector: 'message-input-text-area',
     window: windowB,
+    strategy: 'data-testid',
+    selector: 'send-message-button',
   });
   await sleepFor(10000);
-  // Need to refocus window B to trigger read receipt
-  // await windowB.focus();
   await hasTextMessageBeenDeleted(windowB, testMessage);
 });
 
