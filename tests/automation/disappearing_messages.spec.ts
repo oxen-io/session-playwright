@@ -11,12 +11,10 @@ import { sendNewMessage } from './utilities/send_message';
 import { setDisappearingMessages } from './utilities/set_disappearing_messages';
 import {
   clickOnElement,
-  clickOnMatchingText,
   clickOnTestIdWithText,
   doesTextIncludeString,
   hasTextMessageBeenDeleted,
   typeIntoInput,
-  waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
 
@@ -24,54 +22,6 @@ test.beforeEach(beforeAllClean);
 
 // test.afterEach(() => forceCloseAllWindows(windows));
 // tslint:disable: no-console
-
-test('Disappearing messages legacy', async () => {
-  // Open App
-  // Create User
-  const [windowA, windowB] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const sentMessage =
-    'Testing disappearing messages timer is working correctly';
-  // Create Contact
-  await createContact(windowA, windowB, userA, userB);
-  // Need to wait for contact approval
-  await sleepFor(5000);
-  // Click on user's avatar to open conversation options
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  // Select disappearing messages drop down
-  await clickOnMatchingText(windowA, 'Disappearing messages');
-  // Select 5 seconds
-  await clickOnMatchingText(windowA, '5 seconds');
-  // Click chevron to close menu
-  await clickOnTestIdWithText(windowA, 'back-button-conversation-options');
-  // Check config message
-  await waitForTestIdWithText(
-    windowA,
-    'control-message',
-    'You set the disappearing message timer to 5 seconds',
-  );
-  await waitForTestIdWithText(
-    windowB,
-    'control-message',
-    `${userA.userName} set the disappearing message timer to 5 seconds`,
-  );
-  await sleepFor(500);
-  // Check top right hand corner indicator
-  await waitForTestIdWithText(
-    windowA,
-    'disappearing-messages-indicator',
-    '5 seconds',
-  );
-  // Send message
-  await sendMessage(windowA, sentMessage);
-  // Check timer is functioning
-  await sleepFor(6000);
-  // Verify message is deleted
-  await hasTextMessageBeenDeleted(windowA, sentMessage, 3000);
-});
 
 test('Disappear after read 1:1', async () => {
   // Open App

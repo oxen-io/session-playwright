@@ -27,19 +27,19 @@ export type DMTimeOption =
   | 'time-option-1-week'
   | 'time-option-2-weeks';
 
-export type DisappearOpts1o1 = [
+type DisappearOpts1o1 = [
   '1:1',
   'disappear-after-read-option' | 'disappear-after-send-option',
   DMTimeOption,
 ];
 
-export type DisappearOptsGroup = [
+type DisappearOptsGroup = [
   'group' | 'note-to-self',
   'disappear-after-send-option',
   DMTimeOption,
 ];
 
-export type MergedOptions = DisappearOpts1o1 | DisappearOptsGroup;
+export type DisappearOptions = DisappearOpts1o1 | DisappearOptsGroup;
 
 export type StrategyExtractionObj =
   | {

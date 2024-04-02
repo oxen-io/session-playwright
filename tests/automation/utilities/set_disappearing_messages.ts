@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { ConversationType, MergedOptions } from '../types/testing';
+import { ConversationType, DisappearOptions } from '../types/testing';
 import {
   clickOnElement,
   clickOnMatchingText,
@@ -9,7 +9,7 @@ import {
 
 export const setDisappearingMessages = async (
   windowA: Page,
-  [conversationType, timerType, timerDuration]: MergedOptions,
+  [conversationType, timerType, timerDuration]: DisappearOptions,
   windowB?: Page,
 ) => {
   const enforcedType: ConversationType = conversationType;
