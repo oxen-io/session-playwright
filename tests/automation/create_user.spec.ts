@@ -1,14 +1,14 @@
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
+import { sessionTestOneWindow } from './setup/sessionTest';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   waitForTestIdWithText,
 } from './utilities/utils';
-import { sessionTestOneWindow } from './setup/sessionTest';
 
 sessionTestOneWindow('Create User', async ([window]) => {
-  // // Create User
+  // Create User
   const userA = await newUser(window, 'userA');
   // Open profile tab
   await clickOnTestIdWithText(window, 'leftpane-primary-avatar');

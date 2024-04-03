@@ -1,6 +1,7 @@
-import { join } from 'path';
-import { isEmpty } from 'lodash';
 import { _electron as electron } from '@playwright/test';
+import chalk from 'chalk';
+import { isEmpty } from 'lodash';
+import { join } from 'path';
 
 export const NODE_ENV = 'production';
 export const MULTI_PREFIX = 'test-integration-';
@@ -26,10 +27,13 @@ export async function openApp(windowsToCreate: number) {
   const toRet = [];
   for (let index = 0; index < array.length; index++) {
     const element = array[index];
+    // eslint-disable-next-line no-await-in-loop
     const openedWindow = await openAppAndWait(`${element}`);
     toRet.push(openedWindow);
   }
-  console.log(`Pathway to app: `, process.env.SESSION_DESKTOP_ROOT);
+  console.log(
+    chalk.bgRedBright(`Pathway to app: `, process.env.SESSION_DESKTOP_ROOT),
+  );
   return toRet;
 }
 

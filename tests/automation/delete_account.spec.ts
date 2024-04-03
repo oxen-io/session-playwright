@@ -88,6 +88,7 @@ test('Delete account from swarm', async () => {
     restoringWindow,
     'data-testid',
     'module-conversation__user_profile',
+    10000,
   );
   await forceCloseAllWindows(restoringWindows);
 });
