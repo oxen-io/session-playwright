@@ -8,3 +8,5 @@ tests/**/*.js
 tests/automation/todo
 allure-report
 allure-results
+
+sessionReporter.js

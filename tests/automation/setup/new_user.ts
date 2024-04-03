@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import chalk from 'chalk';
 import { User } from '../types/testing';
 import {
   checkPathLight,
@@ -30,8 +31,10 @@ export const newUser = async (
   let sessionid = await window.innerText('[data-testid=your-session-id]');
   sessionid = sessionid.replace(/(\r\n|\n|\r)/gm, ''); // remove the new line in the SessionID as it is rendered with one forced
 
-  console.info(
-    `${userName}: Session ID: ${sessionid} and Recovery phrase: ${recoveryPhrase}`,
+  console.log(
+    `${userName}: Session ID: "${chalk.blue(
+      sessionid,
+    )}" and Recovery phrase2: "${chalk.green(recoveryPhrase)}"`,
   );
   await window.click('.session-icon-button.small');
   await checkPathLight(window);

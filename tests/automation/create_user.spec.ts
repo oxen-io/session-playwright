@@ -7,7 +7,7 @@ import {
 } from './utilities/utils';
 
 sessionTestOneWindow('Create User', async ([window]) => {
-  // // Create User
+  // Create User
   const userA = await newUser(window, 'userA');
   // Open profile tab
   await clickOnTestIdWithText(window, 'leftpane-primary-avatar');

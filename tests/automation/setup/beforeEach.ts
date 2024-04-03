@@ -1,8 +1,9 @@
-import { join } from 'path';
-import { homedir } from 'os';
 import { Page } from '@playwright/test';
 import { readdirSync, rmdirSync } from 'fs-extra';
+import { homedir } from 'os';
+import { join } from 'path';
 import { isLinux, isMacOS } from '../../os_utils';
+import { sleepFor } from '../../promise_utils';
 import { MULTI_PREFIX, NODE_ENV } from './open';
 
 const getDirectoriesOfSessionDataPath = (source: string) =>
@@ -23,46 +24,53 @@ function cleanUpOtherTest() {
 
   alreadyCleanedWaiting = true;
   if (process.env.CI) {
-    console.info('We are on CI, no need to clean up other tests (so we can run them in parallel)');
+    console.info(
+      'We are on CI, no need to clean up other tests (so we can run them in parallel)',
+    );
 
-    return
+    return;
   }
 
   try {
+    const parentFolderOfAllDataPath = isMacOS()
+      ? join(homedir(), 'Library', 'Application Support')
+      : isLinux()
+      ? join(homedir(), '.config')
+      : null;
+    if (!parentFolderOfAllDataPath) {
+      throw new Error('Only macOS is currrently supported ');
+    }
 
-  const parentFolderOfAllDataPath = isMacOS()
-    ? join(homedir(), 'Library', 'Application Support')
-    : isLinux()
-    ? join(homedir(), '.config')
-    : null;
-  if (!parentFolderOfAllDataPath) {
-    throw new Error('Only macOS is currrently supported ');
-  }
-
-  if (!parentFolderOfAllDataPath || parentFolderOfAllDataPath.length < 9) {
-    throw new Error(
-      `parentFolderOfAllDataPath not found or invalid: ${parentFolderOfAllDataPath}`,
+    if (!parentFolderOfAllDataPath || parentFolderOfAllDataPath.length < 9) {
+      throw new Error(
+        `parentFolderOfAllDataPath not found or invalid: ${parentFolderOfAllDataPath}`,
+      );
+    }
+    console.info(
+      'cleaning other tests leftovers...',
+      parentFolderOfAllDataPath,
     );
-  }
-  console.info('cleaning other tests leftovers...', parentFolderOfAllDataPath);
 
-  const allAppDataPath = getDirectoriesOfSessionDataPath(
-    parentFolderOfAllDataPath,
-  );
-  console.info('allAppDataPath', allAppDataPath);
+    const allAppDataPath = getDirectoriesOfSessionDataPath(
+      parentFolderOfAllDataPath,
+    );
+    console.info('allAppDataPath', allAppDataPath);
 
-  allAppDataPath.forEach((folder) => {
-    const pathToRemove = join(parentFolderOfAllDataPath, folder);
-    rmdirSync(pathToRemove, { recursive: true });
-  });
+    allAppDataPath.forEach((folder) => {
+      const pathToRemove = join(parentFolderOfAllDataPath, folder);
+      rmdirSync(pathToRemove, { recursive: true });
+    });
     console.info('...done');
   } catch (e) {
-    console.error(`failed to cleanup old files: ${e.message}`)
+    console.error(`failed to cleanup old files: ${e.message}`);
   }
 }
 
 export const beforeAllClean = cleanUpOtherTest;
 
 export const forceCloseAllWindows = async (windows: Array<Page>) => {
-  return Promise.all(windows.map((w) => w.close()));
+  return Promise.race([
+    Promise.all(windows.map((w) => w.close())),
+    async () => sleepFor(4000),
+  ]);
 };

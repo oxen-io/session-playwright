@@ -5,12 +5,12 @@ import { ElementHandle, Page } from '@playwright/test';
 import { sleepFor } from '../../promise_utils';
 import {
   DataTestId,
-  loaderType,
   Strategy,
   StrategyExtractionObj,
   WithMaxWait,
   WithPage,
   WithRightButton,
+  loaderType,
 } from '../types/testing';
 import { sendMessage } from './message';
 
@@ -320,7 +320,7 @@ export async function hasElementBeenDeleted(
 ) {
   const start = Date.now();
 
-  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined;
   do {
     try {
       el = await waitForElement(window, strategy, selector, maxWait, text);
@@ -350,15 +350,13 @@ export async function hasTextMessageBeenDeleted(
   text: string,
   maxWait: number = 5000,
 ) {
-  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
-
   await doWhileWithMax(
     15000,
     500,
     'waiting for text message to be deleted',
     async () => {
       try {
-        el = await waitForElement(
+        await waitForElement(
           window,
           'data-testid',
           'message-content',
@@ -367,7 +365,6 @@ export async function hasTextMessageBeenDeleted(
         );
         return false;
       } catch (e) {
-        el = undefined;
         console.info(`Text message not found, yay!`);
         return true;
       }
@@ -423,6 +420,7 @@ export async function doWhileWithMax(
         e,
       );
     }
+    iteration++;
     await sleepFor(waitBetweenMs);
   } while (!wasSuccess && Date.now() - start < maxWaitMs);
 
