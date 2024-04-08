@@ -35,23 +35,21 @@ export const createGroup = async (
     userThree.sessionid,
     `${messageAC} Time: ${Date.now()}`,
   );
-  await Promise.all([
-    sendNewMessage(
-      windowA,
-      userTwo.sessionid,
-      `${messageAB} Time: ${Date.now()}`,
-    ),
-    sendNewMessage(
-      windowB,
-      userOne.sessionid,
-      `${messageBA} Time: ${Date.now()}`,
-    ),
-    sendNewMessage(
-      windowC,
-      userOne.sessionid,
-      `${messageCA} Time: ${Date.now()}`,
-    ),
-  ]);
+  await sendNewMessage(
+    windowA,
+    userTwo.sessionid,
+    `${messageAB} Time: ${Date.now()}`,
+  );
+  await sendNewMessage(
+    windowB,
+    userOne.sessionid,
+    `${messageBA} Time: ${Date.now()}`,
+  );
+  await sendNewMessage(
+    windowC,
+    userOne.sessionid,
+    `${messageCA} Time: ${Date.now()}`,
+  );
   // Focus screen on window C to allow user C to become contact
   await clickOnTestIdWithText(windowC, 'messages-container');
   // wait for user C to be contact before moving to create group
@@ -108,43 +106,32 @@ export const createGroup = async (
     })(),
   ]);
 
-  await Promise.all([
-    (async () => {
-      // Send message in group chat from user A
-      await sendMessage(windowA, msgAToGroup);
-      // Focus screen
-      await clickOnMatchingText(windowA, msgAToGroup);
-    })(),
-    (async () => {
-      // Send message in group chat from user B
-      await sendMessage(windowB, msgBToGroup);
-      await clickOnMatchingText(windowB, msgBToGroup);
-    })(),
-    (async () => {
-      // Send message from C to the group
-      await sendMessage(windowC, msgCToGroup);
-      await clickOnMatchingText(windowC, msgCToGroup);
-    })(),
-  ]);
+  // Send message in group chat from user A
+  await sendMessage(windowA, msgAToGroup);
+  // Focus screen
+  await clickOnMatchingText(windowA, msgAToGroup);
+
+  // Send message in group chat from user B
+  await sendMessage(windowB, msgBToGroup);
+  await clickOnMatchingText(windowB, msgBToGroup);
+
+  // Send message from C to the group
+  await sendMessage(windowC, msgCToGroup);
+  await clickOnMatchingText(windowC, msgCToGroup);
 
   // Verify that each messages was received by the other two accounts
-  await Promise.all([
-    (async () => {
-      // windowA should see the message from B and the message from C
-      await waitForTextMessage(windowA, msgBToGroup);
-      await waitForTextMessage(windowA, msgCToGroup);
-    })(),
-    (async () => {
-      // windowB should see the message from A and the message from C
-      await waitForTextMessage(windowB, msgAToGroup);
-      await waitForTextMessage(windowB, msgCToGroup);
-    })(),
-    (async () => {
-      // windowC must see the message from A and the message from B
-      await waitForTextMessage(windowC, msgAToGroup);
-      await waitForTextMessage(windowC, msgBToGroup);
-    })(),
-  ]);
+
+  // windowA should see the message from B and the message from C
+  await waitForTextMessage(windowA, msgBToGroup);
+  await waitForTextMessage(windowA, msgCToGroup);
+
+  // windowB should see the message from A and the message from C
+  await waitForTextMessage(windowB, msgAToGroup);
+  await waitForTextMessage(windowB, msgCToGroup);
+
+  // windowC must see the message from A and the message from B
+  await waitForTextMessage(windowC, msgAToGroup);
+  await waitForTextMessage(windowC, msgBToGroup);
 
   // Focus screen
   // await clickOnTestIdWithText(windowB, 'scroll-to-bottom-button');
