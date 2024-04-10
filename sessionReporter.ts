@@ -49,14 +49,12 @@ class MyReporter implements Reporter {
       )}`,
     );
     if (result.status !== 'passed') {
-      console.warn(
-        'stdout: ',
-        result.stdout.map((t) => process.stdout.write(t.toString())),
-      );
-      console.warn(
-        'stderr: ',
-        result.stderr.map((t) => process.stderr.write(t.toString())),
-      );
+      result.stdout.map((t) => process.stdout.write(t.toString()));
+      console.warn(`stdout:`);
+      result.stdout.map((t) => process.stdout.write(t.toString()));
+
+      console.warn('stderr:');
+      result.stderr.map((t) => process.stderr.write(t.toString()));
     }
     this.allResults.push({ test, result });
 

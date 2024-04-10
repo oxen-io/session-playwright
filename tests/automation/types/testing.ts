@@ -115,6 +115,7 @@ export type DataTestId =
   | 'privacy-settings-menu-item'
   | 'set-password-button'
   | 'password-input'
+  | 'seed-input-password'
   | 'password-input-confirm'
   | 'change-password-settings-button'
   | 'password-input-reconfirm'

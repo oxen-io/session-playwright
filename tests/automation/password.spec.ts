@@ -13,7 +13,7 @@ const newTestPassword = '789101112';
 
 sessionTestOneWindow('Set Password', async ([window]) => {
   // Create user
-  await newUser(window, 'Alice');
+  const { recoveryPhrase } = await newUser(window, 'Alice');
   // Click on settings tab
   await clickOnTestIdWithText(window, 'settings-section');
   // Click on privacy
@@ -33,13 +33,27 @@ sessionTestOneWindow('Set Password', async ([window]) => {
     'Your password has been set. Please keep it safe.',
   );
   // Click on settings tab
-  await sleepFor(300);
+  await sleepFor(300, true);
   await clickOnTestIdWithText(window, 'settings-section');
   await clickOnTestIdWithText(window, 'recovery-phrase-settings-menu-item');
-  // Type password into input field
-  await typeIntoInput(window, 'password-input', testPassword);
+  await sleepFor(300, true);
+
+  // Type password into input field and validate it
+  await typeIntoInput(window, 'seed-input-password', testPassword);
   // Click Done
   await clickOnMatchingText(window, 'Done');
+
+  // check that the seed is visible now
+  await waitForTestIdWithText(
+    window,
+    'recovery-phrase-seed-modal',
+    recoveryPhrase,
+  );
+
+  // copy the seed phrase to the clipboard, also closes the dialog
+  await clickOnMatchingText(window, 'Copy');
+  // Note: did not find a way to get the clipboard content from the page/window for now.
+
   await clickOnTestIdWithText(window, 'settings-section');
 
   // Change password

@@ -73,6 +73,13 @@ sessionTestTwoWindows('Decline request syncs', async ([windowA, windowB]) => {
   await clickOnTestIdWithText(windowB, 'decline-message-request', 'Decline');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button', 'Decline');
 
+  // Note: this test is broken currently but this is a known issue.
+  // It happens because we have a race condition between the update from libsession and the update from the swarm, both with the same seqno.
+  // See SES-1563
+  console.warn(
+    'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
+  );
+
   await waitForMatchingText(windowB, 'No pending message requests');
   await waitForMatchingText(windowC, 'No pending message requests');
 });
