@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test';
 import { newUser } from './setup/new_user';
-import { clickOnTestIdWithText } from './utilities/utils';
 import { sessionTestOneWindow } from './setup/sessionTest';
+import { clickOnTestIdWithText } from './utilities/utils';
 
 sessionTestOneWindow('Switch themes', async ([windowA]) => {
   // Create User
-  await newUser(windowA, 'Alice');
+  await newUser(windowA, 'Alice', false);
   // Check light theme colour is correct
   const darkThemeColor = windowA.locator('.inbox.index');
   await expect(darkThemeColor).toHaveCSS('background-color', 'rgb(27, 27, 27)');

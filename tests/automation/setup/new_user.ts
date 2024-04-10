@@ -11,6 +11,7 @@ import {
 export const newUser = async (
   window: Page,
   userName: string,
+  awaitOnionPath = true,
 ): Promise<User> => {
   // Create User
   await clickOnMatchingText(window, 'Create Session ID');
@@ -37,6 +38,8 @@ export const newUser = async (
     )}" and Recovery phrase2: "${chalk.green(recoveryPhrase)}"`,
   );
   await window.click('.session-icon-button.small');
-  await checkPathLight(window);
+  if (awaitOnionPath) {
+    await checkPathLight(window);
+  }
   return { userName, sessionid, recoveryPhrase };
 };
