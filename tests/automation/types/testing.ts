@@ -77,6 +77,7 @@ export type DataTestId =
   | 'clear-data-settings-menu-item'
   | 'message-requests-settings-menu-item'
   | 'restore-using-recovery'
+  | 'reveal-recovery-phrase'
   | 'recovery-phrase-input'
   | 'continue-session-button'
   | 'label-device_and_network'

@@ -5,7 +5,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
 

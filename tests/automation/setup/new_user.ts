@@ -18,7 +18,7 @@ export const newUser = async (
   await typeIntoInput(window, 'display-name-input', userName);
   await clickOnMatchingText(window, 'Get started');
   // save recovery phrase
-  await clickOnMatchingText(window, 'Reveal Recovery Phrase');
+  await clickOnTestIdWithText(window, 'reveal-recovery-phrase');
   const recoveryPhrase = await window.innerText(
     '[data-testid=recovery-phrase-seed-modal]',
   );
