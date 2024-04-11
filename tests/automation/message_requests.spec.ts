@@ -1,6 +1,5 @@
-import { test } from '@playwright/test';
-import { beforeAllClean } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
+import { sessionTestTwoWindows } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -9,11 +8,7 @@ import {
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
-test.beforeEach(beforeAllClean);
-
-// test.afterEach(() => forceCloseAllWindows(windows));
 // Open two windows and log into 2 separate accounts
 sessionTestTwoWindows('Message requests accept', async ([windowA, windowB]) => {
   const [userA, userB] = await Promise.all([

@@ -14,10 +14,10 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
     })
     .filter((n) => n.includes(`${NODE_ENV}-${MULTI_PREFIX}`));
 
-const alreadyCleaned = true;
+const alreadyCleaned = false;
 let alreadyCleanedWaiting = false;
 
-function cleanUpOtherTest() {
+export function cleanUpOtherTest() {
   if (alreadyCleaned || alreadyCleanedWaiting) {
     return;
   }
@@ -65,8 +65,6 @@ function cleanUpOtherTest() {
     console.error(`failed to cleanup old files: ${e.message}`);
   }
 }
-
-export const beforeAllClean = cleanUpOtherTest;
 
 export const forceCloseAllWindows = async (windows: Array<Page>) => {
   return Promise.race([

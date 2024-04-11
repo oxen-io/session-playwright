@@ -3,6 +3,7 @@ import { _electron as electron } from '@playwright/test';
 import chalk from 'chalk';
 import { isEmpty } from 'lodash';
 import { join } from 'path';
+import { v4 } from 'uuid';
 
 export const NODE_ENV = 'production';
 export const MULTI_PREFIX = 'test-integration-';
@@ -49,9 +50,9 @@ export async function openApp(windowsToCreate: number) {
 
 const openElectronAppOnly = async (multi: string) => {
   process.env.MULTI = `${multi}`;
-  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-devprod-${Date.now()}-${
-    process.env.MULTI
-  }`;
+  // using a v4 uuid, as timestamps to the ms are sometimes the same (when a bunch of workers are started)
+  const uniqueId = v4();
+  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-devprod-${uniqueId}-${process.env.MULTI}`;
   process.env.NODE_ENV = NODE_ENV;
 
   if (!isEmpty(process.env.CI)) {

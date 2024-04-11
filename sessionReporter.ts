@@ -43,18 +43,24 @@ class MyReporter implements Reporter {
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    console.log(
-      `${this.getChalkColorForStatus(result)(
-        `\t\tFinished test "${test.title}": ${result.status} with stdout/stderr`,
-      )}`,
-    );
     if (result.status !== 'passed') {
+      console.log(
+        `${this.getChalkColorForStatus(result)(
+          `\t\tFinished test "${test.title}": ${result.status} with stdout/stderr`,
+        )}`,
+      );
       result.stdout.map((t) => process.stdout.write(t.toString()));
       console.warn(`stdout:`);
       result.stdout.map((t) => process.stdout.write(t.toString()));
 
       console.warn('stderr:');
       result.stderr.map((t) => process.stderr.write(t.toString()));
+    } else {
+      console.log(
+        `${this.getChalkColorForStatus(result)(
+          `\t\tFinished test "${test.title}": ${result.status}`,
+        )}`,
+      );
     }
     this.allResults.push({ test, result });
 
@@ -95,7 +101,7 @@ class MyReporter implements Reporter {
       chalk.bgWhiteBright(
         `\n\n\n\t\tFinished the run: ${result.status}, took ${Math.floor(
           (Date.now() - this.startTime) / (60 * 1000),
-        )} minute`,
+        )} minute(s)`,
       ),
     );
     const resultsWhichPassed = this.getAllPassedAtLeastOnce();

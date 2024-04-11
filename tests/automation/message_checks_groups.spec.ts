@@ -1,6 +1,5 @@
 import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean } from './setup/beforeEach';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
 import { openApp } from './setup/open';
@@ -17,8 +16,6 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-
-test.beforeEach(beforeAllClean);
 
 test('Send image to group', async () => {
   const [windowA, windowB, windowC] = await openApp(3);
@@ -49,8 +46,10 @@ test('Send image to group', async () => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply);
-  await waitForTextMessage(windowC, testMessage);
+  await replyTo(windowB, testMessage, testReply, windowA);
+
+  // reply was sent from windowB and awaited from windowA already
+  await waitForTextMessage(windowC, testReply);
 });
 
 test('Send video to group', async () => {
@@ -83,7 +82,7 @@ test('Send video to group', async () => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply);
+  await replyTo(windowB, testMessage, testReply, windowA);
 });
 
 test('Send document to group', async () => {
@@ -115,7 +114,7 @@ test('Send document to group', async () => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply);
+  await replyTo(windowB, testMessage, testReply, windowA);
 });
 
 test('Send voice message to group', async () => {
@@ -212,8 +211,7 @@ test('Send GIF to group', async () => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply);
-  await waitForTextMessage(windowA, testReply);
+  await replyTo(windowB, testMessage, testReply, windowA);
 });
 
 test('Send long text to group', async () => {
@@ -244,9 +242,8 @@ test('Send long text to group', async () => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, longText, testReply);
+  await replyTo(windowB, longText, testReply, windowC);
   await waitForTextMessage(windowC, longText);
-  await waitForTextMessage(windowC, testReply);
 });
 
 test('Unsend message to group', async () => {

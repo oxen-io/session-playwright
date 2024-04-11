@@ -1,6 +1,5 @@
 import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean } from './setup/beforeEach';
 import { createGroup } from './setup/create_group';
 import { newUser } from './setup/new_user';
 import { openApp } from './setup/open';
@@ -17,11 +16,6 @@ import {
   typeIntoInput,
   waitForTextMessage,
 } from './utilities/utils';
-
-test.beforeEach(beforeAllClean);
-
-// test.afterEach(() => forceCloseAllWindows(windows));
-// tslint:disable: no-console
 
 test('Disappear after read 1:1', async () => {
   // Open App
@@ -44,7 +38,7 @@ test('Disappear after read 1:1', async () => {
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
+
   await setDisappearingMessages(
     windowA,
     ['1:1', 'disappear-after-read-option', 'time-option-10-seconds'],
@@ -96,6 +90,7 @@ test('Disappear after send 1:1', async () => {
     'set your messages to disappear 10 seconds after they have been sent';
   // Create Contact
   await createContact(windowA, windowB, userA, userB);
+
   // Click on conversation in linked device
   await clickOnTestIdWithText(
     windowC,
@@ -153,11 +148,6 @@ test('Disappear after send groups', async () => {
     'module-conversation__user__profile-name',
     group.userName,
   );
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'conversation-options-avatar',
-  });
   await setDisappearingMessages(windowA, [
     'group',
     'disappear-after-send-option',

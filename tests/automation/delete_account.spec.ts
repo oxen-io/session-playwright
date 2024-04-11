@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';
+import { forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import { openApp } from './setup/open';
 import { createContact } from './utilities/create_contact';
@@ -14,8 +14,6 @@ import {
   waitForElement,
   waitForLoadingAnimationToFinish,
 } from './utilities/utils';
-
-test.beforeEach(beforeAllClean);
 
 test('Delete account from swarm', async () => {
   const [windowA, windowB] = await openApp(2); // not using sessionTest here as we need to close and reopen one of the window

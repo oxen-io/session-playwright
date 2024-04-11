@@ -28,5 +28,5 @@ sessionTestOneWindow('Create User', async ([window]) => {
     userA.recoveryPhrase,
   );
   // Exit profile module
-  await window.click('.session-icon-button.small');
+  await clickOnTestIdWithText(window, 'modal-close-button');
 });

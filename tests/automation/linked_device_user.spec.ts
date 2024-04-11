@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import { openApp } from './setup/open';
 import { createContact } from './utilities/create_contact';
@@ -21,11 +20,6 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-
-const windows: Array<Page> = [];
-test.beforeEach(beforeAllClean);
-
-test.afterEach(() => forceCloseAllWindows(windows));
 
 test('Link a device', async () => {
   const [windowA] = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window

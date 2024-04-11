@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/array-type */
 import { Page, test } from '@playwright/test';
-import { beforeAllClean, forceCloseAllWindows } from './beforeEach';
+import { forceCloseAllWindows } from './beforeEach';
 import { openApp } from './open';
 
 // This is not ideal, most of our test needs to open a specific number of windows and close them once the test is done or failed.
@@ -24,7 +24,6 @@ function sessionTest<T extends CountWindows, N extends Tuple<Page, T>>(
   count: T,
 ) {
   return test(testName, async () => {
-    beforeAllClean();
     const windows = await openApp(count);
 
     try {

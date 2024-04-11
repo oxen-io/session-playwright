@@ -24,8 +24,7 @@ export const newUser = async (
   const recoveryPhrase = await window.innerText(
     '[data-testid=recovery-phrase-seed-modal]',
   );
-  await window.click('.session-icon-button.small');
-
+  await clickOnTestIdWithText(window, 'modal-close-button');
   await clickOnTestIdWithText(window, 'leftpane-primary-avatar');
 
   // Save session ID to a variable
@@ -37,7 +36,7 @@ export const newUser = async (
       sessionid,
     )}" and Recovery phrase2: "${chalk.green(recoveryPhrase)}"`,
   );
-  await window.click('.session-icon-button.small');
+  await clickOnTestIdWithText(window, 'modal-close-button');
   if (awaitOnionPath) {
     await checkPathLight(window);
   }

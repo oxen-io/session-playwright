@@ -120,7 +120,7 @@ sessionTestOneWindow('Change username', async ([window]) => {
     newUsername,
   );
   // Exit profile module
-  await window.click('.session-icon-button.small');
+  await clickOnTestIdWithText(window, 'modal-close-button');
 });
 
 sessionTestOneWindow('Change avatar', async ([window]) => {
