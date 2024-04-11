@@ -16,7 +16,7 @@ sessionTestThreeWindows(
       newUser(windowB, 'Bob'),
       newUser(windowC, 'Charlie'),
     ]);
-    const [windowD] = await linkedDevice(userA.recoveryPhrase);
+    const windowD = await linkedDevice(userA.recoveryPhrase);
 
     const group = await createGroup(
       'Testing group creation',
@@ -44,7 +44,7 @@ sessionTestThreeWindows(
       newUser(windowC, 'Bob'),
       newUser(windowD, 'Charlie'),
     ]);
-    const [windowB] = await linkedDevice(userA.recoveryPhrase);
+    const windowB = await linkedDevice(userA.recoveryPhrase);
 
     const group = await createGroup(
       'Testing leaving a group',

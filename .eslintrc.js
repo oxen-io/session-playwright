@@ -52,6 +52,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'no-await-in-loop': 'off',
     'import/order': 'off',
+    'no-useless-catch': 'off',
 
     quotes: [
       'error',

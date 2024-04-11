@@ -8,5 +8,5 @@ export async function linkedDevice(recoveryPhrase: string) {
   await logIn(window, recoveryPhrase);
   await checkPathLight(window);
 
-  return [window];
+  return window;
 }

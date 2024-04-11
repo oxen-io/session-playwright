@@ -62,13 +62,14 @@ sessionTestTwoWindows('Send video 1:1', async ([windowA, windowB]) => {
     'tests/automation/fixtures/test-video.mp4',
   );
   await typeIntoInput(windowA, 'message-input-text-area', testMessage);
-  await sleepFor(100);
+  // give some time before we send the message, as the video preview takes some time to be added
+  await sleepFor(1000);
+
   await clickOnElement({
     window: windowA,
     strategy: 'data-testid',
     selector: 'send-message-button',
   });
-  await sleepFor(1000);
   await clickOnMatchingText(windowB, 'Click to download media');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
   await waitForLoadingAnimationToFinish(windowB, 'loading-animation');

@@ -54,7 +54,7 @@ export function cleanUpOtherTest() {
     const allAppDataPath = getDirectoriesOfSessionDataPath(
       parentFolderOfAllDataPath,
     );
-    console.info('allAppDataPath', allAppDataPath);
+    console.info('allAppDataPath to clean', allAppDataPath);
 
     allAppDataPath.forEach((folder) => {
       const pathToRemove = join(parentFolderOfAllDataPath, folder);

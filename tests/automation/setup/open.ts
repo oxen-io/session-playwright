@@ -36,6 +36,7 @@ export async function openApp(windowsToCreate: number) {
 
   const array = [...multisToUse];
   const toRet = [];
+  // not too sure why, but launching those windows with Promise.all triggers a sqlite error...
   for (let index = 0; index < array.length; index++) {
     const element = array[index];
     // eslint-disable-next-line no-await-in-loop
@@ -73,16 +74,38 @@ const openElectronAppOnly = async (multi: string) => {
   console.info('   NODE_ENV', process.env.NODE_ENV);
   console.info('   NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
 
-  const electronApp = await electron.launch({
-    args: [join(getAppRootPath(), 'ts', 'mains', 'main_node.js')],
-  });
-  return electronApp;
+  try {
+    const electronApp = await electron.launch({
+      args: [join(getAppRootPath(), 'ts', 'mains', 'main_node.js')],
+    });
+    return electronApp;
+  } catch (e) {
+    console.warn(
+      chalk.redBright(
+        `failed to start electron app with error: ${e.message}`,
+        e,
+      ),
+    );
+    throw e;
+  }
 };
+
+const logBrowserConsole = false;
 
 const openAppAndWait = async (multi: string) => {
   const electronApp = await openElectronAppOnly(multi);
   // Get the first window that the app opens, wait if necessary.
   const window = await electronApp.firstWindow();
+  window.on('console', (msg) => {
+    if (!logBrowserConsole) {
+      return;
+    }
+    if (msg.type() === 'error') {
+      console.log(chalk.grey(`FROM BROWSER: Error "${msg.text()}"`));
+    } else {
+      console.log(chalk.grey(`FROM BROWSER: ${msg.text()}`));
+    }
+  });
 
   // await window.reload();
   return window;

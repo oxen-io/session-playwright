@@ -8,8 +8,9 @@ import type {
   TestResult,
 } from '@playwright/test/reporter';
 import chalk from 'chalk';
+import { mean } from 'lodash';
 
-class MyReporter implements Reporter {
+class SessionReporter implements Reporter {
   private printTestConsole = false;
   private startTime: number = 0;
   private allTestsCount: number = 0;
@@ -68,7 +69,7 @@ class MyReporter implements Reporter {
     // we keep track of all the failed/passed states, but only render the passed status here even if it took a few retries
 
     const resultsWhichPassed = this.getAllPassedAtLeastOnce();
-    const resultsWhichFailed = this.getAllNotPassedYet();
+    const resultsWhichFailed = this.getAllNotPassedEvenOnce();
     [...resultsWhichPassed, ...resultsWhichFailed].forEach((t) => {
       console.log(
         `${this.getChalkColorForStatus(t.result)(
@@ -82,7 +83,13 @@ class MyReporter implements Reporter {
     const notPassedCount =
       this.allTestsCount -
       this.allResults.filter((m) => m.result.status === 'passed').length;
-    console.log(`\t\tRemaining tests:`, notPassedCount);
+    const estimateLeftMs =
+      notPassedCount * mean(this.allResults.map((m) => m.result.duration));
+    console.log(
+      `\t\tRemaining tests: ${notPassedCount}, so rougly ${Math.floor(
+        estimateLeftMs / (60 * 1000),
+      )}min left...`,
+    );
   }
 
   private getAllPassedAtLeastOnce() {
@@ -94,6 +101,10 @@ class MyReporter implements Reporter {
     return this.allResults.filter(
       (m) => !allPassed.some((passed) => passed.test.id === m.test.id),
     );
+  }
+
+  private getAllNotPassedEvenOnce() {
+    return this.allResults.filter((m) => m.result.status !== 'passed');
   }
 
   onEnd(result: FullResult) {
@@ -147,4 +158,4 @@ class MyReporter implements Reporter {
   }
 }
 
-export default MyReporter;
+export default SessionReporter;

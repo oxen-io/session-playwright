@@ -73,6 +73,9 @@ sessionTestTwoWindows(
       'module-conversation__user__profile-name',
       userB.userName,
     );
+    // he is a contact, close the new conversation button tab as there is no right click allowed on it
+    await clickOnTestIdWithText(windowA, 'new-conversation-button');
+    // then right click on the contact conversation list item to show the menu
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',

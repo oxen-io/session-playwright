@@ -59,6 +59,7 @@ export type loaderType = 'loading-animation' | 'loading-spinner';
 
 export type Strategy = 'data-testid' | 'class' | ':has-text';
 
+// Would be good to find a way to sort those with prettier
 export type DataTestId =
   | 'session-id-signup'
   | 'display-name-input'
