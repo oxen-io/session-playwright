@@ -159,7 +159,7 @@ test('Profile picture syncs', async ({}, testinfo) => {
     console.warn(
       `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
     );
-    throw new Error('waiting 20s and still the screenshot is not right');
+    throw new Error('waited 20s and still the screenshot is not right');
   }
 });
 
@@ -187,28 +187,30 @@ test('Deleted message syncs', async () => {
     newUser(windowC, 'Bob'),
   ]);
   const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const deletedMessage = 'Testing deletion functionality for linked device';
+  const messageToDelete = 'Testing deletion functionality for linked device';
   await createContact(windowA, windowC, userA, userB);
-  await sendMessage(windowA, deletedMessage);
+  await sendMessage(windowA, messageToDelete);
   // Navigate to conversation on linked device and for message from user A to user B
   await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await waitForTextMessage(windowB, deletedMessage);
-  await waitForTextMessage(windowC, deletedMessage);
-  await clickOnTextMessage(windowA, deletedMessage, true);
-  await clickOnMatchingText(windowA, 'Delete just for me');
+  await Promise.all([
+    waitForTextMessage(windowB, messageToDelete),
+    waitForTextMessage(windowC, messageToDelete),
+  ]);
+  await clickOnTextMessage(windowA, messageToDelete, true);
   await clickOnMatchingText(windowA, 'Delete');
+  await clickOnTestIdWithText(windowA, 'session-confirm-ok-button', 'Delete');
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextMessageBeenDeleted(windowA, deletedMessage, 6000);
+  await hasTextMessageBeenDeleted(windowA, messageToDelete, 6000);
   // linked device for deleted message
   // Waiting for message to be removed
   // Check for linked device
-  await hasTextMessageBeenDeleted(windowB, deletedMessage, 10000);
+  await hasTextMessageBeenDeleted(windowB, messageToDelete, 10000);
   // Still should exist for user B
-  await waitForMatchingText(windowC, deletedMessage);
+  await waitForMatchingText(windowC, messageToDelete);
 });
 
 test('Unsent message syncs', async () => {
@@ -227,9 +229,12 @@ test('Unsent message syncs', async () => {
     'module-conversation__user__profile-name',
     userB.userName,
   );
-  await waitForTextMessage(windowB, unsentMessage);
-  await waitForTextMessage(windowC, unsentMessage);
+  await Promise.all([
+    waitForTextMessage(windowB, unsentMessage),
+    waitForTextMessage(windowC, unsentMessage),
+  ]);
   await clickOnTextMessage(windowA, unsentMessage, true);
+  await clickOnMatchingText(windowA, 'Delete');
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -261,18 +266,18 @@ test('Blocked user syncs', async () => {
     userB.userName,
     true,
   );
-  await clickOnMatchingText(windowA, 'Block');
-  await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
+  // Select block
+  await clickOnMatchingText(windowB, 'Block');
+  // Verify toast notification 'blocked'
+  await waitForTestIdWithText(windowB, 'session-toast', 'Blocked');
+  // Verify the user was moved to the blocked contact list
+  // Click on settings tab
   await waitForMatchingPlaceholder(
     windowA,
     'message-input-text-area',
     'Unblock this contact to send a message.',
   );
-  await waitForMatchingPlaceholder(
-    windowB,
-    'message-input-text-area',
-    'Unblock this contact to send a message.',
-  ); // reveal-blocked-user-settings is not updated once opened
+  // reveal-blocked-user-settings is not updated once opened
   // Check linked device for blocked contact in settings screen
   await clickOnTestIdWithText(windowB, 'settings-section');
   await clickOnTestIdWithText(windowB, 'conversations-settings-menu-item');

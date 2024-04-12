@@ -14,7 +14,7 @@ export const renameGroup = async (
 ) => {
   await clickOnMatchingText(window, oldGroupName);
   await clickOnTestIdWithText(window, 'conversation-options-avatar');
-  await clickOnMatchingText(window, 'Edit group name');
+  await clickOnTestIdWithText(window, 'edit-group-name');
   await typeIntoInput(window, 'group-name-input', newGroupName);
   await window.keyboard.press('Enter');
   await waitForTestIdWithText(window, 'right-panel-group-name', newGroupName);

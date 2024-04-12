@@ -175,7 +175,7 @@ test('Send voice message to group', async () => {
   await sleepFor(1000);
   await lookForPartialTestId(windowB, 'audio-', true, true);
   await lookForPartialTestId(windowC, 'audio-');
-  await clickOnMatchingText(windowB, 'Reply to message');
+  await clickOnMatchingText(windowB, 'Reply');
   await sendMessage(windowB, testReply);
   await waitForTextMessage(windowA, testReply);
 });
@@ -270,6 +270,7 @@ test('Unsend message to group', async () => {
   await waitForTextMessage(windowB, unsendMessage);
   await waitForTextMessage(windowC, unsendMessage);
   await clickOnTextMessage(windowA, unsendMessage, true);
+  await clickOnMatchingText(windowA, 'Delete');
   await clickOnMatchingText(windowA, 'Delete for everyone');
   await clickOnElement({
     window: windowA,
@@ -303,10 +304,16 @@ test('Delete message to group', async () => {
   await waitForTextMessage(windowB, deletedMessage);
   await waitForTextMessage(windowC, deletedMessage);
   await clickOnTextMessage(windowA, deletedMessage, true);
-  await clickOnMatchingText(windowA, 'Delete just for me');
   await clickOnMatchingText(windowA, 'Delete');
+  await clickOnMatchingText(windowA, 'Delete just for me');
+  await clickOnElement({
+    window: windowA,
+    strategy: 'data-testid',
+    selector: 'session-confirm-ok-button',
+  });
   await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
   await hasTextMessageBeenDeleted(windowA, deletedMessage, 5000);
+  // Should still be there for user B and C
   await waitForMatchingText(windowB, deletedMessage);
   await waitForMatchingText(windowC, deletedMessage);
 });

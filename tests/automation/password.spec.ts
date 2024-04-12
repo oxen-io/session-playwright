@@ -5,7 +5,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
 
@@ -14,7 +13,7 @@ const newTestPassword = '789101112';
 
 sessionTestOneWindow('Set Password', async ([window]) => {
   // Create user
-  await newUser(window, 'userA');
+  await newUser(window, 'Alice');
   // Click on settings tab
   await clickOnTestIdWithText(window, 'settings-section');
   // Click on privacy
@@ -36,27 +35,22 @@ sessionTestOneWindow('Set Password', async ([window]) => {
   // Click on settings tab
   await sleepFor(300);
   await clickOnTestIdWithText(window, 'settings-section');
+  await clickOnTestIdWithText(window, 'recovery-phrase-settings-menu-item');
   // Type password into input field
-
   await typeIntoInput(window, 'password-input', testPassword);
-
   // Click Done
   await clickOnMatchingText(window, 'Done');
   await clickOnTestIdWithText(window, 'settings-section');
 
   // Change password
-  await clickOnTestIdWithText(
-    window,
-    'change-password-settings-button',
-    'Change Password',
-  );
+  await clickOnTestIdWithText(window, 'change-password-settings-button');
 
   console.warn('clicked Change Password');
   // Enter old password
   await typeIntoInput(window, 'password-input', testPassword);
   // Enter new password
   await typeIntoInput(window, 'password-input-confirm', newTestPassword);
-  await window.keyboard.press('Tab');
+  // await window.keyboard.press('Tab');
   // Confirm new password
   await typeIntoInput(window, 'password-input-reconfirm', newTestPassword);
   // Press enter on keyboard
@@ -72,52 +66,46 @@ sessionTestOneWindow('Set Password', async ([window]) => {
 sessionTestOneWindow('Wrong password', async ([window]) => {
   // Check if incorrect password works
   // Create user
-  await newUser(window, 'userA');
+  await newUser(window, 'Alice');
   // Click on settings tab
   await clickOnTestIdWithText(window, 'settings-section');
   // Click on privacy
   await clickOnMatchingText(window, 'Privacy');
   // Click set password
-  await clickOnMatchingText(window, 'Set Password');
+  await clickOnTestIdWithText(window, 'set-password-button');
   // Enter password
   await typeIntoInput(window, 'password-input', testPassword);
   // Confirm password
   await typeIntoInput(window, 'password-input-confirm', testPassword);
   // Click Done
-  await window.keyboard.press('Enter');
-  // // Click on settings tab
+  await clickOnMatchingText(window, 'Done');
+  // Click on recovery phrase tab
   await sleepFor(100);
-  await clickOnTestIdWithText(window, 'settings-section');
-
+  await clickOnTestIdWithText(window, 'recovery-phrase-settings-menu-item');
   // Type password into input field
-  await sleepFor(100);
   await typeIntoInput(window, 'password-input', testPassword);
   // Click Done
-  await clickOnMatchingText(window, 'Done');
-  await sleepFor(100);
-  await window.mouse.click(0, 0);
-  await clickOnTestIdWithText(window, 'message-section');
-  await sleepFor(100);
-
+  await clickOnTestIdWithText(window, 'session-confirm-ok-button');
   // // Click on settings tab
-  await sleepFor(1000);
-  await clickOnTestIdWithText(window, 'settings-section');
+  await sleepFor(500);
+  // Click on recovery phrase tab
+  await clickOnTestIdWithText(window, 'recovery-phrase-settings-menu-item');
   // // Try with incorrect password
   await typeIntoInput(window, 'password-input', '000000');
   // Confirm
   await clickOnMatchingText(window, 'Done');
   // // invalid password banner showing?
-  await waitForMatchingText(window, 'Invalid password');
-  // // Empty password
-  // // Navigate away from settings tab
-  await window.mouse.click(0, 0);
+  await waitForTestIdWithText(window, 'session-toast', 'Invalid password');
+  await clickOnTestIdWithText(window, 'modal-close-button');
   await sleepFor(100);
-  await clickOnTestIdWithText(window, 'message-section');
-  await sleepFor(100);
-  // // Click on settings tab
-  await clickOnTestIdWithText(window, 'settings-section');
+  // Click on recovery phrase tab
+  await clickOnTestIdWithText(window, 'recovery-phrase-settings-menu-item');
   // // No password entered
   await clickOnMatchingText(window, 'Done');
   // // Banner should ask for password to be entered
-  await waitForMatchingText(window, 'Enter password');
+  await waitForTestIdWithText(
+    window,
+    'session-toast',
+    'Please enter your password',
+  );
 });

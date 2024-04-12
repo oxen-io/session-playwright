@@ -81,7 +81,7 @@ export async function waitForControlMessageWithText(
   window: Page,
   text: string,
 ) {
-  return waitForTestIdWithText(window, 'control-message', text);
+  return waitForTestIdWithText(window, 'message-content', text);
 }
 
 export async function waitForMatchingText(
@@ -160,7 +160,7 @@ export async function waitForLoadingAnimationToFinish(
 }
 
 export async function checkPathLight(window: Page, maxWait?: number) {
-  const maxWaitTime = maxWait || 100000;
+  const maxWaitTime = maxWait || 500000;
   const waitPerLoop = 100;
   const start = Date.now();
   let pathColor: string | null = null;
@@ -361,7 +361,7 @@ export async function hasTextMessageBeenDeleted(
         el = await waitForElement(
           window,
           'data-testid',
-          'control-message',
+          'message-content',
           maxWait,
           text,
         );

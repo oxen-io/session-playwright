@@ -62,6 +62,11 @@ sessionTestFourWindows(
     // Check config messages in all windows
     await sleepFor(1000);
     await createContact(windowA, windowD, userA, userD);
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowA,
       'module-conversation__user__profile-name',
@@ -96,17 +101,23 @@ sessionTestFourWindows(
       'group-update-message',
       `${userD.sessionid} joined the group.`,
     );
+    await clickOnElement({
+      window: windowD,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
     await clickOnTestIdWithText(
       windowD,
       'module-conversation__user__profile-name',
       testGroup.userName,
     );
-    const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
-    await waitForTestIdWithText(
-      windowD,
-      'empty-conversation-notification',
-      emptyStateGroupText,
-    );
+    // Update in closed group rewrite
+    //   const emptyStateGroupText = `You have no messages from ${testGroup.userName}. Send a message to start the conversation!`;
+    //   await waitForTestIdWithText(
+    //     windowD,
+    //     'empty-conversation-notification',
+    //     emptyStateGroupText,
+    //   );
   },
 );
 
@@ -135,11 +146,14 @@ sessionTestThreeWindows(
     // Check config message in window B for group name change
     await clickOnMatchingText(windowB, newGroupName);
     await waitForMatchingText(windowB, `Group name is now '${newGroupName}'.`);
+    await clickOnMatchingText(windowC, newGroupName);
+    await waitForMatchingText(windowC, `Group name is now '${newGroupName}'.`);
     // Click on conversation options
     // Check to see that you can't change group name to empty string
     // Click on edit group name
-    await clickOnMatchingText(windowA, 'Edit group name');
-    await windowA.fill('.profile-name-input', '   ');
+    await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
+    await clickOnTestIdWithText(windowA, 'edit-group-name');
+    await typeIntoInput(windowA, 'group-name-input', '     ');
     await windowA.keyboard.press('Enter');
     const errorMessage = windowA.locator('.error-message');
     await expect(errorMessage).toContainText('Please enter a group name');

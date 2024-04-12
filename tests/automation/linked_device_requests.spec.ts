@@ -70,7 +70,7 @@ sessionTestTwoWindows('Decline request syncs', async ([windowA, windowB]) => {
     userA.userName,
   );
   await sleepFor(1000);
-  await clickOnTestIdWithText(windowB, 'decline-message-request');
+  await clickOnTestIdWithText(windowB, 'decline-message-request', 'Decline');
   await clickOnTestIdWithText(windowB, 'session-confirm-ok-button', 'Decline');
 
   await waitForMatchingText(windowB, 'No pending message requests');

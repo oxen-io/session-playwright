@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { join } from 'path';
 
 export const NODE_ENV = 'production';
-export const MULTI_PREFIX = 'test-integration-testnet-';
+export const MULTI_PREFIX = 'test-integration-';
 const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function getAppRootPath() {
@@ -38,12 +38,13 @@ export async function openApp(windowsToCreate: number) {
     const openedWindow = await openAppAndWait(`${element}`);
     toRet.push(openedWindow);
   }
+  console.log(`Pathway to app: `, process.env.SESSION_DESKTOP_ROOT);
   return toRet;
 }
 
 const openElectronAppOnly = async (multi: string) => {
-  process.env.MULTI = `${multi}_disappear_v2`;
-  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-${Date.now()}-${
+  process.env.MULTI = `${multi}`;
+  process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-devprod-${Date.now()}-${
     process.env.MULTI
   }`;
   process.env.NODE_ENV = NODE_ENV;

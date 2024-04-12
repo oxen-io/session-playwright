@@ -60,9 +60,9 @@ sessionTestTwoWindows(
       'module-conversation__user__profile-name',
       userA.userName,
     );
-    // Check that using the accept button has intended use
     await sendMessage(windowB, testReply);
     // Check config message of message request acceptance
+
     await waitForTestIdWithText(
       windowB,
       'message-request-response-message',

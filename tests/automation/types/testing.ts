@@ -13,7 +13,33 @@ export type Group = {
   userThree: User;
 };
 
-export type ConversationType = '1:1' | 'Group' | 'Community' | 'Note to Self';
+export type ConversationType = '1:1' | 'group' | 'community' | 'note-to-self';
+
+export type DMTimeOption =
+  | 'input-10-seconds'
+  | 'time-option-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks';
+
+type DisappearOpts1o1 = [
+  '1:1',
+  'disappear-after-read-option' | 'disappear-after-send-option',
+  DMTimeOption,
+];
+
+type DisappearOptsGroup = [
+  'group' | 'note-to-self',
+  'disappear-after-send-option',
+  DMTimeOption,
+];
+
+export type DisappearOptions = DisappearOpts1o1 | DisappearOptsGroup;
 
 export type StrategyExtractionObj =
   | {
@@ -51,6 +77,7 @@ export type DataTestId =
   | 'clear-data-settings-menu-item'
   | 'message-requests-settings-menu-item'
   | 'restore-using-recovery'
+  | 'reveal-recovery-phrase'
   | 'recovery-phrase-input'
   | 'continue-session-button'
   | 'label-device_and_network'
@@ -71,6 +98,7 @@ export type DataTestId =
   | 'unblock-button-settings-screen'
   | 'leftpane-primary-avatar'
   | 'edit-profile-icon'
+  | 'edit-group-name'
   | 'profile-name-input'
   | 'image-upload-section'
   | 'save-button-profile-update'
@@ -90,6 +118,7 @@ export type DataTestId =
   | 'password-input-confirm'
   | 'change-password-settings-button'
   | 'password-input-reconfirm'
+  | 'recovery-phrase-settings-menu-item'
   | 'messages-container'
   | 'chooser-new-group'
   | 'new-closed-group-name'
@@ -116,4 +145,14 @@ export type DataTestId =
   | 'message-content'
   | 'group-update-message'
   | 'message-request-response-message'
-  | 'image-upload-click';
+  | 'image-upload-click'
+  | 'input-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks'
+  | 'leave-group-button';
