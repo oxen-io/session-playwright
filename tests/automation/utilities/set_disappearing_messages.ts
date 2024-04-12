@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-import { sleepFor } from '../../promise_utils';
 import { ConversationType, DisappearOptions } from '../types/testing';
 import {
   clickOnElement,
@@ -14,9 +13,7 @@ export const setDisappearingMessages = async (
   windowB?: Page,
 ) => {
   const enforcedType: ConversationType = conversationType;
-  await sleepFor(101, true);
   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  await sleepFor(102, true);
   try {
     await clickOnElement({
       window: windowA,
@@ -24,18 +21,13 @@ export const setDisappearingMessages = async (
       selector: 'disappearing-messages',
       maxWait: 100,
     });
-    await sleepFor(103, true);
   } catch (e) {
-    console.warn('44444444444444444444444444444');
-    await sleepFor(104, true);
     await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-    await sleepFor(105, true);
     await clickOnElement({
       window: windowA,
       strategy: 'data-testid',
       selector: 'disappearing-messages',
     });
-    await sleepFor(106, true);
   }
 
   if (enforcedType === '1:1') {
