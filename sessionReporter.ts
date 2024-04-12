@@ -8,18 +8,68 @@ import type {
   TestResult,
 } from '@playwright/test/reporter';
 import chalk from 'chalk';
-import { groupBy, mean } from 'lodash';
+import { Dictionary, groupBy, mean, sortBy } from 'lodash';
 
 type TestAndResult = { test: TestCase; result: TestResult };
+
+function sortByTitle(toSort: Dictionary<Array<TestAndResult>>) {
+  return sortBy(Object.values(toSort), (a) => a[0].test.title);
+}
+
+function getChalkColorForStatus(result: Pick<TestResult, 'status'>) {
+  return result.status === 'passed'
+    ? chalk.green
+    : result.status === 'interrupted'
+    ? chalk.yellow
+    : chalk.red;
+}
+
+function testResultToDurationStr(tests: Array<Pick<TestAndResult, 'result'>>) {
+  const inSeconds = tests
+    .map((m) => m.result)
+    .map((r) => Math.floor(r.duration / 1000));
+  return inSeconds.map((m) => `${m}s`).join(',');
+}
+
+function formatGroupedByResults(testAndResults: Array<TestAndResult>) {
+  const allPassed = testAndResults.every((m) => m.result.status === 'passed');
+  const allFailed = testAndResults.every((m) => m.result.status !== 'passed');
+  const firstItem = testAndResults[0]; // we know they all have the same state
+  const statuses = testAndResults.map((m) => `"${m.result.status}"`).join(',');
+
+  const times =
+    testAndResults.length === 1
+      ? 'once'
+      : testAndResults.length === 2
+      ? 'twice'
+      : `${testAndResults.length} times`;
+  console.log(
+    `${getChalkColorForStatus(
+      allPassed
+        ? { status: 'passed' }
+        : allFailed
+        ? { status: 'failed' }
+        : { status: 'interrupted' },
+    )(
+      `\t\t\t"${
+        firstItem.test.title
+      }": run ${times}, statuses:[${statuses}], durations: [${testResultToDurationStr(
+        testAndResults,
+      )}]`,
+    )}`,
+  );
+}
 
 class SessionReporter implements Reporter {
   private printTestConsole = false;
   private startTime: number = 0;
   private allTestsCount: number = 0;
   private allResults: Array<TestAndResult> = [];
+  private countWorkers: number = 1;
 
   onBegin(config: FullConfig, suite: Suite) {
     this.allTestsCount = suite.allTests().length;
+    this.countWorkers = config.workers;
 
     this.printTestConsole = this.allTestsCount <= 1;
     console.log(
@@ -37,57 +87,10 @@ class SessionReporter implements Reporter {
     );
   }
 
-  private getChalkColorForStatus(result: Pick<TestResult, 'status'>) {
-    return result.status === 'passed'
-      ? chalk.green
-      : result.status === 'interrupted'
-      ? chalk.yellow
-      : chalk.red;
-  }
-
-  private testResultToDurationStr(tests: Array<Pick<TestAndResult, 'result'>>) {
-    const inSeconds = tests
-      .map((m) => m.result)
-      .map((r) => Math.floor(r.duration / 1000));
-    const formatted = inSeconds.map((m) => `${m}s`).join(',');
-    return formatted;
-  }
-
-  private formatGroupedByResults(testAndResults: Array<TestAndResult>) {
-    const allPassed = testAndResults.every((m) => m.result.status === 'passed');
-    const allFailed = testAndResults.every((m) => m.result.status !== 'passed');
-    const firstItem = testAndResults[0]; // we know they all have the same state
-    const statuses = testAndResults
-      .map((m) => `"${m.result.status}"`)
-      .join(',');
-
-    const times =
-      testAndResults.length === 1
-        ? 'once'
-        : testAndResults.length === 2
-        ? 'twice'
-        : `${testAndResults.length} times`;
-    console.log(
-      `${this.getChalkColorForStatus(
-        allPassed
-          ? { status: 'passed' }
-          : allFailed
-          ? { status: 'failed' }
-          : { status: 'interrupted' },
-      )(
-        `\t\t\t"${
-          firstItem.test.title
-        }": run ${times}, statuses:[${statuses}], durations: [${this.testResultToDurationStr(
-          testAndResults,
-        )}]`,
-      )}`,
-    );
-  }
-
   onTestEnd(test: TestCase, result: TestResult) {
     if (result.status !== 'passed') {
       console.log(
-        `${this.getChalkColorForStatus(result)(
+        `${getChalkColorForStatus(result)(
           `\t\tFinished test "${test.title}": ${result.status} with stdout/stderr`,
         )}`,
       );
@@ -99,38 +102,35 @@ class SessionReporter implements Reporter {
       result.stderr.map((t) => process.stderr.write(t.toString()));
     } else {
       console.log(
-        `${this.getChalkColorForStatus(result)(
+        `${getChalkColorForStatus(result)(
           `\t\tFinished test "${test.title}": ${result.status}`,
         )}`,
       );
     }
     this.allResults.push({ test, result });
 
-    console.log(`\t\tResults so far:`);
+    console.log(chalk.bgWhiteBright(`\t\tResults so far:`));
     // we keep track of all the failed/passed states, but only render the passed status here even if it took a few retries
 
     const { allFailedSoFar, allPassedSoFar, partiallyPassed } =
       this.groupResultsByTestName();
 
-    Object.values(allPassedSoFar).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
-    Object.values(partiallyPassed).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
-    Object.values(allFailedSoFar).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
+    sortByTitle(allPassedSoFar).forEach((m) => formatGroupedByResults(m));
+    sortByTitle(partiallyPassed).forEach((m) => formatGroupedByResults(m));
+    sortByTitle(allFailedSoFar).forEach((m) => formatGroupedByResults(m));
 
     const notPassedCount =
       this.allTestsCount -
       this.allResults.filter((m) => m.result.status === 'passed').length;
     const estimateLeftMs =
       notPassedCount * mean(this.allResults.map((m) => m.result.duration));
+    const estimatedTotalMins = Math.floor(estimateLeftMs / (60 * 1000));
     console.log(
-      `\t\tRemaining tests: ${notPassedCount}, so rougly ${Math.floor(
-        estimateLeftMs / (60 * 1000),
-      )}min left...`,
+      chalk.bgWhite(
+        `\t\tRemaining tests: ${notPassedCount}, so rougly ${estimatedTotalMins}min total  left, so about ${Math.floor(
+          estimatedTotalMins / this.countWorkers,
+        )}min as we have ${this.countWorkers} worker(s)...`,
+      ),
     );
   }
 
@@ -178,7 +178,9 @@ class SessionReporter implements Reporter {
   onEnd(result: FullResult) {
     console.log(
       chalk.bgWhiteBright(
-        `\n\n\n\t\tFinished the run: ${result.status}, took ${Math.floor(
+        `\n\n\n\t\tFinished the run: ${result.status}, count of tests run: ${
+          this.allResults.length
+        }, took ${Math.floor(
           (Date.now() - this.startTime) / (60 * 1000),
         )} minute(s)`,
       ),
@@ -186,15 +188,9 @@ class SessionReporter implements Reporter {
     const { allFailedSoFar, allPassedSoFar, partiallyPassed } =
       this.groupResultsByTestName();
 
-    Object.values(allPassedSoFar).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
-    Object.values(partiallyPassed).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
-    Object.values(allFailedSoFar).forEach((m) =>
-      this.formatGroupedByResults(m),
-    );
+    sortByTitle(allPassedSoFar).forEach((m) => formatGroupedByResults(m));
+    sortByTitle(partiallyPassed).forEach((m) => formatGroupedByResults(m));
+    sortByTitle(allFailedSoFar).forEach((m) => formatGroupedByResults(m));
   }
 
   onStdOut?(

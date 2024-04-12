@@ -1,7 +1,7 @@
 import { cleanUpOtherTest } from './tests/automation/setup/beforeEach';
 
-export default function cleanupPreviousTests() {
+export default async function cleanupPreviousTests() {
   console.log('Cleaning up all previous tests configs...');
-  cleanUpOtherTest();
+  await cleanUpOtherTest();
   console.log('Cleaning up done.');
 }

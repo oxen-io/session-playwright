@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { readdirSync, rmdirSync } from 'fs-extra';
+import { readdirSync, rm } from 'fs-extra';
 import { homedir } from 'os';
 import { join } from 'path';
 import { isLinux, isMacOS } from '../../os_utils';
@@ -17,7 +17,7 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
 const alreadyCleaned = false;
 let alreadyCleanedWaiting = false;
 
-export function cleanUpOtherTest() {
+export async function cleanUpOtherTest() {
   if (alreadyCleaned || alreadyCleanedWaiting) {
     return;
   }
@@ -56,10 +56,12 @@ export function cleanUpOtherTest() {
     );
     console.info('allAppDataPath to clean', allAppDataPath);
 
-    allAppDataPath.forEach((folder) => {
-      const pathToRemove = join(parentFolderOfAllDataPath, folder);
-      rmdirSync(pathToRemove, { recursive: true });
-    });
+    await Promise.all(
+      allAppDataPath.map((folder) => {
+        const pathToRemove = join(parentFolderOfAllDataPath, folder);
+        return rm(pathToRemove, { recursive: true });
+      }),
+    );
     console.info('...done');
   } catch (e) {
     console.error(`failed to cleanup old files: ${e.message}`);
