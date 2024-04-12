@@ -8,7 +8,7 @@ import {
 
 sessionTestOneWindow('Create User', async ([window]) => {
   // Create User
-  const userA = await newUser(window, 'userA', false);
+  const userA = await newUser(window, 'Alice', false);
   // Open profile tab
   await clickOnTestIdWithText(window, 'leftpane-primary-avatar');
   await sleepFor(100, true);
