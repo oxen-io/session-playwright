@@ -45,7 +45,12 @@ sessionTestTwoWindows('Send image 1:1', async ([windowA, windowB]) => {
   // Waiting for image to change from loading state to loaded (takes a second)
   await sleepFor(1000);
 
-  await replyTo(windowB, testMessage, testReply, windowA);
+  await replyTo({
+    windowSender: windowB,
+    textMessage: testMessage,
+    replyText: testReply,
+    windowReceiver: windowA,
+  });
 });
 
 sessionTestTwoWindows('Send video 1:1', async ([windowA, windowB]) => {
@@ -75,7 +80,12 @@ sessionTestTwoWindows('Send video 1:1', async ([windowA, windowB]) => {
   await waitForLoadingAnimationToFinish(windowB, 'loading-animation');
   // Waiting for videoto change from loading state to loaded (takes a second)
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply, windowA);
+  await replyTo({
+    windowSender: windowB,
+    textMessage: testMessage,
+    replyText: testReply,
+    windowReceiver: windowA,
+  });
 });
 
 sessionTestTwoWindows('Send document 1:1', async ([windowA, windowB]) => {
@@ -103,7 +113,12 @@ sessionTestTwoWindows('Send document 1:1', async ([windowA, windowB]) => {
   await waitForLoadingAnimationToFinish(windowB, 'loading-animation');
   // Waiting for video to change from loading state to loaded (takes a second)
   await sleepFor(500);
-  await replyTo(windowB, testMessage, testReply, windowA);
+  await replyTo({
+    windowSender: windowB,
+    textMessage: testMessage,
+    replyText: testReply,
+    windowReceiver: windowA,
+  });
 });
 
 sessionTestTwoWindows('Send voice message 1:1', async ([windowA, windowB]) => {
@@ -175,7 +190,12 @@ sessionTestTwoWindows('Send long text 1:1', async ([windowA, windowB]) => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, longText, testReply, windowA);
+  await replyTo({
+    windowSender: windowB,
+    textMessage: longText,
+    replyText: testReply,
+    windowReceiver: windowA,
+  });
 });
 
 sessionTestTwoWindows('Unsend message 1:1', async ([windowA, windowB]) => {
@@ -260,5 +280,10 @@ sessionTestTwoWindows('Send link 1:1', async ([windowA, windowB]) => {
     selector: 'send-message-button',
   });
   await sleepFor(1000);
-  await replyTo(windowB, testMessage, testReply, windowA);
+  await replyTo({
+    windowSender: windowB,
+    textMessage: testMessage,
+    replyText: testReply,
+    windowReceiver: windowA,
+  });
 });

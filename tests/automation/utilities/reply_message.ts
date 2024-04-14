@@ -15,12 +15,17 @@ import {
  *
  * Note: Most of the case, we want a windowReceiver argument to be given, to make the tests as reliable as possible
  */
-export const replyTo = async (
-  windowSender: Page,
-  textMessage: string,
-  replyText: string,
-  windowReceiver: Page | null,
-) => {
+export const replyTo = async ({
+  replyText,
+  textMessage,
+  windowReceiver,
+  windowSender,
+}: {
+  windowSender: Page;
+  textMessage: string;
+  replyText: string;
+  windowReceiver: Page | null;
+}) => {
   await waitForTextMessage(windowSender, textMessage);
   await clickOnTextMessage(windowSender, textMessage, true);
   await clickOnMatchingText(windowSender, 'Reply');

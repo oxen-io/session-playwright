@@ -46,7 +46,12 @@ sessionTestThreeWindows(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await replyTo(windowB, testMessage, testReply, windowA);
+    await replyTo({
+      windowSender: windowB,
+      textMessage: testMessage,
+      replyText: testReply,
+      windowReceiver: windowA,
+    });
 
     // reply was sent from windowB and awaited from windowA already
     await waitForTextMessage(windowC, testReply);
@@ -84,7 +89,12 @@ sessionTestThreeWindows(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await replyTo(windowB, testMessage, testReply, windowA);
+    await replyTo({
+      windowSender: windowB,
+      textMessage: testMessage,
+      replyText: testReply,
+      windowReceiver: windowA,
+    });
   },
 );
 
@@ -118,7 +128,12 @@ sessionTestThreeWindows(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await replyTo(windowB, testMessage, testReply, windowA);
+    await replyTo({
+      windowSender: windowB,
+      textMessage: testMessage,
+      replyText: testReply,
+      windowReceiver: windowA,
+    });
   },
 );
 
@@ -219,7 +234,12 @@ sessionTestThreeWindows(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await replyTo(windowB, testMessage, testReply, windowA);
+    await replyTo({
+      windowSender: windowB,
+      textMessage: testMessage,
+      replyText: testReply,
+      windowReceiver: windowA,
+    });
   },
 );
 
@@ -252,7 +272,12 @@ sessionTestThreeWindows(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await replyTo(windowB, longText, testReply, windowC);
+    await replyTo({
+      windowSender: windowB,
+      textMessage: longText,
+      replyText: testReply,
+      windowReceiver: windowC,
+    });
     await waitForTextMessage(windowC, longText);
   },
 );
