@@ -26,22 +26,22 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestOneWindow('Link a device', async ([windowA]) => {
-  let windowB: Page | undefined;
+sessionTestOneWindow('Link a device', async ([alice1]) => {
+  let alice2: Page | undefined;
   try {
-    const userA = await newUser(windowA, 'Alice');
-    windowB = await linkedDevice(userA.recoveryPhrase); // not using fixture here as we want to the the behavior finely
-    await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
+    const userA = await newUser(alice1, 'Alice');
+    alice2 = await linkedDevice(userA.recoveryPhrase); // not using fixture here as we want to check the behavior finely
+    await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
     // Verify Username
-    await waitForTestIdWithText(windowA, 'your-profile-name', userA.userName);
+    await waitForTestIdWithText(alice1, 'your-profile-name', userA.userName);
     // Verify Session ID
-    await waitForTestIdWithText(windowA, 'your-session-id', userA.sessionid);
+    await waitForTestIdWithText(alice1, 'your-session-id', userA.sessionid);
     // exit profile module
-    await clickOnTestIdWithText(windowA, 'modal-close-button');
+    await clickOnTestIdWithText(alice1, 'modal-close-button');
     // You're almost finished isn't displayed
     const errorDesc = 'Should not be found';
     try {
-      const elemShouldNotBeFound = windowB.locator(
+      const elemShouldNotBeFound = alice2.locator(
         '[data-testid=reveal-recovery-phrase]',
       );
       if (elemShouldNotBeFound) {
@@ -57,30 +57,29 @@ sessionTestOneWindow('Link a device', async ([windowA]) => {
       }
     }
   } finally {
-    if (windowB) {
-      await forceCloseAllWindows([windowB]);
+    if (alice2) {
+      await forceCloseAllWindows([alice2]);
     }
   }
 });
 
 sessionTestTwoLinkedWindows(
   'Changed username syncs',
-  'Alice',
-  async ([windowA, windowB]) => {
+  async ({ alice1, alice2 }) => {
     const newUsername = 'Tiny bubble';
-    await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
+    await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
     // Click on pencil icon
-    await clickOnTestIdWithText(windowA, 'edit-profile-icon');
+    await clickOnTestIdWithText(alice1, 'edit-profile-icon');
     // Replace old username with new username
-    await typeIntoInput(windowA, 'profile-name-input', newUsername);
+    await typeIntoInput(alice1, 'profile-name-input', newUsername);
     // Press enter to confirm change
     await clickOnElement({
-      window: windowA,
+      window: alice1,
       strategy: 'data-testid',
       selector: 'save-button-profile-update',
     });
     // Wait for loading animation
-    await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
+    await waitForLoadingAnimationToFinish(alice1, 'loading-spinner');
 
     // Check username change in window B
     // Click on profile settings in window B
@@ -90,11 +89,11 @@ sessionTestTwoLinkedWindows(
       500,
       'waiting for updated username in profile dialog',
       async () => {
-        await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
+        await clickOnTestIdWithText(alice2, 'leftpane-primary-avatar');
         // Verify username has changed to new username
         try {
           await waitForTestIdWithText(
-            windowB,
+            alice2,
             'your-profile-name',
             newUsername,
             100,
@@ -105,7 +104,7 @@ sessionTestTwoLinkedWindows(
           return false;
         } finally {
           await clickOnElement({
-            window: windowB,
+            window: alice2,
             strategy: 'data-testid',
             selector: 'modal-close-button',
           });
@@ -118,16 +117,15 @@ sessionTestTwoLinkedWindows(
 // eslint-disable-next-line no-empty-pattern
 sessionTestTwoLinkedWindows(
   'Profile picture syncs',
-  'Alice',
-  async ([windowA, windowB], _user, testinfo) => {
-    await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
+  async ({ alice1, alice2 }, testinfo) => {
+    await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
     // Click on current profile picture
-    await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
+    await waitForTestIdWithText(alice1, 'copy-button-profile-update', 'Copy');
 
-    await clickOnTestIdWithText(windowA, 'image-upload-section');
-    await clickOnTestIdWithText(windowA, 'image-upload-click');
-    await clickOnTestIdWithText(windowA, 'save-button-profile-update');
-    await waitForTestIdWithText(windowA, 'loading-spinner');
+    await clickOnTestIdWithText(alice1, 'image-upload-section');
+    await clickOnTestIdWithText(alice1, 'image-upload-click');
+    await clickOnTestIdWithText(alice1, 'save-button-profile-update');
+    await waitForTestIdWithText(alice1, 'loading-spinner');
 
     if (testinfo.config.updateSnapshots === 'all') {
       await sleepFor(15000, true); // long time to be sure a poll happened when we want to update the snapshot
@@ -135,7 +133,7 @@ sessionTestTwoLinkedWindows(
       await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
     }
     const leftpaneAvatarContainer = await waitForTestIdWithText(
-      windowB,
+      alice2,
       'leftpane-primary-avatar',
     );
     const start = Date.now();
@@ -174,17 +172,13 @@ sessionTestTwoLinkedWindows(
 
 sessionTestThreeWindowsWithTwoLinked(
   'Contacts syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow: windowC },
-    { userLinked, otherUser },
-  ) => {
-    await createContact(windowA, windowC, userLinked, otherUser);
-    // linked device (windowB)
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
+    await createContact(alice1, bob1, alice, bob);
+    // linked device (alice2)
     await waitForTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
     console.info('Contacts correctly synced');
   },
@@ -192,115 +186,103 @@ sessionTestThreeWindowsWithTwoLinked(
 
 sessionTestThreeWindowsWithTwoLinked(
   'Deleted message syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow: windowC },
-    { userLinked, otherUser },
-  ) => {
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
     const messageToDelete = 'Testing deletion functionality for linked device';
-    await createContact(windowA, windowC, userLinked, otherUser);
-    await sendMessage(windowA, messageToDelete);
+    await createContact(alice1, bob1, alice, bob);
+    await sendMessage(alice1, messageToDelete);
     // Navigate to conversation on linked device and for message from user A to user B
     await clickOnTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
     await Promise.all([
-      waitForTextMessage(windowB, messageToDelete),
-      waitForTextMessage(windowC, messageToDelete),
+      waitForTextMessage(alice2, messageToDelete),
+      waitForTextMessage(bob1, messageToDelete),
     ]);
-    await clickOnTextMessage(windowA, messageToDelete, true);
-    await clickOnMatchingText(windowA, 'Delete');
-    await clickOnTestIdWithText(windowA, 'session-confirm-ok-button', 'Delete');
-    await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-    await hasTextMessageBeenDeleted(windowA, messageToDelete, 6000);
+    await clickOnTextMessage(alice1, messageToDelete, true);
+    await clickOnMatchingText(alice1, 'Delete');
+    await clickOnTestIdWithText(alice1, 'session-confirm-ok-button', 'Delete');
+    await waitForTestIdWithText(alice1, 'session-toast', 'Deleted');
+    await hasTextMessageBeenDeleted(alice1, messageToDelete, 6000);
     // linked device for deleted message
     // Waiting for message to be removed
     // Check for linked device
-    await hasTextMessageBeenDeleted(windowB, messageToDelete, 10000);
+    await hasTextMessageBeenDeleted(alice2, messageToDelete, 10000);
     // Still should exist for user B
-    await waitForMatchingText(windowC, messageToDelete);
+    await waitForMatchingText(bob1, messageToDelete);
   },
 );
 
 sessionTestThreeWindowsWithTwoLinked(
   'Unsent message syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow: windowC },
-    { userLinked, otherUser },
-  ) => {
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
     const unsentMessage = 'Testing unsending functionality for linked device';
-    await createContact(windowA, windowC, userLinked, otherUser);
-    await sendMessage(windowA, unsentMessage);
+    await createContact(alice1, bob1, alice, bob);
+    await sendMessage(alice1, unsentMessage);
     // Navigate to conversation on linked device and for message from user A to user B
     await clickOnTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
     await Promise.all([
-      waitForTextMessage(windowB, unsentMessage),
-      waitForTextMessage(windowC, unsentMessage),
+      waitForTextMessage(alice2, unsentMessage),
+      waitForTextMessage(bob1, unsentMessage),
     ]);
-    await clickOnTextMessage(windowA, unsentMessage, true);
-    await clickOnMatchingText(windowA, 'Delete');
-    await clickOnMatchingText(windowA, 'Delete for everyone');
+    await clickOnTextMessage(alice1, unsentMessage, true);
+    await clickOnMatchingText(alice1, 'Delete');
+    await clickOnMatchingText(alice1, 'Delete for everyone');
     await clickOnElement({
-      window: windowA,
+      window: alice1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-    await hasTextMessageBeenDeleted(windowA, unsentMessage, 1000);
-    await waitForMatchingText(windowC, 'This message has been deleted');
+    await waitForTestIdWithText(alice1, 'session-toast', 'Deleted');
+    await hasTextMessageBeenDeleted(alice1, unsentMessage, 1000);
+    await waitForMatchingText(bob1, 'This message has been deleted');
     // linked device for deleted message
-    await hasTextMessageBeenDeleted(windowB, unsentMessage, 1000);
+    await hasTextMessageBeenDeleted(alice2, unsentMessage, 1000);
   },
 );
 sessionTestThreeWindowsWithTwoLinked(
   'Blocked user syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow: windowC },
-    { userLinked, otherUser },
-  ) => {
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
     const testMessage = 'Testing blocking functionality for linked device';
 
-    await createContact(windowA, windowC, userLinked, otherUser);
-    await sendMessage(windowA, testMessage);
+    await createContact(alice1, bob1, alice, bob);
+    await sendMessage(alice1, testMessage);
     // Navigate to conversation on linked device and check for message from user A to user B
     await clickOnTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
       true,
     );
     // Select block
-    await clickOnMatchingText(windowB, 'Block');
+    await clickOnMatchingText(alice2, 'Block');
     // Verify toast notification 'blocked'
-    await waitForTestIdWithText(windowB, 'session-toast', 'Blocked');
+    await waitForTestIdWithText(alice2, 'session-toast', 'Blocked');
     // Verify the user was moved to the blocked contact list
     // Click on settings tab
     await waitForMatchingPlaceholder(
-      windowA,
+      alice1,
       'message-input-text-area',
       'Unblock this contact to send a message.',
     );
     // reveal-blocked-user-settings is not updated once opened
     // Check linked device for blocked contact in settings screen
-    await clickOnTestIdWithText(windowB, 'settings-section');
-    await clickOnTestIdWithText(windowB, 'conversations-settings-menu-item');
+    await clickOnTestIdWithText(alice2, 'settings-section');
+    await clickOnTestIdWithText(alice2, 'conversations-settings-menu-item');
     // a conf sync job can take 30s (if the last one failed) +  10s polling to show a change on a linked device.
     await clickOnTestIdWithText(
-      windowB,
+      alice2,
       'reveal-blocked-user-settings',
       undefined,
       undefined,
       50000,
     );
     // Check if user B is in blocked contact list
-    await waitForMatchingText(windowB, otherUser.userName);
+    await waitForMatchingText(alice2, bob.userName);
   },
 );

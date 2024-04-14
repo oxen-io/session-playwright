@@ -73,7 +73,7 @@ class SessionReporter implements Reporter {
 
     this.printTestConsole = this.allTestsCount <= 1;
     console.log(
-      `\t\tStarting the run with ${this.allTestsCount} tests, with ${config.workers} workers and ${config.projects[0].retries} retries`,
+      `\t\tStarting the run with ${this.allTestsCount} tests, with ${this.countWorkers} workers, ${config.projects[0].retries} retries and ${config.projects[0].repeatEach} repeats`,
     );
     this.startTime = Date.now();
   }

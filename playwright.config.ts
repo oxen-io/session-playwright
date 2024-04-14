@@ -23,5 +23,6 @@ export default defineConfig({
     : 0,
   workers: toNumber(process.env.PLAYWRIGHT_WORKER_COUNT) || 3,
   reportSlowTests: null,
-  globalSetup: './global.setup',
+  fullyParallel: true, // otherwise, tests in the same file are not run in parallel
+  globalSetup: './global.setup', // cleanup left over of previous runs on start, only once
 });

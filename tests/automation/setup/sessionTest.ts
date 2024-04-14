@@ -103,15 +103,20 @@ export function sessionTestFiveWindows(
  * fixtures with linked windows are below
  */
 
+/**
+ * Opens two windows and link one to the other, logged in user is "Alice"
+ * @param testName title of the test
+ * @param testCallback what to run as a test
+ * @returns
+ */
 export function sessionTestTwoLinkedWindows(
   testName: string,
-  userName: string,
   testCallback: (
-    windows: Tuple<Page, 2>,
-    user: User,
+    details: { alice1: Page; alice2: Page; alice: User },
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
+  const userName = 'Alice';
   return test(testName, async ({}, testinfo) => {
     const count = 1;
     const windows = await openApp(count);
@@ -122,11 +127,11 @@ export function sessionTestTwoLinkedWindows(
           `openApp should have opened ${count} windows but did not.`,
         );
       }
-      const mainPage = windows[0];
-      const createdUser = await newUser(windows[0], userName);
-      const linkedPage = await linkedDevice(createdUser.recoveryPhrase);
-      windows.push(linkedPage);
-      await testCallback([mainPage, linkedPage], createdUser, testinfo);
+      const alice1 = windows[0];
+      const alice = await newUser(windows[0], userName);
+      const alice2 = await linkedDevice(alice.recoveryPhrase);
+      windows.push(alice2);
+      await testCallback({ alice, alice1, alice2 }, testinfo);
       // eslint-disable-next-line no-useless-catch
     } catch (e) {
       throw e;
@@ -142,13 +147,19 @@ export function sessionTestTwoLinkedWindows(
 
 export function sessionTestThreeWindowsWithTwoLinked(
   testName: string,
-  userNames: Tuple<string, 2>,
   testCallback: (
-    windows: { windowsLinked: Tuple<Page, 2>; otherWindow: Page },
-    users: { userLinked: User; otherUser: User },
+    details: {
+      alice: User;
+      bob: User;
+      alice1: Page;
+      alice2: Page;
+      bob1: Page;
+    },
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
+  const aliceName = 'Alice';
+  const bobName = 'Bob';
   return test(testName, async ({}, testinfo) => {
     const count = 2;
     const windows = await openApp(count);
@@ -159,20 +170,16 @@ export function sessionTestThreeWindowsWithTwoLinked(
           `openApp should have opened ${count} windows but did not.`,
         );
       }
-      const mainPage1 = windows[0];
-      const mainPage2 = windows[1];
-      const [userLinked, otherUser] = await Promise.all([
-        newUser(mainPage1, userNames[0]),
-        newUser(mainPage2, userNames[1]),
+      const alice1 = windows[0];
+      const bob1 = windows[1];
+      const [alice, bob] = await Promise.all([
+        newUser(alice1, aliceName),
+        newUser(bob1, bobName),
       ]);
-      const linkedPage = await linkedDevice(userLinked.recoveryPhrase);
-      windows.push(linkedPage);
+      const alice2 = await linkedDevice(alice.recoveryPhrase);
+      windows.push(alice2);
 
-      await testCallback(
-        { windowsLinked: [mainPage1, linkedPage], otherWindow: mainPage2 },
-        { userLinked, otherUser },
-        testinfo,
-      );
+      await testCallback({ alice, alice1, alice2, bob, bob1 }, testinfo);
     } catch (e) {
       throw e;
     } finally {

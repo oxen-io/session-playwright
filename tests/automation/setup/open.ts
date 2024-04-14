@@ -106,7 +106,5 @@ const openAppAndWait = async (multi: string) => {
       console.log(chalk.grey(`FROM BROWSER: ${msg.text()}`));
     }
   });
-
-  // await window.reload();
   return window;
-};
+}

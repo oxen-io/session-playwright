@@ -11,70 +11,58 @@ import {
 
 sessionTestThreeWindowsWithTwoLinked(
   'Accept request syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow },
-    { userLinked, otherUser },
-  ) => {
-    const testMessage = `${otherUser.userName} sending message request to ${userLinked.userName}`;
-    const testReply = `${userLinked.userName} accepting message request from ${otherUser.userName}`;
-    await sendNewMessage(otherWindow, userLinked.sessionid, testMessage);
-    // Accept request in windowA
-    await clickOnTestIdWithText(windowA, 'message-request-banner');
-    await clickOnTestIdWithText(windowB, 'message-request-banner');
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
+    const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
+    const testReply = `${alice.userName} accepting message request from ${bob.userName}`;
+    await sendNewMessage(bob1, alice.sessionid, testMessage);
+    // Accept request in alice1
+    await clickOnTestIdWithText(alice1, 'message-request-banner');
+    await clickOnTestIdWithText(alice2, 'message-request-banner');
     await clickOnTestIdWithText(
-      windowA,
+      alice1,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
-    await clickOnTestIdWithText(windowA, 'accept-message-request');
+    await clickOnTestIdWithText(alice1, 'accept-message-request');
     await waitForTestIdWithText(
-      windowA,
+      alice1,
       'message-request-response-message',
-      `You have accepted ${otherUser.userName}'s message request`,
+      `You have accepted ${bob.userName}'s message request`,
     );
-    await waitForMatchingText(windowA, 'No pending message requests');
-    await waitForMatchingText(windowB, 'No pending message requests');
-    await sendMessage(windowA, testReply);
-    await waitForTextMessage(otherWindow, testReply);
-    await clickOnTestIdWithText(windowB, 'new-conversation-button');
+    await waitForMatchingText(alice1, 'No pending message requests');
+    await waitForMatchingText(alice2, 'No pending message requests');
+    await sendMessage(alice1, testReply);
+    await waitForTextMessage(bob1, testReply);
+    await clickOnTestIdWithText(alice2, 'new-conversation-button');
     await waitForTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
   },
 );
 
 sessionTestThreeWindowsWithTwoLinked(
   'Decline request syncs',
-  ['Alice', 'Bob'],
-  async (
-    { windowsLinked: [windowA, windowB], otherWindow },
-    { userLinked, otherUser },
-  ) => {
-    const testMessage = `${otherUser.userName} sending message request to ${userLinked.userName}`;
-    await sendNewMessage(otherWindow, userLinked.sessionid, testMessage);
-    // Decline request in windowA
-    await clickOnTestIdWithText(windowA, 'message-request-banner');
+  async ({ alice, alice1, alice2, bob, bob1 }) => {
+    const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
+    await sendNewMessage(bob1, alice.sessionid, testMessage);
+    // Decline request in alice1
+    await clickOnTestIdWithText(alice1, 'message-request-banner');
     await clickOnTestIdWithText(
-      windowA,
+      alice1,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
-    await clickOnTestIdWithText(windowB, 'message-request-banner');
+    await clickOnTestIdWithText(alice2, 'message-request-banner');
     await waitForTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      otherUser.userName,
+      bob.userName,
     );
     await sleepFor(1000);
-    await clickOnTestIdWithText(windowA, 'decline-message-request', 'Decline');
-    await clickOnTestIdWithText(
-      windowA,
-      'session-confirm-ok-button',
-      'Decline',
-    );
+    await clickOnTestIdWithText(alice1, 'decline-message-request', 'Decline');
+    await clickOnTestIdWithText(alice1, 'session-confirm-ok-button', 'Decline');
 
     // Note: this test is broken currently but this is a known issue.
     // It happens because we have a race condition between the update from libsession and the update from the swarm, both with the same seqno.
@@ -83,7 +71,7 @@ sessionTestThreeWindowsWithTwoLinked(
       'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
     );
 
-    await waitForMatchingText(windowA, 'No pending message requests');
-    await waitForMatchingText(windowB, 'No pending message requests');
+    await waitForMatchingText(alice1, 'No pending message requests');
+    await waitForMatchingText(alice2, 'No pending message requests');
   },
 );
