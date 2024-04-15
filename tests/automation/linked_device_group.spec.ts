@@ -1,100 +1,65 @@
-import { createGroup } from './setup/create_group';
-import { newUser } from './setup/new_user';
-import { sessionTestThreeWindows } from './setup/sessionTest';
+import { test_group_Alice2_Bob1_Charlie1 } from './setup/sessionTest';
 import { leaveGroup } from './utilities/leave_group';
-import { linkedDevice } from './utilities/linked_device';
 import {
   clickOnTestIdWithText,
   waitForTestIdWithText,
 } from './utilities/utils';
 
-sessionTestThreeWindows(
+test_group_Alice2_Bob1_Charlie1(
   'Check group and name syncs',
-  async ([windowA, windowB, windowC]) => {
-    const [userA, userB, userC] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-      newUser(windowC, 'Charlie'),
-    ]);
-    const windowD = await linkedDevice(userA.recoveryPhrase);
-
-    const group = await createGroup(
-      'Testing group creation',
-      userA,
-      windowA,
-      userB,
-      windowB,
-      userC,
-      windowC,
-    );
+  async ({ alice2, groupCreated }) => {
     // Check group conversation is in conversation list on linked device
     await waitForTestIdWithText(
-      windowD,
+      alice2,
       'module-conversation__user__profile-name',
-      group.userName,
+      groupCreated.userName,
     );
   },
 );
 
-sessionTestThreeWindows(
+test_group_Alice2_Bob1_Charlie1(
   'Leaving group syncs',
-  async ([windowA, windowC, windowD]) => {
-    const [userA, userB, userC] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowC, 'Bob'),
-      newUser(windowD, 'Charlie'),
-    ]);
-    const windowB = await linkedDevice(userA.recoveryPhrase);
-
-    const group = await createGroup(
-      'Testing leaving a group',
-      userA,
-      windowA,
-      userB,
-      windowC,
-      userC,
-      windowD,
-    );
+  async ({ alice1, alice2, bob1, charlie, charlie1, groupCreated }) => {
     // Check group conversation is in conversation list of linked device
     await waitForTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      group.userName,
+      groupCreated.userName,
     );
     // User C to leave group
-    await leaveGroup(windowD, group);
+    await leaveGroup(charlie1, groupCreated);
     // Check for user A for control message that userC left group
     // await sleepFor(1000);
     // Click on group
     await clickOnTestIdWithText(
-      windowA,
+      alice1,
       'module-conversation__user__profile-name',
-      group.userName,
+      groupCreated.userName,
     );
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      windowA,
+      alice1,
       'group-update-message',
-      `"${userC.userName}" has left the group.`,
+      `"${charlie.userName}" has left the group.`,
     );
     // Check for linked device (userA)
     await clickOnTestIdWithText(
-      windowB,
+      alice2,
       'module-conversation__user__profile-name',
-      group.userName,
+      groupCreated.userName,
     );
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      windowB,
+      alice2,
       'group-update-message',
-      `"${userC.userName}" has left the group.`,
+      `"${charlie.userName}" has left the group.`,
     );
     // Check for user B
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      windowC,
+      bob1,
       'group-update-message',
-      `"${userC.userName}" has left the group.`,
+      `"${charlie.userName}" has left the group.`,
     );
   },
 );

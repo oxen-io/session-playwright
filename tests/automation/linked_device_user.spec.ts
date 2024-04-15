@@ -5,8 +5,8 @@ import { forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import {
   sessionTestOneWindow,
-  sessionTestThreeWindowsWithTwoLinked,
-  sessionTestTwoLinkedWindows,
+  test_Alice2,
+  test_Alice2_Bob1,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { linkedDevice } from './utilities/linked_device';
@@ -63,114 +63,107 @@ sessionTestOneWindow('Link a device', async ([alice1]) => {
   }
 });
 
-sessionTestTwoLinkedWindows(
-  'Changed username syncs',
-  async ({ alice1, alice2 }) => {
-    const newUsername = 'Tiny bubble';
-    await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
-    // Click on pencil icon
-    await clickOnTestIdWithText(alice1, 'edit-profile-icon');
-    // Replace old username with new username
-    await typeIntoInput(alice1, 'profile-name-input', newUsername);
-    // Press enter to confirm change
-    await clickOnElement({
-      window: alice1,
-      strategy: 'data-testid',
-      selector: 'save-button-profile-update',
-    });
-    // Wait for loading animation
-    await waitForLoadingAnimationToFinish(alice1, 'loading-spinner');
+test_Alice2('Changed username syncs', async ({ alice1, alice2 }) => {
+  const newUsername = 'Tiny bubble';
+  await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
+  // Click on pencil icon
+  await clickOnTestIdWithText(alice1, 'edit-profile-icon');
+  // Replace old username with new username
+  await typeIntoInput(alice1, 'profile-name-input', newUsername);
+  // Press enter to confirm change
+  await clickOnElement({
+    window: alice1,
+    strategy: 'data-testid',
+    selector: 'save-button-profile-update',
+  });
+  // Wait for loading animation
+  await waitForLoadingAnimationToFinish(alice1, 'loading-spinner');
 
-    // Check username change in window B
-    // Click on profile settings in window B
-    // Waiting for the username to change
-    await doWhileWithMax(
-      15000,
-      500,
-      'waiting for updated username in profile dialog',
-      async () => {
-        await clickOnTestIdWithText(alice2, 'leftpane-primary-avatar');
-        // Verify username has changed to new username
-        try {
-          await waitForTestIdWithText(
-            alice2,
-            'your-profile-name',
-            newUsername,
-            100,
-          );
-          return true;
-        } catch (e) {
-          // if waitForTestIdWithText doesn't find the right username, close the window and retry
-          return false;
-        } finally {
-          await clickOnElement({
-            window: alice2,
-            strategy: 'data-testid',
-            selector: 'modal-close-button',
-          });
-        }
-      },
-    );
-  },
-);
-
-// eslint-disable-next-line no-empty-pattern
-sessionTestTwoLinkedWindows(
-  'Profile picture syncs',
-  async ({ alice1, alice2 }, testinfo) => {
-    await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
-    // Click on current profile picture
-    await waitForTestIdWithText(alice1, 'copy-button-profile-update', 'Copy');
-
-    await clickOnTestIdWithText(alice1, 'image-upload-section');
-    await clickOnTestIdWithText(alice1, 'image-upload-click');
-    await clickOnTestIdWithText(alice1, 'save-button-profile-update');
-    await waitForTestIdWithText(alice1, 'loading-spinner');
-
-    if (testinfo.config.updateSnapshots === 'all') {
-      await sleepFor(15000, true); // long time to be sure a poll happened when we want to update the snapshot
-    } else {
-      await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
-    }
-    const leftpaneAvatarContainer = await waitForTestIdWithText(
-      alice2,
-      'leftpane-primary-avatar',
-    );
-    const start = Date.now();
-    let correctScreenshot = false;
-    let tryNumber = 0;
-    let lastError: Error | undefined;
-    do {
+  // Check username change in window B
+  // Click on profile settings in window B
+  // Waiting for the username to change
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for updated username in profile dialog',
+    async () => {
+      await clickOnTestIdWithText(alice2, 'leftpane-primary-avatar');
+      // Verify username has changed to new username
       try {
-        await sleepFor(500);
-
-        const screenshot = await leftpaneAvatarContainer.screenshot({
-          type: 'jpeg',
-          // path: 'avatar-updated-blue',
-        });
-        expect(screenshot).toMatchSnapshot({
-          name: 'avatar-updated-blue.jpeg',
-        });
-        correctScreenshot = true;
-        console.warn(
-          `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+        await waitForTestIdWithText(
+          alice2,
+          'your-profile-name',
+          newUsername,
+          100,
         );
+        return true;
       } catch (e) {
-        lastError = e;
+        // if waitForTestIdWithText doesn't find the right username, close the window and retry
+        return false;
+      } finally {
+        await clickOnElement({
+          window: alice2,
+          strategy: 'data-testid',
+          selector: 'modal-close-button',
+        });
       }
-      tryNumber++;
-    } while (Date.now() - start <= 20000 && !correctScreenshot);
+    },
+  );
+});
 
-    if (!correctScreenshot) {
+test_Alice2('Profile picture syncs', async ({ alice1, alice2 }, testinfo) => {
+  await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
+  // Click on current profile picture
+  await waitForTestIdWithText(alice1, 'copy-button-profile-update', 'Copy');
+
+  await clickOnTestIdWithText(alice1, 'image-upload-section');
+  await clickOnTestIdWithText(alice1, 'image-upload-click');
+  await clickOnTestIdWithText(alice1, 'save-button-profile-update');
+  await waitForTestIdWithText(alice1, 'loading-spinner');
+
+  if (testinfo.config.updateSnapshots === 'all') {
+    await sleepFor(15000, true); // long time to be sure a poll happened when we want to update the snapshot
+  } else {
+    await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
+  }
+  const leftpaneAvatarContainer = await waitForTestIdWithText(
+    alice2,
+    'leftpane-primary-avatar',
+  );
+  const start = Date.now();
+  let correctScreenshot = false;
+  let tryNumber = 0;
+  let lastError: Error | undefined;
+  do {
+    try {
+      await sleepFor(500);
+
+      const screenshot = await leftpaneAvatarContainer.screenshot({
+        type: 'jpeg',
+        // path: 'avatar-updated-blue',
+      });
+      expect(screenshot).toMatchSnapshot({
+        name: 'avatar-updated-blue.jpeg',
+      });
+      correctScreenshot = true;
       console.warn(
-        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
       );
-      throw new Error('waited 20s and still the screenshot is not right');
+    } catch (e) {
+      lastError = e;
     }
-  },
-);
+    tryNumber++;
+  } while (Date.now() - start <= 20000 && !correctScreenshot);
 
-sessionTestThreeWindowsWithTwoLinked(
+  if (!correctScreenshot) {
+    console.warn(
+      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+    );
+    throw new Error('waited 20s and still the screenshot is not right');
+  }
+});
+
+test_Alice2_Bob1(
   'Contacts syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     await createContact(alice1, bob1, alice, bob);
@@ -184,7 +177,7 @@ sessionTestThreeWindowsWithTwoLinked(
   },
 );
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Deleted message syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const messageToDelete = 'Testing deletion functionality for linked device';
@@ -214,7 +207,7 @@ sessionTestThreeWindowsWithTwoLinked(
   },
 );
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Unsent message syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const unsentMessage = 'Testing unsending functionality for linked device';
@@ -245,7 +238,8 @@ sessionTestThreeWindowsWithTwoLinked(
     await hasTextMessageBeenDeleted(alice2, unsentMessage, 1000);
   },
 );
-sessionTestThreeWindowsWithTwoLinked(
+
+test_Alice2_Bob1(
   'Blocked user syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const testMessage = 'Testing blocking functionality for linked device';

@@ -1,5 +1,5 @@
 import { sleepFor } from '../promise_utils';
-import { sessionTestThreeWindowsWithTwoLinked } from './setup/sessionTest';
+import { test_Alice2_Bob1 } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -9,9 +9,9 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Accept request syncs',
-  async ({ alice, alice1, alice2, bob, bob1 }) => {
+  async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
     const testReply = `${alice.userName} accepting message request from ${bob.userName}`;
     await sendNewMessage(bob1, alice.sessionid, testMessage);
@@ -42,7 +42,7 @@ sessionTestThreeWindowsWithTwoLinked(
   },
 );
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Decline request syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;

@@ -1,9 +1,10 @@
 /* eslint-disable no-empty-pattern */
 /* eslint-disable @typescript-eslint/array-type */
 import { Page, TestInfo, test } from '@playwright/test';
-import { User } from '../types/testing';
+import { Group, User } from '../types/testing';
 import { linkedDevice } from '../utilities/linked_device';
 import { forceCloseAllWindows } from './beforeEach';
+import { createGroup } from './create_group';
 import { newUser } from './new_user';
 import { openApp } from './open';
 
@@ -21,6 +22,20 @@ type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N
   : _TupleOf<T, N, [T, ...R]>;
 
 type CountWindows = 1 | 2 | 3 | 4 | 5;
+
+type WithAlice = { alice: User };
+type WithBob = { bob: User };
+type WithCharlie = { charlie: User };
+type WithDracula = { dracula: User };
+
+type WithAlice1 = { alice1: Page };
+type WithAlice2 = { alice2: Page };
+type WithBob1 = { bob1: Page };
+type WithCharlie1 = { charlie1: Page };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type WithDracula1 = { dracula1: Page };
+
+type WithGroupCreated = { groupCreated: Group };
 
 function sessionTest<T extends CountWindows, N extends Tuple<Page, T>>(
   testName: string,
@@ -74,120 +89,261 @@ export function sessionTestThreeWindows(
   return sessionTest(testName, testCallback, 3);
 }
 
-export function sessionTestFourWindows(
-  testName: string,
-  testCallback: ([windowA, windowB, windowC, windowD]: [
-    Page,
-    Page,
-    Page,
-    Page,
-  ]) => Promise<void>,
-) {
-  return sessionTest(testName, testCallback, 4);
-}
-
-export function sessionTestFiveWindows(
-  testName: string,
-  testCallback: ([windowA, windowB, windowC, windowD]: [
-    Page,
-    Page,
-    Page,
-    Page,
-    Page,
-  ]) => Promise<void>,
-) {
-  return sessionTest(testName, testCallback, 5);
-}
+/**
+ * This type can cause type checking performance issues, so only use it with small values
+ */
+type LessThan<
+  TNumber extends number,
+  TArray extends any[] = [],
+> = TNumber extends TArray['length']
+  ? TArray[number]
+  : LessThan<TNumber, [...TArray, TArray['length']]>;
 
 /**
- * fixtures with linked windows are below
+ * This type can cause type checking performance issues, so only use it with small values.
  */
+type NumericRange<TStart extends number, TEnd extends number> =
+  | Exclude<TEnd, LessThan<TStart, []>>
+  | Exclude<LessThan<TEnd, []>, LessThan<TStart, []>>;
 
-/**
- * Opens two windows and link one to the other, logged in user is "Alice"
- * @param testName title of the test
- * @param testCallback what to run as a test
- * @returns
- */
-export function sessionTestTwoLinkedWindows(
+function sessionTestGeneric<
+  UserCount extends 1 | 2 | 3 | 4,
+  Links extends Array<NumericRange<1, UserCount>>,
+  Grouped extends Array<NumericRange<1, UserCount>>,
+>(
   testName: string,
-  testCallback: (
-    details: { alice1: Page; alice2: Page; alice: User },
-    testInfo: TestInfo,
-  ) => Promise<void>,
-) {
-  const userName = 'Alice';
-  return test(testName, async ({}, testinfo) => {
-    const count = 1;
-    const windows = await openApp(count);
-
-    try {
-      if (windows.length !== count) {
-        throw new Error(
-          `openApp should have opened ${count} windows but did not.`,
-        );
-      }
-      const alice1 = windows[0];
-      const alice = await newUser(windows[0], userName);
-      const alice2 = await linkedDevice(alice.recoveryPhrase);
-      windows.push(alice2);
-      await testCallback({ alice, alice1, alice2 }, testinfo);
-      // eslint-disable-next-line no-useless-catch
-    } catch (e) {
-      throw e;
-    } finally {
-      try {
-        await forceCloseAllWindows(windows);
-      } catch (e) {
-        console.error(`forceCloseAllWindows of ${testName} failed with: `, e);
-      }
-    }
-  });
-}
-
-export function sessionTestThreeWindowsWithTwoLinked(
-  testName: string,
+  userCount: UserCount,
+  { links, grouped }: { links?: Links; grouped?: Grouped },
   testCallback: (
     details: {
-      alice: User;
-      bob: User;
-      alice1: Page;
-      alice2: Page;
-      bob1: Page;
+      users: Tuple<User, UserCount>;
+      groupCreated: Grouped extends Array<any> ? Group : undefined;
+      mainWindows: Tuple<Page, UserCount>;
+      linkedWindows: Tuple<Page, Links['length']>;
     },
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
-  const aliceName = 'Alice';
-  const bobName = 'Bob';
+  const userNames: Tuple<string, 4> = ['Alice', 'Bob', 'Charlie', 'Dracula'];
+
   return test(testName, async ({}, testinfo) => {
-    const count = 2;
-    const windows = await openApp(count);
+    const mainWindows = await openApp(userCount);
+    const linkedWindows: Array<Page> = [];
 
     try {
-      if (windows.length !== count) {
+      if (mainWindows.length !== userCount) {
         throw new Error(
-          `openApp should have opened ${count} windows but did not.`,
+          `openApp should have opened ${userCount} windows but did not.`,
         );
       }
-      const alice1 = windows[0];
-      const bob1 = windows[1];
-      const [alice, bob] = await Promise.all([
-        newUser(alice1, aliceName),
-        newUser(bob1, bobName),
-      ]);
-      const alice2 = await linkedDevice(alice.recoveryPhrase);
-      windows.push(alice2);
+      const users = (await Promise.all(
+        mainWindows.map((m, i) => newUser(m, userNames[i])),
+      )) as Tuple<User, UserCount>;
 
-      await testCallback({ alice, alice1, alice2, bob, bob1 }, testinfo);
+      if (links?.length) {
+        for (let index = 0; index < links.length; index++) {
+          const link = links[index];
+          console.info(
+            'linking a window with ',
+            users[link - 1].recoveryPhrase,
+          );
+          const linked = await linkedDevice(users[link - 1].recoveryPhrase);
+          linkedWindows.push(linked);
+        }
+      }
+
+      let groupCreated: Group | undefined;
+      if (grouped?.length) {
+        groupCreated = await createGroup(
+          testName,
+          users[grouped[0] - 1],
+          mainWindows[grouped[0] - 1],
+          users[grouped[1] - 1],
+          mainWindows[grouped[1] - 1],
+          users[grouped[2] - 1],
+          mainWindows[grouped[2] - 1],
+        );
+      }
+
+      // Sadly, we need to cast the parameters here, so our less generic function have correct types for the callback
+      await testCallback(
+        {
+          mainWindows: mainWindows as Tuple<Page, UserCount>,
+          linkedWindows: linkedWindows as Tuple<Page, Links['length']>,
+          users,
+          groupCreated: groupCreated as Grouped extends Array<any>
+            ? Group
+            : undefined,
+        },
+        testinfo,
+      );
     } catch (e) {
       throw e;
     } finally {
       try {
-        await forceCloseAllWindows(windows);
+        await forceCloseAllWindows([...mainWindows, ...linkedWindows]);
       } catch (e) {
         console.error(`forceCloseAllWindows of ${testName} failed with: `, e);
       }
     }
   });
+}
+
+export function test_Alice2(
+  testname: string,
+  testCallback: (
+    details: WithAlice & WithAlice1 & WithAlice2,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    1,
+    { links: [1] },
+    ({ mainWindows, users, linkedWindows }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          alice1: mainWindows[0],
+          alice2: linkedWindows[0],
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
+export function test_Alice2_Bob1(
+  testname: string,
+  testCallback: (
+    details: WithAlice & WithAlice1 & WithAlice2 & WithBob & WithBob1,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    2,
+    { links: [1] },
+    ({ mainWindows, users, linkedWindows }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          bob: users[1],
+          alice1: mainWindows[0],
+          bob1: mainWindows[1],
+          alice2: linkedWindows[0],
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
+export function test_group_Alice1_Bob1_Charlie1(
+  testname: string,
+  testCallback: (
+    details: WithAlice &
+      WithAlice1 &
+      WithBob &
+      WithBob1 &
+      WithCharlie &
+      WithCharlie1 &
+      WithGroupCreated,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    3,
+    { grouped: [1, 2, 3] },
+    ({ mainWindows, users, groupCreated }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          bob: users[1],
+          charlie: users[2],
+          alice1: mainWindows[0],
+          bob1: mainWindows[1],
+          charlie1: mainWindows[2],
+          groupCreated,
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
+export function test_group_Alice2_Bob1_Charlie1(
+  testname: string,
+  testCallback: (
+    details: WithAlice &
+      WithAlice1 &
+      WithAlice2 &
+      WithBob &
+      WithBob1 &
+      WithCharlie &
+      WithCharlie1 &
+      WithGroupCreated,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    3,
+    { grouped: [1, 2, 3], links: [1] },
+    ({ mainWindows, users, groupCreated, linkedWindows }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          bob: users[1],
+          charlie: users[2],
+          alice1: mainWindows[0],
+          bob1: mainWindows[1],
+          charlie1: mainWindows[2],
+          alice2: linkedWindows[0],
+          groupCreated,
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
+export function test_group_Alice1_Bob1_Charlie1_Dracula1(
+  testname: string,
+  testCallback: (
+    details: WithAlice &
+      WithAlice1 &
+      WithBob &
+      WithBob1 &
+      WithCharlie &
+      WithCharlie1 &
+      WithDracula &
+      WithDracula1 &
+      WithGroupCreated,
+
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    4,
+    { grouped: [1, 2, 3] },
+    ({ mainWindows, users, groupCreated }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          bob: users[1],
+          charlie: users[2],
+          dracula: users[3],
+          alice1: mainWindows[0],
+          bob1: mainWindows[1],
+          charlie1: mainWindows[2],
+          dracula1: mainWindows[3],
+          groupCreated,
+        },
+        testInfo,
+      );
+    },
+  );
 }

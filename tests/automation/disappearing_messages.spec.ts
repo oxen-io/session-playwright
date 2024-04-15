@@ -1,13 +1,10 @@
 import { sleepFor } from '../promise_utils';
-import { createGroup } from './setup/create_group';
-import { newUser } from './setup/new_user';
 import {
-  sessionTestThreeWindows,
-  sessionTestThreeWindowsWithTwoLinked,
-  sessionTestTwoLinkedWindows,
+  test_Alice2,
+  test_Alice2_Bob1,
+  test_group_Alice2_Bob1_Charlie1,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
-import { linkedDevice } from './utilities/linked_device';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import { setDisappearingMessages } from './utilities/set_disappearing_messages';
@@ -20,7 +17,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Disappear after read 1:1',
   async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage =
@@ -73,7 +70,7 @@ sessionTestThreeWindowsWithTwoLinked(
   },
 );
 
-sessionTestThreeWindowsWithTwoLinked(
+test_Alice2_Bob1(
   'Disappear after send 1:1',
   async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage =
@@ -116,61 +113,47 @@ sessionTestThreeWindowsWithTwoLinked(
   },
 );
 
-sessionTestThreeWindows(
+test_group_Alice2_Bob1_Charlie1(
   'Disappear after send groups',
-  async ([windowA, windowB, windowC]) => {
-    const [userA, userB, userC] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-      newUser(windowC, 'Chloe'),
-    ]);
-    const windowD = await linkedDevice(userA.recoveryPhrase);
+  async ({ alice1, alice2, bob1, charlie1, groupCreated }) => {
     const controlMessageText =
       'set messages to disappear 10 seconds after they have been sent';
     const testMessage = 'Testing disappearing messages in groups';
-    const group = await createGroup(
-      'Disappearing messages test',
-      userA,
-      windowA,
-      userB,
-      windowB,
-      userC,
-      windowC,
-    );
+
     await clickOnTestIdWithText(
-      windowD,
+      alice2,
       'module-conversation__user__profile-name',
-      group.userName,
+      groupCreated.userName,
     );
-    await setDisappearingMessages(windowA, [
+    await setDisappearingMessages(alice1, [
       'group',
       'disappear-after-send-option',
       'time-option-10-seconds',
     ]);
     // Check control message is visible and correct
     await doesTextIncludeString(
-      windowA,
+      alice1,
       'disappear-control-message',
       controlMessageText,
     );
-    await sendMessage(windowA, testMessage);
+    await sendMessage(alice1, testMessage);
     await Promise.all([
-      waitForTextMessage(windowB, testMessage),
-      waitForTextMessage(windowC, testMessage),
-      waitForTextMessage(windowD, testMessage),
+      waitForTextMessage(bob1, testMessage),
+      waitForTextMessage(charlie1, testMessage),
+      waitForTextMessage(alice2, testMessage),
     ]);
     // Wait 10 seconds for messages to disappear
     await sleepFor(10000);
     await Promise.all([
-      hasTextMessageBeenDeleted(windowA, testMessage),
-      hasTextMessageBeenDeleted(windowB, testMessage),
-      hasTextMessageBeenDeleted(windowC, testMessage),
-      hasTextMessageBeenDeleted(windowD, testMessage),
+      hasTextMessageBeenDeleted(alice1, testMessage),
+      hasTextMessageBeenDeleted(bob1, testMessage),
+      hasTextMessageBeenDeleted(charlie1, testMessage),
+      hasTextMessageBeenDeleted(alice2, testMessage),
     ]);
   },
 );
 
-sessionTestTwoLinkedWindows(
+test_Alice2(
   'Disappear after send note to self',
   async ({ alice, alice1, alice2 }) => {
     const testMessage = 'Message to test note to self';
