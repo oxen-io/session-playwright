@@ -1,32 +1,26 @@
 import { sleepFor } from '../promise_utils';
-import { newUser } from './setup/new_user';
+import { test_Alice1_Bob1 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
-sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-
-  await createContact(windowA, windowB, userA, userB);
-  await clickOnTestIdWithText(windowA, 'call-button');
-  await clickOnTestIdWithText(windowA, 'session-toast');
-  await clickOnTestIdWithText(windowA, 'enable-calls');
-  await clickOnTestIdWithText(windowA, 'session-confirm-ok-button');
-  await clickOnTestIdWithText(windowA, 'message-section');
+test_Alice1_Bob1('Voice calls', async ({ alice, alice1, bob, bob1 }) => {
+  await createContact(alice1, bob1, alice, bob);
+  await clickOnTestIdWithText(alice1, 'call-button');
+  await clickOnTestIdWithText(alice1, 'session-toast');
+  await clickOnTestIdWithText(alice1, 'enable-calls');
+  await clickOnTestIdWithText(alice1, 'session-confirm-ok-button');
+  await clickOnTestIdWithText(alice1, 'message-section');
   await clickOnTestIdWithText(
-    windowA,
+    alice1,
     'module-conversation__user__profile-name',
-    userB.userName,
+    bob.userName,
   );
-  await clickOnTestIdWithText(windowA, 'call-button');
+  await clickOnTestIdWithText(alice1, 'call-button');
   // Enable calls in window B
-  await clickOnTestIdWithText(windowB, 'session-toast');
-  await clickOnTestIdWithText(windowB, 'enable-calls');
-  await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
-  await clickOnMatchingText(windowB, 'Accept');
+  await clickOnTestIdWithText(bob1, 'session-toast');
+  await clickOnTestIdWithText(bob1, 'enable-calls');
+  await clickOnTestIdWithText(bob1, 'session-confirm-ok-button');
+  await clickOnMatchingText(bob1, 'Accept');
   await sleepFor(5000);
-  await clickOnTestIdWithText(windowA, 'end-call');
+  await clickOnTestIdWithText(alice1, 'end-call');
 });

@@ -20,6 +20,7 @@ import {
 
 // Send message in one to one conversation with new contact
 sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
+  // no fixture for that one
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
