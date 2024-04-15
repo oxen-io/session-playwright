@@ -127,7 +127,7 @@ class SessionReporter implements Reporter {
     const estimatedTotalMins = Math.floor(estimateLeftMs / (60 * 1000));
     console.log(
       chalk.bgWhite(
-        `\t\tRemaining tests: ${notPassedCount}, so rougly ${estimatedTotalMins}min total  left, so about ${Math.floor(
+        `\t\tRemaining tests: ${notPassedCount}, rougly ${estimatedTotalMins}min total left, so about ${Math.ceil(
           estimatedTotalMins / this.countWorkers,
         )}min as we have ${this.countWorkers} worker(s)...`,
       ),

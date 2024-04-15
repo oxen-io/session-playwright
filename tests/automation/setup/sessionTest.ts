@@ -113,7 +113,11 @@ function sessionTestGeneric<
 >(
   testName: string,
   userCount: UserCount,
-  { links, grouped }: { links?: Links; grouped?: Grouped },
+  {
+    links,
+    grouped,
+    waitForNetwork = true,
+  }: { links?: Links; grouped?: Grouped; waitForNetwork?: boolean },
   testCallback: (
     details: {
       users: Tuple<User, UserCount>;
@@ -137,7 +141,7 @@ function sessionTestGeneric<
         );
       }
       const users = (await Promise.all(
-        mainWindows.map((m, i) => newUser(m, userNames[i])),
+        mainWindows.map((m, i) => newUser(m, userNames[i], waitForNetwork)),
       )) as Tuple<User, UserCount>;
 
       if (links?.length) {
@@ -189,6 +193,29 @@ function sessionTestGeneric<
   });
 }
 
+export function test_Alice1_no_network(
+  testname: string,
+  testCallback: (
+    details: WithAlice & WithAlice1,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    1,
+    { waitForNetwork: false },
+    ({ mainWindows, users }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          alice1: mainWindows[0],
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
 export function test_Alice2(
   testname: string,
   testCallback: (
@@ -206,6 +233,31 @@ export function test_Alice2(
           alice: users[0],
           alice1: mainWindows[0],
           alice2: linkedWindows[0],
+        },
+        testInfo,
+      );
+    },
+  );
+}
+
+export function test_Alice1_Bob1(
+  testname: string,
+  testCallback: (
+    details: WithAlice & WithAlice1 & WithBob & WithBob1,
+    testInfo: TestInfo,
+  ) => Promise<void>,
+) {
+  return sessionTestGeneric(
+    testname,
+    2,
+    {},
+    ({ mainWindows, users }, testInfo) => {
+      return testCallback(
+        {
+          alice: users[0],
+          bob: users[1],
+          alice1: mainWindows[0],
+          bob1: mainWindows[1],
         },
         testInfo,
       );
