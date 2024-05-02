@@ -193,7 +193,11 @@ function sessionTestGeneric<
   });
 }
 
-export function test_Alice1_no_network(
+/**
+ * Setup the test with 1 user and a single window, but don't wait for the network to be ready.
+ * Used for tests which don't need network (i.e. setting/checking passwords etc)
+ */
+export function test_Alice_1W_no_network(
   testname: string,
   testCallback: (
     details: WithAlice & WithAlice1,
@@ -216,7 +220,11 @@ export function test_Alice1_no_network(
   );
 }
 
-export function test_Alice2(
+/**
+ * Setup the test with 1 user and 2 windows total:
+ * - Alice with 2 windows.
+ */
+export function test_Alice_2W(
   testname: string,
   testCallback: (
     details: WithAlice & WithAlice1 & WithAlice2,
@@ -240,7 +248,12 @@ export function test_Alice2(
   );
 }
 
-export function test_Alice1_Bob1(
+/**
+ * Setup the test with 2 users and 2 windows total:
+ * - Alice with 1 window,
+ * - Bob with 1 window.
+ */
+export function test_Alice_1W_Bob_1W(
   testname: string,
   testCallback: (
     details: WithAlice & WithAlice1 & WithBob & WithBob1,
@@ -265,7 +278,12 @@ export function test_Alice1_Bob1(
   );
 }
 
-export function test_Alice2_Bob1(
+/**
+ * Setup the test with 2 users and 3 windows total:
+ * - Alice with 2 windows,
+ * - Bob with 1 window.
+ */
+export function test_Alice_2W_Bob_1W(
   testname: string,
   testCallback: (
     details: WithAlice & WithAlice1 & WithAlice2 & WithBob & WithBob1,
@@ -291,7 +309,13 @@ export function test_Alice2_Bob1(
   );
 }
 
-export function test_group_Alice1_Bob1_Charlie1(
+/**
+ * Setup the test with a group having 3 users and 3 windows total:
+ * - Alice with 1 window,
+ * - Bob with 1 window,
+ * - Charlie with 1 window.
+ */
+export function test_group_Alice_1W_Bob_1W_Charlie_1W(
   testname: string,
   testCallback: (
     details: WithAlice &
@@ -325,7 +349,13 @@ export function test_group_Alice1_Bob1_Charlie1(
   );
 }
 
-export function test_group_Alice2_Bob1_Charlie1(
+/**
+ * Setup the test with a group having 3 users and 4 windows total:
+ * - Alice with 2 windows,
+ * - Bob with 1 window,
+ * - Charlie with 1 window.
+ */
+export function test_group_Alice_2W_Bob_1W_Charlie_1W(
   testname: string,
   testCallback: (
     details: WithAlice &
@@ -361,7 +391,14 @@ export function test_group_Alice2_Bob1_Charlie1(
   );
 }
 
-export function test_group_Alice1_Bob1_Charlie1_Dracula1(
+/**
+ * Setup the test with a group having 4 users and 4 windows total:
+ * - Alice with 1 window,
+ * - Bob with 1 window,
+ * - Charlie with 1 window,
+ * - Dracula with 1 window,
+ */
+export function test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
   testname: string,
   testCallback: (
     details: WithAlice &

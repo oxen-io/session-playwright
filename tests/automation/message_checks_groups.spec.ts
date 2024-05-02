@@ -1,5 +1,5 @@
 import { sleepFor } from '../promise_utils';
-import { test_group_Alice1_Bob1_Charlie1 } from './setup/sessionTest';
+import { test_group_Alice_1W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { replyTo } from './utilities/reply_message';
 import {
@@ -14,7 +14,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send image to group',
   async ({ alice, bob, alice1, bob1, charlie1, groupCreated }) => {
     const testMessage = `${alice.userName} sending image to ${groupCreated.userName}`;
@@ -42,7 +42,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send video to group',
   async ({ alice, bob, alice1, bob1, groupCreated }) => {
     const testMessage = `${alice.userName} sending video to ${groupCreated.userName}`;
@@ -68,7 +68,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send document to group',
   async ({ alice, bob, alice1, bob1, groupCreated }) => {
     const testMessage = `${alice.userName} sending document to ${groupCreated.userName}`;
@@ -93,7 +93,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send voice message to group',
   async ({ alice, bob, alice1, bob1, charlie1, groupCreated }) => {
     const testReply = `${bob.userName} replying to voice message from ${alice.userName} in ${groupCreated.userName}`;
@@ -143,7 +143,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send GIF to group',
   async ({ alice, bob, alice1, bob1, groupCreated }) => {
     const testMessage = `${alice.userName} sending GIF to ${groupCreated.userName}`;
@@ -171,7 +171,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Send long text to group',
   async ({ alice, bob, alice1, bob1, charlie1, groupCreated }) => {
     const longText =
@@ -196,7 +196,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Unsend message to group',
   async ({ alice1, bob1, charlie1, groupCreated }) => {
     const unsendMessage = `Testing unsend functionality in ${groupCreated.userName}`;
@@ -218,7 +218,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Delete message to group',
   async ({ alice1, bob1, charlie1, groupCreated }) => {
     const deletedMessage = `Testing delete message functionality in ${groupCreated.userName}`;

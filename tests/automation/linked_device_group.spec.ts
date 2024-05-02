@@ -1,11 +1,11 @@
-import { test_group_Alice2_Bob1_Charlie1 } from './setup/sessionTest';
+import { test_group_Alice_2W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { leaveGroup } from './utilities/leave_group';
 import {
   clickOnTestIdWithText,
   waitForTestIdWithText,
 } from './utilities/utils';
 
-test_group_Alice2_Bob1_Charlie1(
+test_group_Alice_2W_Bob_1W_Charlie_1W(
   'Check group and name syncs',
   async ({ alice2, groupCreated }) => {
     // Check group conversation is in conversation list on linked device
@@ -17,7 +17,7 @@ test_group_Alice2_Bob1_Charlie1(
   },
 );
 
-test_group_Alice2_Bob1_Charlie1(
+test_group_Alice_2W_Bob_1W_Charlie_1W(
   'Leaving group syncs',
   async ({ alice1, alice2, bob1, charlie, charlie1, groupCreated }) => {
     // Check group conversation is in conversation list of linked device

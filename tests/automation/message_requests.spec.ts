@@ -1,4 +1,4 @@
-import { test_Alice1_Bob1 } from './setup/sessionTest';
+import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -9,7 +9,7 @@ import {
 } from './utilities/utils';
 
 // Open two windows and log into 2 separate accounts
-test_Alice1_Bob1(
+test_Alice_1W_Bob_1W(
   'Message requests accept',
   async ({ alice, alice1, bob, bob1 }) => {
     const testMessage = `Sender: ${alice.userName} Receiver: ${bob.userName}`;
@@ -35,7 +35,7 @@ test_Alice1_Bob1(
   },
 );
 
-test_Alice1_Bob1(
+test_Alice_1W_Bob_1W(
   'Message requests text reply',
   async ({ alice, alice1, bob, bob1 }) => {
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
@@ -62,7 +62,7 @@ test_Alice1_Bob1(
   },
 );
 
-test_Alice1_Bob1(
+test_Alice_1W_Bob_1W(
   'Message requests decline',
   async ({ alice, alice1, bob, bob1 }) => {
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
@@ -85,7 +85,7 @@ test_Alice1_Bob1(
   },
 );
 
-test_Alice1_Bob1(
+test_Alice_1W_Bob_1W(
   'Message requests clear all',
   async ({ alice, alice1, bob, bob1 }) => {
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;

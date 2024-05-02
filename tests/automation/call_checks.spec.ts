@@ -1,9 +1,9 @@
 import { sleepFor } from '../promise_utils';
-import { test_Alice1_Bob1 } from './setup/sessionTest';
+import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
 
-test_Alice1_Bob1('Voice calls', async ({ alice, alice1, bob, bob1 }) => {
+test_Alice_1W_Bob_1W('Voice calls', async ({ alice, alice1, bob, bob1 }) => {
   await createContact(alice1, bob1, alice, bob);
   await clickOnTestIdWithText(alice1, 'call-button');
   await clickOnTestIdWithText(alice1, 'session-toast');

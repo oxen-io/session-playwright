@@ -3,8 +3,8 @@ import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
   sessionTestTwoWindows,
-  test_Alice1_Bob1,
-  test_Alice1_no_network,
+  test_Alice_1W_Bob_1W,
+  test_Alice_1W_no_network,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { sendMessage } from './utilities/message';
@@ -58,7 +58,7 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   ]);
 });
 
-test_Alice1_Bob1(
+test_Alice_1W_Bob_1W(
   'Block user in conversation list',
   async ({ alice1, bob1, alice, bob }) => {
     // Create contact and send new message
@@ -100,7 +100,7 @@ test_Alice1_Bob1(
   },
 );
 
-test_Alice1_no_network('Change username', async ({ alice1 }) => {
+test_Alice_1W_no_network('Change username', async ({ alice1 }) => {
   const newUsername = 'Tiny bubble';
   // Open Profile
   await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
@@ -121,7 +121,7 @@ test_Alice1_no_network('Change username', async ({ alice1 }) => {
   await clickOnTestIdWithText(alice1, 'modal-close-button');
 });
 
-test_Alice1_no_network('Change avatar', async ({ alice1 }) => {
+test_Alice_1W_no_network('Change avatar', async ({ alice1 }) => {
   // Open profile
   await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
   // Click on current profile picture
@@ -168,7 +168,7 @@ test_Alice1_no_network('Change avatar', async ({ alice1 }) => {
   }
 });
 
-test_Alice1_Bob1('Set nickname', async ({ alice1, bob1, alice, bob }) => {
+test_Alice_1W_Bob_1W('Set nickname', async ({ alice1, bob1, alice, bob }) => {
   const nickname = 'new nickname for Bob';
 
   await createContact(alice1, bob1, alice, bob);
@@ -207,7 +207,7 @@ test_Alice1_Bob1('Set nickname', async ({ alice1, bob1, alice, bob }) => {
   expect(conversationListUsername).toBe(nickname);
 });
 
-test_Alice1_Bob1('Read status', async ({ alice1, bob1, alice, bob }) => {
+test_Alice_1W_Bob_1W('Read status', async ({ alice1, bob1, alice, bob }) => {
   await createContact(alice1, bob1, alice, bob);
   await clickOnElement({
     window: alice1,

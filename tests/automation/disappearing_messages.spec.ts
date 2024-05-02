@@ -1,8 +1,8 @@
 import { sleepFor } from '../promise_utils';
 import {
-  test_Alice2,
-  test_Alice2_Bob1,
-  test_group_Alice2_Bob1_Charlie1,
+  test_Alice_2W,
+  test_Alice_2W_Bob_1W,
+  test_group_Alice_2W_Bob_1W_Charlie_1W,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { sendMessage } from './utilities/message';
@@ -17,7 +17,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Disappear after read 1:1',
   async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage =
@@ -70,7 +70,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Disappear after send 1:1',
   async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage =
@@ -113,7 +113,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_group_Alice2_Bob1_Charlie1(
+test_group_Alice_2W_Bob_1W_Charlie_1W(
   'Disappear after send groups',
   async ({ alice1, alice2, bob1, charlie1, groupCreated }) => {
     const controlMessageText =
@@ -153,7 +153,7 @@ test_group_Alice2_Bob1_Charlie1(
   },
 );
 
-test_Alice2(
+test_Alice_2W(
   'Disappear after send note to self',
   async ({ alice, alice1, alice2 }) => {
     const testMessage = 'Message to test note to self';

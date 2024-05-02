@@ -14,8 +14,8 @@ import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
   sessionTestThreeWindows,
-  test_group_Alice1_Bob1_Charlie1,
-  test_group_Alice1_Bob1_Charlie1_Dracula1,
+  test_group_Alice_1W_Bob_1W_Charlie_1W,
+  test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { leaveGroup } from './utilities/leave_group';
@@ -43,7 +43,7 @@ sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
   // await waitForTestIdWithText(windowA, 'control-message');
 });
 
-test_group_Alice1_Bob1_Charlie1_Dracula1(
+test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
   'Add contact to group',
   async ({
     alice,
@@ -116,7 +116,7 @@ test_group_Alice1_Bob1_Charlie1_Dracula1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Change group name',
   async ({ alice1, bob1, charlie1, groupCreated }) => {
     const newGroupName = 'New group name';
@@ -144,7 +144,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Test mentions',
   async ({ alice, alice1, bob, bob1, charlie, charlie1, groupCreated }) => {
     // in windowA we should be able to mentions bob and userC
@@ -186,7 +186,7 @@ test_group_Alice1_Bob1_Charlie1(
   },
 );
 
-test_group_Alice1_Bob1_Charlie1(
+test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Leave group',
   async ({ charlie1, groupCreated }) => {
     await leaveGroup(charlie1, groupCreated);

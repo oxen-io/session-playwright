@@ -5,8 +5,8 @@ import { forceCloseAllWindows } from './setup/beforeEach';
 import { newUser } from './setup/new_user';
 import {
   sessionTestOneWindow,
-  test_Alice2,
-  test_Alice2_Bob1,
+  test_Alice_2W,
+  test_Alice_2W_Bob_1W,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { linkedDevice } from './utilities/linked_device';
@@ -63,7 +63,7 @@ sessionTestOneWindow('Link a device', async ([alice1]) => {
   }
 });
 
-test_Alice2('Changed username syncs', async ({ alice1, alice2 }) => {
+test_Alice_2W('Changed username syncs', async ({ alice1, alice2 }) => {
   const newUsername = 'Tiny bubble';
   await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
   // Click on pencil icon
@@ -111,7 +111,7 @@ test_Alice2('Changed username syncs', async ({ alice1, alice2 }) => {
   );
 });
 
-test_Alice2('Profile picture syncs', async ({ alice1, alice2 }, testinfo) => {
+test_Alice_2W('Profile picture syncs', async ({ alice1, alice2 }, testinfo) => {
   await clickOnTestIdWithText(alice1, 'leftpane-primary-avatar');
   // Click on current profile picture
   await waitForTestIdWithText(alice1, 'copy-button-profile-update', 'Copy');
@@ -163,7 +163,7 @@ test_Alice2('Profile picture syncs', async ({ alice1, alice2 }, testinfo) => {
   }
 });
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Contacts syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     await createContact(alice1, bob1, alice, bob);
@@ -177,7 +177,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Deleted message syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const messageToDelete = 'Testing deletion functionality for linked device';
@@ -207,7 +207,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Unsent message syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const unsentMessage = 'Testing unsending functionality for linked device';
@@ -239,7 +239,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Blocked user syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const testMessage = 'Testing blocking functionality for linked device';

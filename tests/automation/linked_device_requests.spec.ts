@@ -1,5 +1,5 @@
 import { sleepFor } from '../promise_utils';
-import { test_Alice2_Bob1 } from './setup/sessionTest';
+import { test_Alice_2W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -9,7 +9,7 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Accept request syncs',
   async ({ alice, bob, alice1, alice2, bob1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
@@ -42,7 +42,7 @@ test_Alice2_Bob1(
   },
 );
 
-test_Alice2_Bob1(
+test_Alice_2W_Bob_1W(
   'Decline request syncs',
   async ({ alice, alice1, alice2, bob, bob1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;

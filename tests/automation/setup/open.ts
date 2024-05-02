@@ -107,4 +107,4 @@ const openAppAndWait = async (multi: string) => {
     }
   });
   return window;
-}
+};

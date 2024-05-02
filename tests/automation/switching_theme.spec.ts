@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { test_Alice1_no_network } from './setup/sessionTest';
+import { test_Alice_1W_no_network } from './setup/sessionTest';
 import { clickOnTestIdWithText } from './utilities/utils';
 
-test_Alice1_no_network('Switch themes', async ({ alice1 }) => {
+test_Alice_1W_no_network('Switch themes', async ({ alice1 }) => {
   // Create
   // Check light theme colour is correct
   const darkThemeColor = alice1.locator('.inbox.index');

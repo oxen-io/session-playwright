@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 
 import { sleepFor } from '../promise_utils';
-import { test_Alice1_no_network } from './setup/sessionTest';
+import { test_Alice_1W_no_network } from './setup/sessionTest';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
@@ -25,7 +25,7 @@ async function expectRecoveryPhraseToBeVisible(
   );
 }
 
-test_Alice1_no_network('Set Password', async ({ alice, alice1 }) => {
+test_Alice_1W_no_network('Set Password', async ({ alice, alice1 }) => {
   // Click on settings tab
   await clickOnTestIdWithText(alice1, 'settings-section');
   // Click on privacy
@@ -85,7 +85,7 @@ test_Alice1_no_network('Set Password', async ({ alice, alice1 }) => {
   );
 });
 
-test_Alice1_no_network(
+test_Alice_1W_no_network(
   'Wrong Password',
   async ({ alice: { recoveryPhrase }, alice1 }) => {
     // Check if incorrect password works
