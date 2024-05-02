@@ -3,6 +3,7 @@ import { homedir } from 'os';
 import { join } from 'path';
 import { MULTI_PREFIX, NODE_ENV } from './tests/automation/setup/open';
 import { isLinux, isMacOS } from './tests/os_utils';
+import { isEmpty } from 'lodash';
 
 const getDirectoriesOfSessionDataPath = (source: string) =>
   readdirSync(source, { withFileTypes: true })
@@ -12,15 +13,14 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
     })
     .filter((n) => n.includes(`${NODE_ENV}-${MULTI_PREFIX}`));
 
-const alreadyCleaned = false;
-let alreadyCleanedWaiting = false;
+let needsClean = isEmpty(process.env.NO_CLEAN);
 
 async function cleanUpOtherTest() {
-  if (alreadyCleaned || alreadyCleanedWaiting) {
+  if (!needsClean) {
     return;
   }
 
-  alreadyCleanedWaiting = true;
+  needsClean = false;
   if (process.env.CI) {
     console.info(
       'We are on CI, no need to clean up other tests (so we can run them in parallel)',
