@@ -3,7 +3,7 @@
 import { Page, TestInfo, test } from '@playwright/test';
 import { Group, User } from '../types/testing';
 import { linkedDevice } from '../utilities/linked_device';
-import { forceCloseAllWindows } from './beforeEach';
+import { forceCloseAllWindows } from './closeWindows';
 import { createGroup } from './create_group';
 import { newUser } from './new_user';
 import { openApp } from './open';
