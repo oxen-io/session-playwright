@@ -32,9 +32,9 @@ export const createContact = async (
   // Note: when creating a contact, we want to make sure both sides are friends when we finish this function,
   // so passing the windowA here is very important, so we wait for windowA to have received the reply
   await replyTo({
-    windowSender: windowB,
+    senderWindow: windowB,
     textMessage: testMessage,
     replyText: testReply,
-    windowReceiver: windowA,
+    receiverWindow: windowA,
   });
 };

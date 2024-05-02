@@ -31,10 +31,10 @@ test_group_Alice1_Bob1_Charlie1(
     });
     await sleepFor(1000);
     await replyTo({
-      windowSender: bob1,
+      senderWindow: bob1,
       textMessage: testMessage,
       replyText: testReply,
-      windowReceiver: alice1,
+      receiverWindow: alice1,
     });
 
     // reply was sent from bob1 and awaited from alice1 already
@@ -60,10 +60,10 @@ test_group_Alice1_Bob1_Charlie1(
     });
     await sleepFor(1000);
     await replyTo({
-      windowSender: bob1,
+      senderWindow: bob1,
       textMessage: testMessage,
       replyText: testReply,
-      windowReceiver: alice1,
+      receiverWindow: alice1,
     });
   },
 );
@@ -85,10 +85,10 @@ test_group_Alice1_Bob1_Charlie1(
     });
     await sleepFor(1000);
     await replyTo({
-      windowSender: bob1,
+      senderWindow: bob1,
       textMessage: testMessage,
       replyText: testReply,
-      windowReceiver: alice1,
+      receiverWindow: alice1,
     });
   },
 );
@@ -163,10 +163,10 @@ test_group_Alice1_Bob1_Charlie1(
     });
     await sleepFor(1000);
     await replyTo({
-      windowSender: bob1,
+      senderWindow: bob1,
       textMessage: testMessage,
       replyText: testReply,
-      windowReceiver: alice1,
+      receiverWindow: alice1,
     });
   },
 );
@@ -187,10 +187,10 @@ test_group_Alice1_Bob1_Charlie1(
     });
     await sleepFor(1000);
     await replyTo({
-      windowSender: bob1,
+      senderWindow: bob1,
       textMessage: longText,
       replyText: testReply,
-      windowReceiver: charlie1,
+      receiverWindow: charlie1,
     });
     await waitForTextMessage(charlie1, longText);
   },

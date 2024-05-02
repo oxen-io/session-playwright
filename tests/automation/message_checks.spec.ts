@@ -42,10 +42,10 @@ test_Alice1_Bob1('Send image 1:1', async ({ alice, alice1, bob, bob1 }) => {
   await sleepFor(1000);
 
   await replyTo({
-    windowSender: bob1,
+    senderWindow: bob1,
     textMessage: testMessage,
     replyText: testReply,
-    windowReceiver: alice1,
+    receiverWindow: alice1,
   });
 });
 
@@ -73,10 +73,10 @@ test_Alice1_Bob1('Send video 1:1', async ({ alice, alice1, bob, bob1 }) => {
   // Waiting for videoto change from loading state to loaded (takes a second)
   await sleepFor(1000);
   await replyTo({
-    windowSender: bob1,
+    senderWindow: bob1,
     textMessage: testMessage,
     replyText: testReply,
-    windowReceiver: alice1,
+    receiverWindow: alice1,
   });
 });
 
@@ -102,10 +102,10 @@ test_Alice1_Bob1('Send document 1:1', async ({ alice, alice1, bob, bob1 }) => {
   // Waiting for video to change from loading state to loaded (takes a second)
   await sleepFor(500);
   await replyTo({
-    windowSender: bob1,
+    senderWindow: bob1,
     textMessage: testMessage,
     replyText: testReply,
-    windowReceiver: alice1,
+    receiverWindow: alice1,
   });
 });
 
@@ -169,10 +169,10 @@ test_Alice1_Bob1('Send long text 1:1', async ({ alice, alice1, bob, bob1 }) => {
   });
   await sleepFor(1000);
   await replyTo({
-    windowSender: bob1,
+    senderWindow: bob1,
     textMessage: longText,
     replyText: testReply,
-    windowReceiver: alice1,
+    receiverWindow: alice1,
   });
 });
 
@@ -248,9 +248,9 @@ test_Alice1_Bob1('Send link 1:1', async ({ alice, alice1, bob, bob1 }) => {
   });
   await sleepFor(1000);
   await replyTo({
-    windowSender: bob1,
+    senderWindow: bob1,
     textMessage: testMessage,
     replyText: testReply,
-    windowReceiver: alice1,
+    receiverWindow: alice1,
   });
 });
