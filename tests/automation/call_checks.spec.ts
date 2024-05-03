@@ -3,24 +3,27 @@ import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
 
-test_Alice_1W_Bob_1W('Voice calls', async ({ alice, alice1, bob, bob1 }) => {
-  await createContact(alice1, bob1, alice, bob);
-  await clickOnTestIdWithText(alice1, 'call-button');
-  await clickOnTestIdWithText(alice1, 'session-toast');
-  await clickOnTestIdWithText(alice1, 'enable-calls');
-  await clickOnTestIdWithText(alice1, 'session-confirm-ok-button');
-  await clickOnTestIdWithText(alice1, 'message-section');
-  await clickOnTestIdWithText(
-    alice1,
-    'module-conversation__user__profile-name',
-    bob.userName,
-  );
-  await clickOnTestIdWithText(alice1, 'call-button');
-  // Enable calls in window B
-  await clickOnTestIdWithText(bob1, 'session-toast');
-  await clickOnTestIdWithText(bob1, 'enable-calls');
-  await clickOnTestIdWithText(bob1, 'session-confirm-ok-button');
-  await clickOnMatchingText(bob1, 'Accept');
-  await sleepFor(5000);
-  await clickOnTestIdWithText(alice1, 'end-call');
-});
+test_Alice_1W_Bob_1W(
+  'Voice calls',
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await clickOnTestIdWithText(aliceWindow1, 'call-button');
+    await clickOnTestIdWithText(aliceWindow1, 'session-toast');
+    await clickOnTestIdWithText(aliceWindow1, 'enable-calls');
+    await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
+    await clickOnTestIdWithText(aliceWindow1, 'message-section');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await clickOnTestIdWithText(aliceWindow1, 'call-button');
+    // Enable calls in window B
+    await clickOnTestIdWithText(bobWindow1, 'session-toast');
+    await clickOnTestIdWithText(bobWindow1, 'enable-calls');
+    await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
+    await clickOnMatchingText(bobWindow1, 'Accept');
+    await sleepFor(5000);
+    await clickOnTestIdWithText(aliceWindow1, 'end-call');
+  },
+);

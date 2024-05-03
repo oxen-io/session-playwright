@@ -28,12 +28,12 @@ type WithBob = { bob: User };
 type WithCharlie = { charlie: User };
 type WithDracula = { dracula: User };
 
-type WithAlice1 = { alice1: Page };
-type WithAlice2 = { alice2: Page };
-type WithBob1 = { bob1: Page };
-type WithCharlie1 = { charlie1: Page };
+type WithaliceWindow1 = { aliceWindow1: Page };
+type WithaliceWindow2 = { aliceWindow2: Page };
+type WithbobWindow1 = { bobWindow1: Page };
+type WithcharlieWindow1 = { charlieWindow1: Page };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type WithDracula1 = { dracula1: Page };
+type WithdraculaWindow1 = { draculaWindow1: Page };
 
 type WithGroupCreated = { groupCreated: Group };
 
@@ -200,7 +200,7 @@ function sessionTestGeneric<
 export function test_Alice_1W_no_network(
   testname: string,
   testCallback: (
-    details: WithAlice & WithAlice1,
+    details: WithAlice & WithaliceWindow1,
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
@@ -212,7 +212,7 @@ export function test_Alice_1W_no_network(
       return testCallback(
         {
           alice: users[0],
-          alice1: mainWindows[0],
+          aliceWindow1: mainWindows[0],
         },
         testInfo,
       );
@@ -227,7 +227,7 @@ export function test_Alice_1W_no_network(
 export function test_Alice_2W(
   testname: string,
   testCallback: (
-    details: WithAlice & WithAlice1 & WithAlice2,
+    details: WithAlice & WithaliceWindow1 & WithaliceWindow2,
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
@@ -239,8 +239,8 @@ export function test_Alice_2W(
       return testCallback(
         {
           alice: users[0],
-          alice1: mainWindows[0],
-          alice2: linkedWindows[0],
+          aliceWindow1: mainWindows[0],
+          aliceWindow2: linkedWindows[0],
         },
         testInfo,
       );
@@ -256,7 +256,7 @@ export function test_Alice_2W(
 export function test_Alice_1W_Bob_1W(
   testname: string,
   testCallback: (
-    details: WithAlice & WithAlice1 & WithBob & WithBob1,
+    details: WithAlice & WithaliceWindow1 & WithBob & WithbobWindow1,
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
@@ -269,8 +269,8 @@ export function test_Alice_1W_Bob_1W(
         {
           alice: users[0],
           bob: users[1],
-          alice1: mainWindows[0],
-          bob1: mainWindows[1],
+          aliceWindow1: mainWindows[0],
+          bobWindow1: mainWindows[1],
         },
         testInfo,
       );
@@ -286,7 +286,11 @@ export function test_Alice_1W_Bob_1W(
 export function test_Alice_2W_Bob_1W(
   testname: string,
   testCallback: (
-    details: WithAlice & WithAlice1 & WithAlice2 & WithBob & WithBob1,
+    details: WithAlice &
+      WithaliceWindow1 &
+      WithaliceWindow2 &
+      WithBob &
+      WithbobWindow1,
     testInfo: TestInfo,
   ) => Promise<void>,
 ) {
@@ -299,9 +303,9 @@ export function test_Alice_2W_Bob_1W(
         {
           alice: users[0],
           bob: users[1],
-          alice1: mainWindows[0],
-          bob1: mainWindows[1],
-          alice2: linkedWindows[0],
+          aliceWindow1: mainWindows[0],
+          bobWindow1: mainWindows[1],
+          aliceWindow2: linkedWindows[0],
         },
         testInfo,
       );
@@ -319,11 +323,11 @@ export function test_group_Alice_1W_Bob_1W_Charlie_1W(
   testname: string,
   testCallback: (
     details: WithAlice &
-      WithAlice1 &
+      WithaliceWindow1 &
       WithBob &
-      WithBob1 &
+      WithbobWindow1 &
       WithCharlie &
-      WithCharlie1 &
+      WithcharlieWindow1 &
       WithGroupCreated,
     testInfo: TestInfo,
   ) => Promise<void>,
@@ -338,9 +342,9 @@ export function test_group_Alice_1W_Bob_1W_Charlie_1W(
           alice: users[0],
           bob: users[1],
           charlie: users[2],
-          alice1: mainWindows[0],
-          bob1: mainWindows[1],
-          charlie1: mainWindows[2],
+          aliceWindow1: mainWindows[0],
+          bobWindow1: mainWindows[1],
+          charlieWindow1: mainWindows[2],
           groupCreated,
         },
         testInfo,
@@ -359,12 +363,12 @@ export function test_group_Alice_2W_Bob_1W_Charlie_1W(
   testname: string,
   testCallback: (
     details: WithAlice &
-      WithAlice1 &
-      WithAlice2 &
+      WithaliceWindow1 &
+      WithaliceWindow2 &
       WithBob &
-      WithBob1 &
+      WithbobWindow1 &
       WithCharlie &
-      WithCharlie1 &
+      WithcharlieWindow1 &
       WithGroupCreated,
     testInfo: TestInfo,
   ) => Promise<void>,
@@ -379,10 +383,10 @@ export function test_group_Alice_2W_Bob_1W_Charlie_1W(
           alice: users[0],
           bob: users[1],
           charlie: users[2],
-          alice1: mainWindows[0],
-          bob1: mainWindows[1],
-          charlie1: mainWindows[2],
-          alice2: linkedWindows[0],
+          aliceWindow1: mainWindows[0],
+          bobWindow1: mainWindows[1],
+          charlieWindow1: mainWindows[2],
+          aliceWindow2: linkedWindows[0],
           groupCreated,
         },
         testInfo,
@@ -402,13 +406,13 @@ export function test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
   testname: string,
   testCallback: (
     details: WithAlice &
-      WithAlice1 &
+      WithaliceWindow1 &
       WithBob &
-      WithBob1 &
+      WithbobWindow1 &
       WithCharlie &
-      WithCharlie1 &
+      WithcharlieWindow1 &
       WithDracula &
-      WithDracula1 &
+      WithdraculaWindow1 &
       WithGroupCreated,
 
     testInfo: TestInfo,
@@ -425,10 +429,10 @@ export function test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
           bob: users[1],
           charlie: users[2],
           dracula: users[3],
-          alice1: mainWindows[0],
-          bob1: mainWindows[1],
-          charlie1: mainWindows[2],
-          dracula1: mainWindows[3],
+          aliceWindow1: mainWindows[0],
+          bobWindow1: mainWindows[1],
+          charlieWindow1: mainWindows[2],
+          draculaWindow1: mainWindows[3],
           groupCreated,
         },
         testInfo,

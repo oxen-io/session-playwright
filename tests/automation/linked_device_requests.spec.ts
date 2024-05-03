@@ -11,31 +11,31 @@ import {
 
 test_Alice_2W_Bob_1W(
   'Accept request syncs',
-  async ({ alice, bob, alice1, alice2, bob1 }) => {
+  async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
     const testReply = `${alice.userName} accepting message request from ${bob.userName}`;
-    await sendNewMessage(bob1, alice.sessionid, testMessage);
-    // Accept request in alice1
-    await clickOnTestIdWithText(alice1, 'message-request-banner');
-    await clickOnTestIdWithText(alice2, 'message-request-banner');
+    await sendNewMessage(bobWindow1, alice.sessionid, testMessage);
+    // Accept request in aliceWindow1
+    await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
+    await clickOnTestIdWithText(aliceWindow2, 'message-request-banner');
     await clickOnTestIdWithText(
-      alice1,
+      aliceWindow1,
       'module-conversation__user__profile-name',
       bob.userName,
     );
-    await clickOnTestIdWithText(alice1, 'accept-message-request');
+    await clickOnTestIdWithText(aliceWindow1, 'accept-message-request');
     await waitForTestIdWithText(
-      alice1,
+      aliceWindow1,
       'message-request-response-message',
       `You have accepted ${bob.userName}'s message request`,
     );
-    await waitForMatchingText(alice1, 'No pending message requests');
-    await waitForMatchingText(alice2, 'No pending message requests');
-    await sendMessage(alice1, testReply);
-    await waitForTextMessage(bob1, testReply);
-    await clickOnTestIdWithText(alice2, 'new-conversation-button');
+    await waitForMatchingText(aliceWindow1, 'No pending message requests');
+    await waitForMatchingText(aliceWindow2, 'No pending message requests');
+    await sendMessage(aliceWindow1, testReply);
+    await waitForTextMessage(bobWindow1, testReply);
+    await clickOnTestIdWithText(aliceWindow2, 'new-conversation-button');
     await waitForTestIdWithText(
-      alice2,
+      aliceWindow2,
       'module-conversation__user__profile-name',
       bob.userName,
     );
@@ -44,25 +44,33 @@ test_Alice_2W_Bob_1W(
 
 test_Alice_2W_Bob_1W(
   'Decline request syncs',
-  async ({ alice, alice1, alice2, bob, bob1 }) => {
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
-    await sendNewMessage(bob1, alice.sessionid, testMessage);
-    // Decline request in alice1
-    await clickOnTestIdWithText(alice1, 'message-request-banner');
+    await sendNewMessage(bobWindow1, alice.sessionid, testMessage);
+    // Decline request in aliceWindow1
+    await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
     await clickOnTestIdWithText(
-      alice1,
+      aliceWindow1,
       'module-conversation__user__profile-name',
       bob.userName,
     );
-    await clickOnTestIdWithText(alice2, 'message-request-banner');
+    await clickOnTestIdWithText(aliceWindow2, 'message-request-banner');
     await waitForTestIdWithText(
-      alice2,
+      aliceWindow2,
       'module-conversation__user__profile-name',
       bob.userName,
     );
     await sleepFor(1000);
-    await clickOnTestIdWithText(alice1, 'decline-message-request', 'Decline');
-    await clickOnTestIdWithText(alice1, 'session-confirm-ok-button', 'Decline');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'decline-message-request',
+      'Decline',
+    );
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      'Decline',
+    );
 
     // Note: this test is broken currently but this is a known issue.
     // It happens because we have a race condition between the update from libsession and the update from the swarm, both with the same seqno.
@@ -71,7 +79,7 @@ test_Alice_2W_Bob_1W(
       'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
     );
 
-    await waitForMatchingText(alice1, 'No pending message requests');
-    await waitForMatchingText(alice2, 'No pending message requests');
+    await waitForMatchingText(aliceWindow1, 'No pending message requests');
+    await waitForMatchingText(aliceWindow2, 'No pending message requests');
   },
 );

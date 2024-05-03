@@ -25,61 +25,68 @@ async function expectRecoveryPhraseToBeVisible(
   );
 }
 
-test_Alice_1W_no_network('Set Password', async ({ alice, alice1 }) => {
+test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   // Click on settings tab
-  await clickOnTestIdWithText(alice1, 'settings-section');
+  await clickOnTestIdWithText(aliceWindow1, 'settings-section');
   // Click on privacy
-  await clickOnTestIdWithText(alice1, 'privacy-settings-menu-item');
+  await clickOnTestIdWithText(aliceWindow1, 'privacy-settings-menu-item');
   // Click set password
-  await clickOnTestIdWithText(alice1, 'set-password-button');
+  await clickOnTestIdWithText(aliceWindow1, 'set-password-button');
   // Enter password
-  await typeIntoInput(alice1, 'password-input', testPassword);
+  await typeIntoInput(aliceWindow1, 'password-input', testPassword);
   // Confirm password
-  await typeIntoInput(alice1, 'password-input-confirm', testPassword);
+  await typeIntoInput(aliceWindow1, 'password-input-confirm', testPassword);
   // Click Done
-  await clickOnMatchingText(alice1, 'Done');
+  await clickOnMatchingText(aliceWindow1, 'Done');
   // Check toast notification
   await waitForTestIdWithText(
-    alice1,
+    aliceWindow1,
     'session-toast',
     'Your password has been set. Please keep it safe.',
   );
   // Click on settings tab
   await sleepFor(300, true);
-  await clickOnTestIdWithText(alice1, 'settings-section');
-  await clickOnTestIdWithText(alice1, 'recovery-phrase-settings-menu-item');
+  await clickOnTestIdWithText(aliceWindow1, 'settings-section');
+  await clickOnTestIdWithText(
+    aliceWindow1,
+    'recovery-phrase-settings-menu-item',
+  );
   await sleepFor(300, true);
 
   // Type password into input field and validate it
-  await typeIntoInput(alice1, 'password-input', testPassword);
+  await typeIntoInput(aliceWindow1, 'password-input', testPassword);
   // Click Done
-  await clickOnMatchingText(alice1, 'Done');
+  await clickOnMatchingText(aliceWindow1, 'Done');
 
   // check that the seed is visible now
-  await expectRecoveryPhraseToBeVisible(alice1, alice.recoveryPhrase);
+  await expectRecoveryPhraseToBeVisible(aliceWindow1, alice.recoveryPhrase);
 
   // copy the seed phrase to the clipboard, also closes the dialog
-  await clickOnMatchingText(alice1, 'Copy');
+  await clickOnMatchingText(aliceWindow1, 'Copy');
   // Note: I did not find a way to get the clipboard content from the page/window/nodeJS for now.
 
-  await clickOnTestIdWithText(alice1, 'settings-section');
+  await clickOnTestIdWithText(aliceWindow1, 'settings-section');
 
   // Change password
-  await clickOnTestIdWithText(alice1, 'change-password-settings-button');
+  await clickOnTestIdWithText(aliceWindow1, 'change-password-settings-button');
 
   console.warn('clicked Change Password');
   // Enter old password
-  await typeIntoInput(alice1, 'password-input', testPassword);
+  await typeIntoInput(aliceWindow1, 'password-input', testPassword);
   // Enter new password
-  await typeIntoInput(alice1, 'password-input-confirm', newTestPassword);
+  await typeIntoInput(aliceWindow1, 'password-input-confirm', newTestPassword);
   // await window.keyboard.press('Tab');
   // Confirm new password
-  await typeIntoInput(alice1, 'password-input-reconfirm', newTestPassword);
+  await typeIntoInput(
+    aliceWindow1,
+    'password-input-reconfirm',
+    newTestPassword,
+  );
   // Press enter on keyboard
-  await alice1.keyboard.press('Enter');
+  await aliceWindow1.keyboard.press('Enter');
   // Check toast notification for 'changed password'
   await waitForTestIdWithText(
-    alice1,
+    aliceWindow1,
     'session-toast',
     'Your password has been changed. Please keep it safe.',
   );
@@ -87,66 +94,79 @@ test_Alice_1W_no_network('Set Password', async ({ alice, alice1 }) => {
 
 test_Alice_1W_no_network(
   'Wrong Password',
-  async ({ alice: { recoveryPhrase }, alice1 }) => {
+  async ({ alice: { recoveryPhrase }, aliceWindow1 }) => {
     // Check if incorrect password works
     // Click on settings tab
-    await clickOnTestIdWithText(alice1, 'settings-section');
+    await clickOnTestIdWithText(aliceWindow1, 'settings-section');
     // Click on privacy
-    await clickOnMatchingText(alice1, 'Privacy');
+    await clickOnMatchingText(aliceWindow1, 'Privacy');
     // Click set password
-    await clickOnTestIdWithText(alice1, 'set-password-button');
+    await clickOnTestIdWithText(aliceWindow1, 'set-password-button');
     // Enter password
-    await typeIntoInput(alice1, 'password-input', testPassword);
+    await typeIntoInput(aliceWindow1, 'password-input', testPassword);
     // Confirm password
-    await typeIntoInput(alice1, 'password-input-confirm', testPassword);
+    await typeIntoInput(aliceWindow1, 'password-input-confirm', testPassword);
     // Click Done
-    await clickOnMatchingText(alice1, 'Done');
+    await clickOnMatchingText(aliceWindow1, 'Done');
     // Click on recovery phrase tab
     await sleepFor(100);
 
     // Click on settings tab
-    await clickOnTestIdWithText(alice1, 'settings-section');
-    await clickOnTestIdWithText(alice1, 'recovery-phrase-settings-menu-item');
+    await clickOnTestIdWithText(aliceWindow1, 'settings-section');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'recovery-phrase-settings-menu-item',
+    );
     // Type password into input field
-    await typeIntoInput(alice1, 'password-input', testPassword);
+    await typeIntoInput(aliceWindow1, 'password-input', testPassword);
     // Confirm the password
-    await clickOnTestIdWithText(alice1, 'session-confirm-ok-button');
+    await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
     // this should print the recovery phrase
-    await expectRecoveryPhraseToBeVisible(alice1, recoveryPhrase);
+    await expectRecoveryPhraseToBeVisible(aliceWindow1, recoveryPhrase);
 
     // copy the seed phrase to the clipboard, also closes the dialog
-    await clickOnMatchingText(alice1, 'Copy');
+    await clickOnMatchingText(aliceWindow1, 'Copy');
 
     //  Click on settings tab
-    await clickOnTestIdWithText(alice1, 'settings-section');
+    await clickOnTestIdWithText(aliceWindow1, 'settings-section');
     await sleepFor(500);
     // Click on recovery phrase tab
-    await clickOnTestIdWithText(alice1, 'recovery-phrase-settings-menu-item');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'recovery-phrase-settings-menu-item',
+    );
     // Try with incorrect password
-    await typeIntoInput(alice1, 'password-input', '000000');
+    await typeIntoInput(aliceWindow1, 'password-input', '000000');
     // Confirm the password
-    await clickOnTestIdWithText(alice1, 'session-confirm-ok-button');
+    await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
     // this should NOT print the recovery phrase
 
     await sleepFor(100);
     await hasElementPoppedUpThatShouldnt(
-      alice1,
+      aliceWindow1,
       'data-testid',
       'recovery-phrase-seed-modal',
       recoveryPhrase,
     );
 
     //  invalid password banner showing?
-    await waitForTestIdWithText(alice1, 'session-toast', 'Invalid password');
-    await clickOnTestIdWithText(alice1, 'modal-close-button');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      'Invalid password',
+    );
+    await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
     await sleepFor(100);
     // Click on recovery phrase tab
-    await clickOnTestIdWithText(alice1, 'recovery-phrase-settings-menu-item');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'recovery-phrase-settings-menu-item',
+    );
     //  No password entered
-    await clickOnMatchingText(alice1, 'Done');
+    await clickOnMatchingText(aliceWindow1, 'Done');
     //  Banner should ask for password to be entered
     await waitForTestIdWithText(
-      alice1,
+      aliceWindow1,
       'session-toast',
       'Please enter your password',
     );

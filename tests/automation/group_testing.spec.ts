@@ -47,62 +47,62 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
   'Add contact to group',
   async ({
     alice,
-    alice1,
-    bob1,
-    charlie1,
+    aliceWindow1,
+    bobWindow1,
+    charlieWindow1,
     dracula,
-    dracula1,
+    draculaWindow1,
     groupCreated,
   }) => {
     // Check config messages in all windows
     await sleepFor(1000);
-    await createContact(alice1, dracula1, alice, dracula);
+    await createContact(aliceWindow1, draculaWindow1, alice, dracula);
     await clickOnElement({
-      window: alice1,
+      window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'message-section',
     });
     await clickOnTestIdWithText(
-      alice1,
+      aliceWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
     await clickOnElement({
-      window: alice1,
+      window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'conversation-options-avatar',
     });
     await clickOnElement({
-      window: alice1,
+      window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'add-user-button',
     });
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
-    await clickOnMatchingText(alice1, dracula.userName);
-    await clickOnMatchingText(alice1, 'OK');
+    await clickOnMatchingText(aliceWindow1, dracula.userName);
+    await clickOnMatchingText(aliceWindow1, 'OK');
     await waitForTestIdWithText(
-      alice1,
+      aliceWindow1,
       'group-update-message',
       `"${dracula.userName}" joined the group.`,
     );
     await waitForTestIdWithText(
-      bob1,
+      bobWindow1,
       'group-update-message',
       `${dracula.sessionid} joined the group.`,
     );
     await waitForTestIdWithText(
-      charlie1,
+      charlieWindow1,
       'group-update-message',
       `${dracula.sessionid} joined the group.`,
     );
     await clickOnElement({
-      window: dracula1,
+      window: draculaWindow1,
       strategy: 'data-testid',
       selector: 'message-section',
     });
     await clickOnTestIdWithText(
-      dracula1,
+      draculaWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
@@ -118,77 +118,118 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
 
 test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Change group name',
-  async ({ alice1, bob1, charlie1, groupCreated }) => {
+  async ({ aliceWindow1, bobWindow1, charlieWindow1, groupCreated }) => {
     const newGroupName = 'New group name';
 
     // Change the name of the group and check that it syncs to all devices (config messages)
     // Click on already created group
     // Check that renaming a group is working
-    await renameGroup(alice1, groupCreated.userName, newGroupName);
+    await renameGroup(aliceWindow1, groupCreated.userName, newGroupName);
     // Check config message in window B for group name change
-    await clickOnMatchingText(bob1, newGroupName);
-    await waitForMatchingText(bob1, `Group name is now '${newGroupName}'.`);
-    await clickOnMatchingText(charlie1, newGroupName);
-    await waitForMatchingText(charlie1, `Group name is now '${newGroupName}'.`);
+    await clickOnMatchingText(bobWindow1, newGroupName);
+    await waitForMatchingText(
+      bobWindow1,
+      `Group name is now '${newGroupName}'.`,
+    );
+    await clickOnMatchingText(charlieWindow1, newGroupName);
+    await waitForMatchingText(
+      charlieWindow1,
+      `Group name is now '${newGroupName}'.`,
+    );
     // Click on conversation options
     // Check to see that you can't change group name to empty string
     // Click on edit group name
-    await clickOnTestIdWithText(alice1, 'conversation-options-avatar');
-    await clickOnTestIdWithText(alice1, 'edit-group-name');
-    await typeIntoInput(alice1, 'group-name-input', '     ');
-    await alice1.keyboard.press('Enter');
-    const errorMessage = alice1.locator('.error-message');
+    await clickOnTestIdWithText(aliceWindow1, 'conversation-options-avatar');
+    await clickOnTestIdWithText(aliceWindow1, 'edit-group-name');
+    await typeIntoInput(aliceWindow1, 'group-name-input', '     ');
+    await aliceWindow1.keyboard.press('Enter');
+    const errorMessage = aliceWindow1.locator('.error-message');
     await expect(errorMessage).toContainText('Please enter a group name');
-    await clickOnMatchingText(alice1, 'Cancel');
-    await clickOnTestIdWithText(alice1, 'back-button-conversation-options');
+    await clickOnMatchingText(aliceWindow1, 'Cancel');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'back-button-conversation-options',
+    );
   },
 );
 
 test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Test mentions',
-  async ({ alice, alice1, bob, bob1, charlie, charlie1, groupCreated }) => {
+  async ({
+    alice,
+    aliceWindow1,
+    bob,
+    bobWindow1,
+    charlie,
+    charlieWindow1,
+    groupCreated,
+  }) => {
     // in windowA we should be able to mentions bob and userC
 
     await clickOnTestIdWithText(
-      alice1,
+      aliceWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    await typeIntoInput(alice1, 'message-input-text-area', '@');
+    await typeIntoInput(aliceWindow1, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
-    await waitForTestIdWithText(alice1, 'mentions-popup-row');
-    await waitForTestIdWithText(alice1, 'mentions-popup-row', bob.userName);
-    await waitForTestIdWithText(alice1, 'mentions-popup-row', charlie.userName);
+    await waitForTestIdWithText(aliceWindow1, 'mentions-popup-row');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'mentions-popup-row',
+      bob.userName,
+    );
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'mentions-popup-row',
+      charlie.userName,
+    );
 
     // in windowB we should be able to mentions alice and charlie
     await clickOnTestIdWithText(
-      bob1,
+      bobWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    await typeIntoInput(bob1, 'message-input-text-area', '@');
+    await typeIntoInput(bobWindow1, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
-    await waitForTestIdWithText(bob1, 'mentions-popup-row');
-    await waitForTestIdWithText(bob1, 'mentions-popup-row', alice.userName);
-    await waitForTestIdWithText(bob1, 'mentions-popup-row', charlie.userName);
+    await waitForTestIdWithText(bobWindow1, 'mentions-popup-row');
+    await waitForTestIdWithText(
+      bobWindow1,
+      'mentions-popup-row',
+      alice.userName,
+    );
+    await waitForTestIdWithText(
+      bobWindow1,
+      'mentions-popup-row',
+      charlie.userName,
+    );
 
-    // in charlie1 we should be able to mentions alice and userB
+    // in charlieWindow1 we should be able to mentions alice and userB
     await clickOnTestIdWithText(
-      charlie1,
+      charlieWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    await typeIntoInput(charlie1, 'message-input-text-area', '@');
+    await typeIntoInput(charlieWindow1, 'message-input-text-area', '@');
     // does 'message-input-text-area' have aria-expanded: true when @ is typed into input
-    await waitForTestIdWithText(charlie1, 'mentions-popup-row');
-    await waitForTestIdWithText(charlie1, 'mentions-popup-row', alice.userName);
-    await waitForTestIdWithText(charlie1, 'mentions-popup-row', bob.userName);
+    await waitForTestIdWithText(charlieWindow1, 'mentions-popup-row');
+    await waitForTestIdWithText(
+      charlieWindow1,
+      'mentions-popup-row',
+      alice.userName,
+    );
+    await waitForTestIdWithText(
+      charlieWindow1,
+      'mentions-popup-row',
+      bob.userName,
+    );
   },
 );
 
 test_group_Alice_1W_Bob_1W_Charlie_1W(
   'Leave group',
-  async ({ charlie1, groupCreated }) => {
-    await leaveGroup(charlie1, groupCreated);
+  async ({ charlieWindow1, groupCreated }) => {
+    await leaveGroup(charlieWindow1, groupCreated);
   },
 );

@@ -7,10 +7,10 @@ import {
 
 test_group_Alice_2W_Bob_1W_Charlie_1W(
   'Check group and name syncs',
-  async ({ alice2, groupCreated }) => {
+  async ({ aliceWindow2, groupCreated }) => {
     // Check group conversation is in conversation list on linked device
     await waitForTestIdWithText(
-      alice2,
+      aliceWindow2,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
@@ -19,45 +19,52 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
 
 test_group_Alice_2W_Bob_1W_Charlie_1W(
   'Leaving group syncs',
-  async ({ alice1, alice2, bob1, charlie, charlie1, groupCreated }) => {
+  async ({
+    aliceWindow1,
+    aliceWindow2,
+    bobWindow1,
+    charlie,
+    charlieWindow1,
+    groupCreated,
+  }) => {
     // Check group conversation is in conversation list of linked device
     await waitForTestIdWithText(
-      alice2,
+      aliceWindow2,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
     // User C to leave group
-    await leaveGroup(charlie1, groupCreated);
+    await leaveGroup(charlieWindow1, groupCreated);
     // Check for user A for control message that userC left group
     // await sleepFor(1000);
     // Click on group
     await clickOnTestIdWithText(
-      alice1,
+      aliceWindow1,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      alice1,
+      aliceWindow1,
       'group-update-message',
       `"${charlie.userName}" has left the group.`,
     );
     // Check for linked device (userA)
     await clickOnTestIdWithText(
-      alice2,
+      aliceWindow2,
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      alice2,
+      aliceWindow2,
       'group-update-message',
       `"${charlie.userName}" has left the group.`,
     );
     // Check for user B
     // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
-      bob1,
+      bobWindow1,
       'group-update-message',
       `"${charlie.userName}" has left the group.`,
     );
