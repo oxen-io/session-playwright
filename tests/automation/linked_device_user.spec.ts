@@ -44,7 +44,7 @@ sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
       'your-session-id',
       userA.sessionid,
     );
-    // exit profile module
+    // exit profile modal
     await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
     // You're almost finished isn't displayed
     const errorDesc = 'Should not be found';

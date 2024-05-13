@@ -2,12 +2,11 @@ node_modules/
 test-results/
 /playwright-report/
 /playwright/.cache/
-playwright.config.js
-*.js
 **/*.js
 .vscode/settings.json
 tests/automation/todo
 allure-report
 allure-results
 
+playwright.config.js
 sessionReporter.js

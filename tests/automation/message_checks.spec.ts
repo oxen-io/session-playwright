@@ -78,7 +78,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(bobWindow1, 'Click to download media');
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
-    // Waiting for videoto change from loading state to loaded (takes a second)
+    // Waiting for video to change from loading state to loaded (takes a second)
     await sleepFor(1000);
     await replyTo({
       senderWindow: bobWindow1,

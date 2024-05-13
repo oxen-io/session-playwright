@@ -120,7 +120,7 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   expect(await aliceWindow1.innerText('[data-testid=your-profile-name]')).toBe(
     newUsername,
   );
-  // Exit profile module
+  // Exit profile modal
   await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
 });
 

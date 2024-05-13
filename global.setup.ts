@@ -15,7 +15,8 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
 
 let needsClean = isEmpty(process.env.NO_CLEAN);
 
-async function cleanUpOtherTest() {
+export default async function cleanupPreviousTests() {
+  console.log('Cleaning up all previous tests configs...');
   if (!needsClean) {
     return;
   }
@@ -36,7 +37,7 @@ async function cleanUpOtherTest() {
       ? join(homedir(), '.config')
       : null;
     if (!parentFolderOfAllDataPath) {
-      throw new Error('Only macOS is currrently supported ');
+      throw new Error('Only macOS/linux are currrently supported ');
     }
 
     if (!parentFolderOfAllDataPath || parentFolderOfAllDataPath.length < 9) {
@@ -64,10 +65,5 @@ async function cleanUpOtherTest() {
   } catch (e) {
     console.error(`failed to cleanup old files: ${e.message}`);
   }
-}
-
-export default async function cleanupPreviousTests() {
-  console.log('Cleaning up all previous tests configs...');
-  await cleanUpOtherTest();
   console.log('Cleaning up done.');
 }

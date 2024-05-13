@@ -34,7 +34,7 @@ export const newUser = async (
   console.log(
     `${userName}: Session ID: "${chalk.blue(
       sessionid,
-    )}" and Recovery phrase2: "${chalk.green(recoveryPhrase)}"`,
+    )}" and Recovery phrase: "${chalk.green(recoveryPhrase)}"`,
   );
   await clickOnTestIdWithText(window, 'modal-close-button');
   if (awaitOnionPath) {

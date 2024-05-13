@@ -16,7 +16,7 @@ sessionTestOneWindow('Create User', async ([window]) => {
   await waitForTestIdWithText(window, 'your-profile-name', userA.userName);
   // check session id matches
   await waitForTestIdWithText(window, 'your-session-id', userA.sessionid);
-  // exit profile module
+  // exit profile modal
   await clickOnTestIdWithText(window, 'modal-close-button');
   // go to settings section
   await clickOnTestIdWithText(window, 'settings-section');
@@ -27,6 +27,6 @@ sessionTestOneWindow('Create User', async ([window]) => {
     'recovery-phrase-seed-modal',
     userA.recoveryPhrase,
   );
-  // Exit profile module
+  // Exit profile modal
   await clickOnTestIdWithText(window, 'modal-close-button');
 });

@@ -20,7 +20,7 @@ import {
 import { createContact } from './utilities/create_contact';
 import { leaveGroup } from './utilities/leave_group';
 
-// Note: Note using the group fixture here as we want to test it thorougly
+// Note: Note using the group fixture here as we want to test it thoroughly
 sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
   // Open Electron
   const [userA, userB, userC] = await Promise.all([
