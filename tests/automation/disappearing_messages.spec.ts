@@ -1,11 +1,10 @@
-import { test } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean } from './setup/beforeEach';
-import { createGroup } from './setup/create_group';
-import { newUser } from './setup/new_user';
-import { openApp } from './setup/open';
+import {
+  test_Alice_2W,
+  test_Alice_2W_Bob_1W,
+  test_group_Alice_2W_Bob_1W_Charlie_1W,
+} from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
-import { linkedDevice } from './utilities/linked_device';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import { setDisappearingMessages } from './utilities/set_disappearing_messages';
@@ -18,207 +17,182 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-test.beforeEach(beforeAllClean);
+test_Alice_2W_Bob_1W(
+  'Disappear after read 1:1',
+  async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
+    const testMessage =
+      'Testing disappearing messages timer is working correctly';
+    const controlMessage =
+      'set your messages to disappear 10 seconds after they have been read';
+    // Create Contact
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    // Click on conversation in linked device
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
 
-// test.afterEach(() => forceCloseAllWindows(windows));
-// tslint:disable: no-console
+    await setDisappearingMessages(
+      aliceWindow1,
+      ['1:1', 'disappear-after-read-option', 'time-option-10-seconds'],
+      bobWindow1,
+    );
+    // Check control message is visible
+    await doesTextIncludeString(
+      aliceWindow1,
+      'disappear-control-message',
+      controlMessage,
+    );
+    await sleepFor(10000);
+    // Control message should also disappear after 10 seconds
+    await hasTextMessageBeenDeleted(aliceWindow1, controlMessage);
+    // Send message
+    await sendMessage(aliceWindow1, testMessage);
+    // Check window B for message to confirm arrival
+    // await clickOnTextMessage(bobWindow1, testMessage);
+    await waitForTextMessage(bobWindow1, testMessage);
+    // Wait 10 seconds to see if message is removed
+    await sleepFor(10000);
+    await hasTextMessageBeenDeleted(aliceWindow1, testMessage);
+    // Check window B (need to refocus window)
+    console.log(`Bring window B to front`);
+    const message = 'Forcing window to front';
+    await typeIntoInput(bobWindow1, 'message-input-text-area', message);
+    // click up arrow (send)
+    await clickOnElement({
+      window: bobWindow1,
+      strategy: 'data-testid',
+      selector: 'send-message-button',
+    });
+    await sleepFor(10000);
+    await hasTextMessageBeenDeleted(bobWindow1, testMessage);
+  },
+);
 
-test('Disappear after read 1:1', async () => {
-  // Open App
-  // Create User
-  const [windowA, windowB] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const [windowC] = await linkedDevice(userA.recoveryPhrase);
-  const testMessage =
-    'Testing disappearing messages timer is working correctly';
-  const controlMessage =
-    'set your messages to disappear 10 seconds after they have been read';
-  // Create Contact
-  await createContact(windowA, windowB, userA, userB);
-  // Click on conversation in linked device
-  await clickOnTestIdWithText(
-    windowC,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  await setDisappearingMessages(
-    windowA,
-    ['1:1', 'disappear-after-read-option', 'time-option-10-seconds'],
-    windowB,
-  );
-  // Check control message is visible
-  await doesTextIncludeString(
-    windowA,
-    'disappear-control-message',
-    controlMessage,
-  );
-  await sleepFor(10000);
-  // Control message should also disappear after 10 seconds
-  await hasTextMessageBeenDeleted(windowA, controlMessage);
-  // Send message
-  await sendMessage(windowA, testMessage);
-  // Check window B for message to confirm arrival
-  // await clickOnTextMessage(windowB, testMessage);
-  await waitForTextMessage(windowB, testMessage);
-  // Wait 10 seconds to see if message is removed
-  await sleepFor(10000);
-  await hasTextMessageBeenDeleted(windowA, testMessage);
-  // Check window B (need to refocus window)
-  console.log(`Bring window B to front`);
-  const message = 'Forcing window to front';
-  await typeIntoInput(windowB, 'message-input-text-area', message);
-  // click up arrow (send)
-  await clickOnElement({
-    window: windowB,
-    strategy: 'data-testid',
-    selector: 'send-message-button',
-  });
-  await sleepFor(10000);
-  await hasTextMessageBeenDeleted(windowB, testMessage);
-});
+test_Alice_2W_Bob_1W(
+  'Disappear after send 1:1',
+  async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
+    const testMessage =
+      'Testing disappearing messages timer is working correctly';
+    const controlMessage =
+      'set your messages to disappear 10 seconds after they have been sent';
+    // Create Contact
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
 
-test('Disappear after send 1:1', async () => {
-  // Open App
-  // Create User
-  const [windowA, windowB] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const [windowC] = await linkedDevice(userA.recoveryPhrase);
-  const testMessage =
-    'Testing disappearing messages timer is working correctly';
-  const controlMessage =
-    'set your messages to disappear 10 seconds after they have been sent';
-  // Create Contact
-  await createContact(windowA, windowB, userA, userB);
-  // Click on conversation in linked device
-  await clickOnTestIdWithText(
-    windowC,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await setDisappearingMessages(
-    windowA,
-    ['1:1', 'disappear-after-send-option', 'time-option-10-seconds'],
-    windowB,
-  );
-  // Check control message is correct and appearing
-  await doesTextIncludeString(
-    windowA,
-    'disappear-control-message',
-    controlMessage,
-  );
-  await sendMessage(windowA, testMessage);
-  // Check message has appeared in receivers window and linked device
-  await Promise.all([
-    waitForTextMessage(windowB, testMessage),
-    waitForTextMessage(windowC, testMessage),
-  ]);
-  // Wait 10 seconds for message to disappearing (should disappear on all devices at once)
-  await sleepFor(10000);
-  await Promise.all([
-    hasTextMessageBeenDeleted(windowA, testMessage),
-    hasTextMessageBeenDeleted(windowB, testMessage),
-    hasTextMessageBeenDeleted(windowC, testMessage),
-  ]);
-});
+    // Click on conversation in linked device
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await setDisappearingMessages(
+      aliceWindow1,
+      ['1:1', 'disappear-after-send-option', 'time-option-10-seconds'],
+      bobWindow1,
+    );
+    // Check control message is correct and appearing
+    await doesTextIncludeString(
+      aliceWindow1,
+      'disappear-control-message',
+      controlMessage,
+    );
+    await sendMessage(aliceWindow1, testMessage);
+    // Check message has appeared in receivers window and linked device
+    await Promise.all([
+      waitForTextMessage(bobWindow1, testMessage),
+      waitForTextMessage(aliceWindow2, testMessage),
+    ]);
+    // Wait 10 seconds for message to disappearing (should disappear on all devices at once)
+    await sleepFor(10000);
+    await Promise.all([
+      hasTextMessageBeenDeleted(aliceWindow1, testMessage),
+      hasTextMessageBeenDeleted(bobWindow1, testMessage),
+      hasTextMessageBeenDeleted(aliceWindow2, testMessage),
+    ]);
+  },
+);
 
-test('Disappear after send groups', async () => {
-  const [windowA, windowB, windowC] = await openApp(3);
-  const [userA, userB, userC] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-    newUser(windowC, 'Chloe'),
-  ]);
-  const [windowD] = await linkedDevice(userA.recoveryPhrase);
-  const controlMessageText =
-    'set messages to disappear 10 seconds after they have been sent';
-  const testMessage = 'Testing disappearing messages in groups';
-  const group = await createGroup(
-    'Disappearing messages test',
-    userA,
-    windowA,
-    userB,
-    windowB,
-    userC,
-    windowC,
-  );
-  await clickOnTestIdWithText(
-    windowD,
-    'module-conversation__user__profile-name',
-    group.userName,
-  );
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'conversation-options-avatar',
-  });
-  await setDisappearingMessages(windowA, [
-    'group',
-    'disappear-after-send-option',
-    'time-option-10-seconds',
-  ]);
-  // Check control message is visible and correct
-  await doesTextIncludeString(
-    windowA,
-    'disappear-control-message',
-    controlMessageText,
-  );
-  await sendMessage(windowA, testMessage);
-  await Promise.all([
-    waitForTextMessage(windowB, testMessage),
-    waitForTextMessage(windowC, testMessage),
-    waitForTextMessage(windowD, testMessage),
-  ]);
-  // Wait 10 seconds for messages to disappear
-  await sleepFor(10000);
-  await Promise.all([
-    hasTextMessageBeenDeleted(windowA, testMessage),
-    hasTextMessageBeenDeleted(windowB, testMessage),
-    hasTextMessageBeenDeleted(windowC, testMessage),
-    hasTextMessageBeenDeleted(windowD, testMessage),
-  ]);
-});
+test_group_Alice_2W_Bob_1W_Charlie_1W(
+  'Disappear after send groups',
+  async ({
+    aliceWindow1,
+    aliceWindow2,
+    bobWindow1,
+    charlieWindow1,
+    groupCreated,
+  }) => {
+    const controlMessageText =
+      'set messages to disappear 10 seconds after they have been sent';
+    const testMessage = 'Testing disappearing messages in groups';
 
-test('Disappear after send note to self', async () => {
-  const [windowA] = await openApp(1);
-  const userA = await newUser(windowA, 'Alice');
-  const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const testMessage = 'Message to test note to self';
-  const testMessageDisappear = 'Message testing disappearing messages';
-  const controlMessageText =
-    'set messages to disappear 10 seconds after they have been sent';
-  // Open Note to self conversation
-  await sendNewMessage(windowA, userA.sessionid, testMessage);
-  // Check messages are syncing across linked devices
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    'Note to Self',
-  );
-  await waitForTextMessage(windowB, testMessage);
-  // Enable disappearing messages
-  await setDisappearingMessages(windowA, [
-    'note-to-self',
-    'disappear-after-send-option',
-    'input-10-seconds',
-  ]);
-  // Check control message is visible and correct
-  await doesTextIncludeString(
-    windowA,
-    'disappear-control-message',
-    controlMessageText,
-  );
-  await sendMessage(windowA, testMessageDisappear);
-  await waitForTextMessage(windowB, testMessageDisappear);
-  await sleepFor(10000);
-  await Promise.all([
-    hasTextMessageBeenDeleted(windowA, testMessageDisappear),
-    hasTextMessageBeenDeleted(windowB, testMessageDisappear),
-  ]);
-});
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      groupCreated.userName,
+    );
+    await setDisappearingMessages(aliceWindow1, [
+      'group',
+      'disappear-after-send-option',
+      'time-option-10-seconds',
+    ]);
+    // Check control message is visible and correct
+    await doesTextIncludeString(
+      aliceWindow1,
+      'disappear-control-message',
+      controlMessageText,
+    );
+    await sendMessage(aliceWindow1, testMessage);
+    await Promise.all([
+      waitForTextMessage(bobWindow1, testMessage),
+      waitForTextMessage(charlieWindow1, testMessage),
+      waitForTextMessage(aliceWindow2, testMessage),
+    ]);
+    // Wait 10 seconds for messages to disappear
+    await sleepFor(10000);
+    await Promise.all([
+      hasTextMessageBeenDeleted(aliceWindow1, testMessage),
+      hasTextMessageBeenDeleted(bobWindow1, testMessage),
+      hasTextMessageBeenDeleted(charlieWindow1, testMessage),
+      hasTextMessageBeenDeleted(aliceWindow2, testMessage),
+    ]);
+  },
+);
+
+test_Alice_2W(
+  'Disappear after send note to self',
+  async ({ alice, aliceWindow1, aliceWindow2 }) => {
+    const testMessage = 'Message to test note to self';
+    const testMessageDisappear = 'Message testing disappearing messages';
+    const controlMessageText =
+      'set messages to disappear 10 seconds after they have been sent';
+    // Open Note to self conversation
+    await sendNewMessage(aliceWindow1, alice.sessionid, testMessage);
+    // Check messages are syncing across linked devices
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      'Note to Self',
+    );
+    await waitForTextMessage(aliceWindow2, testMessage);
+    // Enable disappearing messages
+    await setDisappearingMessages(aliceWindow1, [
+      'note-to-self',
+      'disappear-after-send-option',
+      'input-10-seconds',
+    ]);
+    // Check control message is visible and correct
+    await doesTextIncludeString(
+      aliceWindow1,
+      'disappear-control-message',
+      controlMessageText,
+    );
+    await sendMessage(aliceWindow1, testMessageDisappear);
+    await waitForTextMessage(aliceWindow2, testMessageDisappear);
+    await sleepFor(10000);
+    await Promise.all([
+      hasTextMessageBeenDeleted(aliceWindow1, testMessageDisappear),
+      hasTextMessageBeenDeleted(aliceWindow2, testMessageDisappear),
+    ]);
+  },
+);

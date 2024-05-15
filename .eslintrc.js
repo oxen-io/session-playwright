@@ -49,6 +49,11 @@ module.exports = {
     // Use LF to stay consistent
     'linebreak-style': ['error', 'unix'],
 
+    'import/no-extraneous-dependencies': 'off',
+    'no-await-in-loop': 'off',
+    'import/order': 'off',
+    'no-useless-catch': 'off',
+
     quotes: [
       'error',
       'single',

@@ -1,32 +1,29 @@
 import { sleepFor } from '../promise_utils';
-import { newUser } from './setup/new_user';
+import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { clickOnMatchingText, clickOnTestIdWithText } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
-sessionTestTwoWindows('Voice calls', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-
-  await createContact(windowA, windowB, userA, userB);
-  await clickOnTestIdWithText(windowA, 'call-button');
-  await clickOnTestIdWithText(windowA, 'session-toast');
-  await clickOnTestIdWithText(windowA, 'enable-calls');
-  await clickOnTestIdWithText(windowA, 'session-confirm-ok-button');
-  await clickOnTestIdWithText(windowA, 'message-section');
-  await clickOnTestIdWithText(
-    windowA,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await clickOnTestIdWithText(windowA, 'call-button');
-  // Enable calls in window B
-  await clickOnTestIdWithText(windowB, 'session-toast');
-  await clickOnTestIdWithText(windowB, 'enable-calls');
-  await clickOnTestIdWithText(windowB, 'session-confirm-ok-button');
-  await clickOnMatchingText(windowB, 'Accept');
-  await sleepFor(5000);
-  await clickOnTestIdWithText(windowA, 'end-call');
-});
+test_Alice_1W_Bob_1W(
+  'Voice calls',
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await clickOnTestIdWithText(aliceWindow1, 'call-button');
+    await clickOnTestIdWithText(aliceWindow1, 'session-toast');
+    await clickOnTestIdWithText(aliceWindow1, 'enable-calls');
+    await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
+    await clickOnTestIdWithText(aliceWindow1, 'message-section');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await clickOnTestIdWithText(aliceWindow1, 'call-button');
+    // Enable calls in window B
+    await clickOnTestIdWithText(bobWindow1, 'session-toast');
+    await clickOnTestIdWithText(bobWindow1, 'enable-calls');
+    await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
+    await clickOnMatchingText(bobWindow1, 'Accept');
+    await sleepFor(5000);
+    await clickOnTestIdWithText(aliceWindow1, 'end-call');
+  },
+);

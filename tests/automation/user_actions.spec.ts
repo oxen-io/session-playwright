@@ -2,8 +2,9 @@ import { expect } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
-  sessionTestOneWindow,
   sessionTestTwoWindows,
+  test_Alice_1W_Bob_1W,
+  test_Alice_1W_no_network,
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { sendMessage } from './utilities/message';
@@ -19,6 +20,7 @@ import {
 
 // Send message in one to one conversation with new contact
 sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
+  // no fixture for that one
   const [userA, userB] = await Promise.all([
     newUser(windowA, 'Alice'),
     newUser(windowB, 'Bob'),
@@ -56,88 +58,90 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   ]);
 });
 
-sessionTestTwoWindows(
+test_Alice_1W_Bob_1W(
   'Block user in conversation list',
-  async ([windowA, windowB]) => {
-    // Open app and create user
-    const [userA, userB] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-    ]);
+  async ({ aliceWindow1, bobWindow1, alice, bob }) => {
     // Create contact and send new message
-    await createContact(windowA, windowB, userA, userB);
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
     // Check to see if User B is a contact
-    await clickOnTestIdWithText(windowA, 'new-conversation-button');
+    await clickOnTestIdWithText(aliceWindow1, 'new-conversation-button');
     await waitForTestIdWithText(
-      windowA,
+      aliceWindow1,
       'module-conversation__user__profile-name',
-      userB.userName,
+      bob.userName,
     );
+    // he is a contact, close the new conversation button tab as there is no right click allowed on it
+    await clickOnTestIdWithText(aliceWindow1, 'new-conversation-button');
+    // then right click on the contact conversation list item to show the menu
     await clickOnTestIdWithText(
-      windowA,
+      aliceWindow1,
       'module-conversation__user__profile-name',
-      userB.userName,
+      bob.userName,
       true,
     );
     // Select block
-    await clickOnMatchingText(windowA, 'Block');
+    await clickOnMatchingText(aliceWindow1, 'Block');
     // Verify toast notification 'blocked'
-    await waitForTestIdWithText(windowA, 'session-toast', 'Blocked');
+    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Blocked');
     // Verify the user was moved to the blocked contact list
     // Click on settings tab
-    await clickOnTestIdWithText(windowA, 'settings-section');
+    await clickOnTestIdWithText(aliceWindow1, 'settings-section');
     // click on settings section 'conversation'
-    await clickOnTestIdWithText(windowA, 'conversations-settings-menu-item');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'conversations-settings-menu-item',
+    );
     // Navigate to blocked users tab'
-    await clickOnTestIdWithText(windowA, 'reveal-blocked-user-settings');
+    await clickOnTestIdWithText(aliceWindow1, 'reveal-blocked-user-settings');
     // select the contact to unblock by clicking on it by name
-    await clickOnMatchingText(windowA, userB.userName);
+    await clickOnMatchingText(aliceWindow1, bob.userName);
     // Unblock user by clicking on unblock
-    await clickOnTestIdWithText(windowA, 'unblock-button-settings-screen');
+    await clickOnTestIdWithText(aliceWindow1, 'unblock-button-settings-screen');
     // Verify toast notification says unblocked
-    await waitForTestIdWithText(windowA, 'session-toast', 'Unblocked');
-    await waitForMatchingText(windowA, 'No blocked contacts');
+    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Unblocked');
+    await waitForMatchingText(aliceWindow1, 'No blocked contacts');
   },
 );
 
-sessionTestOneWindow('Change username', async ([window]) => {
-  // Create user
+test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   const newUsername = 'Tiny bubble';
-  await newUser(window, 'Alice');
   // Open Profile
-  await clickOnTestIdWithText(window, 'leftpane-primary-avatar');
+  await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
   // Click on current username to open edit field
-  await clickOnTestIdWithText(window, 'edit-profile-icon');
+  await clickOnTestIdWithText(aliceWindow1, 'edit-profile-icon');
   // Type in new username
-  await typeIntoInput(window, 'profile-name-input', newUsername);
+  await typeIntoInput(aliceWindow1, 'profile-name-input', newUsername);
   // await window.fill('.profile-name-input', 'new username');
   // Press enter to confirm username input
-  await window.keyboard.press('Enter');
+  await aliceWindow1.keyboard.press('Enter');
   // Wait for Copy button to appear to verify username change
-  await window.isVisible("'Copy'");
+  await aliceWindow1.isVisible("'Copy'");
   // verify name change
-  expect(await window.innerText('[data-testid=your-profile-name]')).toBe(
+  expect(await aliceWindow1.innerText('[data-testid=your-profile-name]')).toBe(
     newUsername,
   );
-  // Exit profile module
-  await window.click('.session-icon-button.small');
+  // Exit profile modal
+  await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
 });
 
-sessionTestOneWindow('Change avatar', async ([window]) => {
-  await newUser(window, 'Alice');
+test_Alice_1W_no_network('Change avatar', async ({ aliceWindow1 }) => {
   // Open profile
-  await clickOnTestIdWithText(window, 'leftpane-primary-avatar');
+  await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
   // Click on current profile picture
-  await waitForTestIdWithText(window, 'copy-button-profile-update', 'Copy');
+  await waitForTestIdWithText(
+    aliceWindow1,
+    'copy-button-profile-update',
+    'Copy',
+  );
 
-  await clickOnTestIdWithText(window, 'image-upload-section');
-  await clickOnTestIdWithText(window, 'image-upload-click');
-  await clickOnTestIdWithText(window, 'save-button-profile-update');
-  await waitForTestIdWithText(window, 'loading-spinner');
+  await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
+  await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
+  await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
+  await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
 
   await sleepFor(500);
   const leftpaneAvatarContainer = await waitForTestIdWithText(
-    window,
+    aliceWindow1,
     'leftpane-primary-avatar',
   );
   const start = Date.now();
@@ -152,7 +156,9 @@ sessionTestOneWindow('Change avatar', async ([window]) => {
         type: 'jpeg',
         // path: 'avatar-updated-blue',
       });
-      expect(screenshot).toMatchSnapshot({ name: 'avatar-updated-blue.jpeg' });
+      expect(screenshot).toMatchSnapshot({
+        name: 'avatar-updated-blue.jpeg',
+      });
       correctScreenshot = true;
       console.warn(
         `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
@@ -171,94 +177,92 @@ sessionTestOneWindow('Change avatar', async ([window]) => {
   }
 });
 
-sessionTestTwoWindows('Set nickname', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const nickname = 'new nickname for Bob';
+test_Alice_1W_Bob_1W(
+  'Set nickname',
+  async ({ aliceWindow1, bobWindow1, alice, bob }) => {
+    const nickname = 'new nickname for Bob';
 
-  await createContact(windowA, windowB, userA, userB);
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'message-section',
-  });
-  await clickOnTestIdWithText(
-    windowA,
-    'module-conversation__user__profile-name',
-    userB.userName,
-    true,
-  );
-  await clickOnMatchingText(windowA, 'Change Nickname');
-  await sleepFor(1000);
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+      true,
+    );
+    await clickOnMatchingText(aliceWindow1, 'Change Nickname');
+    await sleepFor(1000);
 
-  await typeIntoInputSlow(windowA, 'nickname-input', nickname);
-  await sleepFor(100);
-  await clickOnTestIdWithText(windowA, 'confirm-nickname', 'OK');
-  const headerUsername = await waitForTestIdWithText(
-    windowA,
-    'header-conversation-name',
-  );
-  const headerUsernameText = await headerUsername.innerText();
-  console.warn('Innertext ', headerUsernameText);
+    await typeIntoInputSlow(aliceWindow1, 'nickname-input', nickname);
+    await sleepFor(100);
+    await clickOnTestIdWithText(aliceWindow1, 'confirm-nickname', 'OK');
+    const headerUsername = await waitForTestIdWithText(
+      aliceWindow1,
+      'header-conversation-name',
+    );
+    const headerUsernameText = await headerUsername.innerText();
+    console.warn('Innertext ', headerUsernameText);
 
-  expect(headerUsernameText).toBe(nickname);
-  // Check conversation list name also
-  const conversationListUsernameText = await waitForTestIdWithText(
-    windowA,
-    'module-conversation__user__profile-name',
-  );
-  const conversationListUsername =
-    await conversationListUsernameText.innerText();
-  expect(conversationListUsername).toBe(nickname);
-});
+    expect(headerUsernameText).toBe(nickname);
+    // Check conversation list name also
+    const conversationListUsernameText = await waitForTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+    );
+    const conversationListUsername =
+      await conversationListUsernameText.innerText();
+    expect(conversationListUsername).toBe(nickname);
+  },
+);
 
-sessionTestTwoWindows('Read status', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  await createContact(windowA, windowB, userA, userB);
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'settings-section',
-  });
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'enable-read-receipts',
-  });
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'message-section',
-  });
-  await clickOnTestIdWithText(
-    windowA,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await clickOnElement({
-    window: windowB,
-    strategy: 'data-testid',
-    selector: 'settings-section',
-  });
-  await clickOnElement({
-    window: windowB,
-    strategy: 'data-testid',
-    selector: 'enable-read-receipts',
-  });
-  await clickOnElement({
-    window: windowB,
-    strategy: 'data-testid',
-    selector: 'message-section',
-  });
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-  await sendMessage(windowA, 'Testing read receipts');
-});
+test_Alice_1W_Bob_1W(
+  'Read status',
+  async ({ aliceWindow1, bobWindow1, alice, bob }) => {
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'settings-section',
+    });
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'enable-read-receipts',
+    });
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await clickOnElement({
+      window: bobWindow1,
+      strategy: 'data-testid',
+      selector: 'settings-section',
+    });
+    await clickOnElement({
+      window: bobWindow1,
+      strategy: 'data-testid',
+      selector: 'enable-read-receipts',
+    });
+    await clickOnElement({
+      window: bobWindow1,
+      strategy: 'data-testid',
+      selector: 'message-section',
+    });
+    await clickOnTestIdWithText(
+      bobWindow1,
+      'module-conversation__user__profile-name',
+      alice.userName,
+    );
+    await sendMessage(aliceWindow1, 'Testing read receipts');
+  },
+);

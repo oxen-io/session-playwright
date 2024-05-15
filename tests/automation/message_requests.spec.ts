@@ -1,6 +1,4 @@
-import { test } from '@playwright/test';
-import { beforeAllClean } from './setup/beforeEach';
-import { newUser } from './setup/new_user';
+import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -9,124 +7,110 @@ import {
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
-import { sessionTestTwoWindows } from './setup/sessionTest';
 
-test.beforeEach(beforeAllClean);
-
-// test.afterEach(() => forceCloseAllWindows(windows));
 // Open two windows and log into 2 separate accounts
-sessionTestTwoWindows('Message requests accept', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const testMessage = `Sender: ${userA.userName} Receiver: ${userB.userName}`;
-  // send a message to User B from User A
-  await sendNewMessage(windowA, userB.sessionid, `${testMessage}`);
-  // Check the message request banner appears and click on it
-  await clickOnTestIdWithText(windowB, 'message-request-banner');
-  // Select message request from User A
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-  // Check that using the accept button has intended use
-  await clickOnTestIdWithText(windowB, 'accept-message-request');
-  // Check config message of message request acceptance
-  await waitForTestIdWithText(
-    windowB,
-    'message-request-response-message',
-    `You have accepted ${userA.userName}'s message request`,
-  );
-  await waitForMatchingText(windowB, 'No pending message requests');
-});
-sessionTestTwoWindows(
-  'Message requests text reply',
-  async ([windowA, windowB]) => {
-    const [userA, userB] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-    ]);
-    const testMessage = `Sender: ${userA.userName}, Receiver: ${userB.userName}`;
-    const testReply = `Sender: ${userB.userName}, Receiver: ${userA.userName}`;
+test_Alice_1W_Bob_1W(
+  'Message requests accept',
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    const testMessage = `Sender: ${alice.userName} Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(windowA, userB.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
     // Check the message request banner appears and click on it
-    await clickOnTestIdWithText(windowB, 'message-request-banner');
+    await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select message request from User A
     await clickOnTestIdWithText(
-      windowB,
+      bobWindow1,
       'module-conversation__user__profile-name',
-      userA.userName,
+      alice.userName,
     );
-    await sendMessage(windowB, testReply);
+    // Check that using the accept button has intended use
+    await clickOnTestIdWithText(bobWindow1, 'accept-message-request');
+    // Check config message of message request acceptance
+    await waitForTestIdWithText(
+      bobWindow1,
+      'message-request-response-message',
+      `You have accepted ${alice.userName}'s message request`,
+    );
+    await waitForMatchingText(bobWindow1, 'No pending message requests');
+  },
+);
+
+test_Alice_1W_Bob_1W(
+  'Message requests text reply',
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
+    const testReply = `Sender: ${bob.userName}, Receiver: ${alice.userName}`;
+    // send a message to User B from User A
+    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
+    // Check the message request banner appears and click on it
+    await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
+    // Select message request from User A
+    await clickOnTestIdWithText(
+      bobWindow1,
+      'module-conversation__user__profile-name',
+      alice.userName,
+    );
+    await sendMessage(bobWindow1, testReply);
     // Check config message of message request acceptance
 
     await waitForTestIdWithText(
-      windowB,
+      bobWindow1,
       'message-request-response-message',
-      `You have accepted ${userA.userName}'s message request`,
+      `You have accepted ${alice.userName}'s message request`,
     );
-    await waitForMatchingText(windowB, 'No pending message requests');
+    await waitForMatchingText(bobWindow1, 'No pending message requests');
   },
 );
-sessionTestTwoWindows(
+
+test_Alice_1W_Bob_1W(
   'Message requests decline',
-  async ([windowA, windowB]) => {
-    const [userA, userB] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-    ]);
-    const testMessage = `Sender: ${userA.userName}, Receiver: ${userB.userName}`;
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(windowA, userB.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
     // Check the message request banner appears and click on it
-    await clickOnTestIdWithText(windowB, 'message-request-banner');
+    await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select message request from User A
     await clickOnTestIdWithText(
-      windowB,
+      bobWindow1,
       'module-conversation__user__profile-name',
-      userA.userName,
+      alice.userName,
     );
     // Check that using the accept button has intended use
-    await clickOnTestIdWithText(windowB, 'decline-message-request');
+    await clickOnTestIdWithText(bobWindow1, 'decline-message-request');
     // Confirm decline
     await clickOnTestIdWithText(
-      windowB,
+      bobWindow1,
       'session-confirm-ok-button',
       'Decline',
     );
     // Check config message of message request acceptance
-    await waitForMatchingText(windowB, 'No pending message requests');
+    await waitForMatchingText(bobWindow1, 'No pending message requests');
   },
 );
-sessionTestTwoWindows(
+
+test_Alice_1W_Bob_1W(
   'Message requests clear all',
-  async ([windowA, windowB]) => {
-    const [userA, userB] = await Promise.all([
-      newUser(windowA, 'Alice'),
-      newUser(windowB, 'Bob'),
-    ]);
-    const testMessage = `Sender: ${userA.userName}, Receiver: ${userB.userName}`;
+  async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
+    const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(windowA, userB.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
     // Check the message request banner appears and click on it
-    await clickOnTestIdWithText(windowB, 'message-request-banner');
+    await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select 'Clear All' button
-    await clickOnMatchingText(windowB, 'Clear All');
+    await clickOnMatchingText(bobWindow1, 'Clear All');
     // Confirm decline
-    await clickOnTestIdWithText(windowB, 'session-confirm-ok-button', 'OK');
+    await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button', 'OK');
     // Navigate back to message request folder to check
-    await clickOnTestIdWithText(windowB, 'settings-section');
+    await clickOnTestIdWithText(bobWindow1, 'settings-section');
 
     await clickOnTestIdWithText(
-      windowB,
+      bobWindow1,
       'message-requests-settings-menu-item',
       'Message Requests',
     );
     // Check config message of message request acceptance
-    await waitForMatchingText(windowB, 'No pending message requests');
+    await waitForMatchingText(bobWindow1, 'No pending message requests');
   },
 );
 

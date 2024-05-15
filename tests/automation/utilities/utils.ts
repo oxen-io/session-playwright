@@ -5,12 +5,12 @@ import { ElementHandle, Page } from '@playwright/test';
 import { sleepFor } from '../../promise_utils';
 import {
   DataTestId,
-  loaderType,
   Strategy,
   StrategyExtractionObj,
   WithMaxWait,
   WithPage,
   WithRightButton,
+  loaderType,
 } from '../types/testing';
 import { sendMessage } from './message';
 
@@ -193,10 +193,11 @@ export async function clickOnElement({
   ...obj
 }: WithPage & StrategyExtractionObj & WithMaxWait & WithRightButton) {
   const builtSelector = `css=[${obj.strategy}=${obj.selector}]`;
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  console.info(`clickOnElement: looking for selector ${builtSelector}`);
+  const sharedOpts = { timeout: maxWait };
   await window.click(
     builtSelector,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
   );
 }
 
@@ -208,11 +209,12 @@ export async function lookForPartialTestId(
   maxWait?: number,
 ) {
   const builtSelector = `css=[data-testid^="${selector}"]`;
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  const sharedOpts = { timeout: maxWait };
+
   if (click) {
     await window.click(
       builtSelector,
-      rightButton ? { button: 'right' } : undefined,
+      rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
     );
   }
   return builtSelector;
@@ -239,6 +241,7 @@ export async function clickOnTestIdWithText(
   rightButton?: boolean,
   maxWait?: number,
 ) {
+  const sharedOpts = { timeout: maxWait, strict: true };
   console.info(
     `clickOnTestIdWithText with testId:${dataTestId} and text:${
       text || 'none'
@@ -249,10 +252,14 @@ export async function clickOnTestIdWithText(
     ? `css=[data-testid=${dataTestId}]`
     : `css=[data-testid=${dataTestId}]:has-text("${text}")`;
 
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
-  return window.click(
+  await window.click(
     builtSelector,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
+  );
+  console.info(
+    `clickOnTestIdWithText:clicked! testId:${dataTestId} and text:${
+      text || 'none'
+    }`,
   );
 }
 
@@ -263,10 +270,11 @@ export async function clickOnTextMessage(
   maxWait?: number,
 ) {
   const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  const sharedOpts = { timeout: maxWait };
+
   await window.click(
     builtSelector,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
   );
 }
 
@@ -320,7 +328,7 @@ export async function hasElementBeenDeleted(
 ) {
   const start = Date.now();
 
-  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined;
   do {
     try {
       el = await waitForElement(window, strategy, selector, maxWait, text);
@@ -350,15 +358,13 @@ export async function hasTextMessageBeenDeleted(
   text: string,
   maxWait: number = 5000,
 ) {
-  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
-
   await doWhileWithMax(
     15000,
     500,
     'waiting for text message to be deleted',
     async () => {
       try {
-        el = await waitForElement(
+        await waitForElement(
           window,
           'data-testid',
           'message-content',
@@ -367,7 +373,6 @@ export async function hasTextMessageBeenDeleted(
         );
         return false;
       } catch (e) {
-        el = undefined;
         console.info(`Text message not found, yay!`);
         return true;
       }
@@ -423,6 +428,7 @@ export async function doWhileWithMax(
         e,
       );
     }
+    iteration++;
     await sleepFor(waitBetweenMs);
   } while (!wasSuccess && Date.now() - start < maxWaitMs);
 

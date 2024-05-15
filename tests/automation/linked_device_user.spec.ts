@@ -1,9 +1,13 @@
 /* eslint-disable no-await-in-loop */
-import { expect, Page, test } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { sleepFor } from '../promise_utils';
-import { beforeAllClean, forceCloseAllWindows } from './setup/beforeEach';
+import { forceCloseAllWindows } from './setup/closeWindows';
 import { newUser } from './setup/new_user';
-import { openApp } from './setup/open';
+import {
+  sessionTestOneWindow,
+  test_Alice_2W,
+  test_Alice_2W_Bob_1W,
+} from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { linkedDevice } from './utilities/linked_device';
 import { sendMessage } from './utilities/message';
@@ -22,273 +26,282 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-const windows: Array<Page> = [];
-test.beforeEach(beforeAllClean);
-
-test.afterEach(() => forceCloseAllWindows(windows));
-
-test('Link a device', async () => {
-  const [windowA] = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window
-  const userA = await newUser(windowA, 'Alice');
-  const [windowB] = await linkedDevice(userA.recoveryPhrase); // not using sessionTest here as we need to close and reopen one of the window
-  await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
-  // Verify Username
-  await waitForTestIdWithText(windowA, 'your-profile-name', userA.userName);
-  // Verify Session ID
-  await waitForTestIdWithText(windowA, 'your-session-id', userA.sessionid);
-  // exit profile module
-  await clickOnTestIdWithText(windowA, 'modal-close-button');
-  // You're almost finished isn't displayed
-  const errorDesc = 'Should not be found';
+sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
+  let aliceWindow2: Page | undefined;
   try {
-    const elemShouldNotBeFound = windowB.locator(
-      '[data-testid=reveal-recovery-phrase]',
+    const userA = await newUser(aliceWindow1, 'Alice');
+    aliceWindow2 = await linkedDevice(userA.recoveryPhrase); // not using fixture here as we want to check the behavior finely
+    await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
+    // Verify Username
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'your-profile-name',
+      userA.userName,
     );
-    if (elemShouldNotBeFound) {
-      console.error(
-        'Continue to save recovery phrase not found, excellent news',
-      );
-      throw new Error(errorDesc);
-    }
-  } catch (e) {
-    if (e.message !== errorDesc) {
-      // this is NOT ok
-      throw e;
-    }
-  }
-});
-
-test('Changed username syncs', async () => {
-  const [windowA] = await openApp(1);
-  const userA = await newUser(windowA, 'Alice');
-  const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const newUsername = 'Tiny bubble';
-  await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
-  // Click on pencil icon
-  await clickOnTestIdWithText(windowA, 'edit-profile-icon');
-  // Replace old username with new username
-  await typeIntoInput(windowA, 'profile-name-input', newUsername);
-  // Press enter to confirm change
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'save-button-profile-update',
-  });
-  // Wait for loading animation
-  await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
-
-  // Check username change in window B
-  // Click on profile settings in window B
-  // Waiting for the username to change
-  await doWhileWithMax(
-    15000,
-    500,
-    'waiting for updated username in profile dialog',
-    async () => {
-      await clickOnTestIdWithText(windowB, 'leftpane-primary-avatar');
-      // Verify username has changed to new username
-      try {
-        await waitForTestIdWithText(
-          windowB,
-          'your-profile-name',
-          newUsername,
-          100,
-        );
-        return true;
-      } catch (e) {
-        // if waitForTestIdWithText doesn't find the right username, close the window and retry
-        return false;
-      } finally {
-        await clickOnElement({
-          window: windowB,
-          strategy: 'data-testid',
-          selector: 'modal-close-button',
-        });
-      }
-    },
-  );
-});
-
-// eslint-disable-next-line no-empty-pattern
-test('Profile picture syncs', async ({}, testinfo) => {
-  const [windowA] = await openApp(1); // not using sessionTest here as we need to close and reopen one of the window
-  const userA = await newUser(windowA, 'Alice');
-  const [windowB] = await linkedDevice(userA.recoveryPhrase); // not using sessionTest here as we need to close and reopen one of the window
-  await clickOnTestIdWithText(windowA, 'leftpane-primary-avatar');
-  // Click on current profile picture
-  await waitForTestIdWithText(windowA, 'copy-button-profile-update', 'Copy');
-
-  await clickOnTestIdWithText(windowA, 'image-upload-section');
-  await clickOnTestIdWithText(windowA, 'image-upload-click');
-  await clickOnTestIdWithText(windowA, 'save-button-profile-update');
-  await waitForTestIdWithText(windowA, 'loading-spinner');
-
-  if (testinfo.config.updateSnapshots === 'all') {
-    await sleepFor(15000, true); // long time to be sure a poll happened when we want to update the snapshot
-  } else {
-    await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
-  }
-  const leftpaneAvatarContainer = await waitForTestIdWithText(
-    windowB,
-    'leftpane-primary-avatar',
-  );
-  const start = Date.now();
-  let correctScreenshot = false;
-  let tryNumber = 0;
-  let lastError: Error | undefined;
-  do {
+    // Verify Session ID
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'your-session-id',
+      userA.sessionid,
+    );
+    // exit profile modal
+    await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
+    // You're almost finished isn't displayed
+    const errorDesc = 'Should not be found';
     try {
-      await sleepFor(500);
-
-      const screenshot = await leftpaneAvatarContainer.screenshot({
-        type: 'jpeg',
-        // path: 'avatar-updated-blue',
-      });
-      expect(screenshot).toMatchSnapshot({ name: 'avatar-updated-blue.jpeg' });
-      correctScreenshot = true;
-      console.warn(
-        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+      const elemShouldNotBeFound = aliceWindow2.locator(
+        '[data-testid=reveal-recovery-phrase]',
       );
+      if (elemShouldNotBeFound) {
+        console.error(
+          'Continue to save recovery phrase not found, excellent news',
+        );
+        throw new Error(errorDesc);
+      }
     } catch (e) {
-      lastError = e;
+      if (e.message !== errorDesc) {
+        // this is NOT ok
+        throw e;
+      }
     }
-    tryNumber++;
-  } while (Date.now() - start <= 20000 && !correctScreenshot);
-
-  if (!correctScreenshot) {
-    console.warn(
-      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
-    );
-    throw new Error('waited 20s and still the screenshot is not right');
+  } finally {
+    if (aliceWindow2) {
+      await forceCloseAllWindows([aliceWindow2]);
+    }
   }
 });
 
-test('Contacts syncs', async () => {
-  const [windowA, windowC] = await openApp(2); // not using sessionTest here as we need to close and reopen one of the window
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowC, 'Bob'),
-  ]);
-  const [windowB] = await linkedDevice(userA.recoveryPhrase); // not using sessionTest here as we need to close and reopen one of the window
-  await createContact(windowA, windowC, userA, userB);
-  // linked device (windowB)
-  await waitForTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  console.info('Contacts correctly synced');
-});
+test_Alice_2W(
+  'Changed username syncs',
+  async ({ aliceWindow1, aliceWindow2 }) => {
+    const newUsername = 'Tiny bubble';
+    await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
+    // Click on pencil icon
+    await clickOnTestIdWithText(aliceWindow1, 'edit-profile-icon');
+    // Replace old username with new username
+    await typeIntoInput(aliceWindow1, 'profile-name-input', newUsername);
+    // Press enter to confirm change
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'save-button-profile-update',
+    });
+    // Wait for loading animation
+    await waitForLoadingAnimationToFinish(aliceWindow1, 'loading-spinner');
 
-test('Deleted message syncs', async () => {
-  const [windowA, windowC] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowC, 'Bob'),
-  ]);
-  const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const messageToDelete = 'Testing deletion functionality for linked device';
-  await createContact(windowA, windowC, userA, userB);
-  await sendMessage(windowA, messageToDelete);
-  // Navigate to conversation on linked device and for message from user A to user B
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await Promise.all([
-    waitForTextMessage(windowB, messageToDelete),
-    waitForTextMessage(windowC, messageToDelete),
-  ]);
-  await clickOnTextMessage(windowA, messageToDelete, true);
-  await clickOnMatchingText(windowA, 'Delete');
-  await clickOnTestIdWithText(windowA, 'session-confirm-ok-button', 'Delete');
-  await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextMessageBeenDeleted(windowA, messageToDelete, 6000);
-  // linked device for deleted message
-  // Waiting for message to be removed
-  // Check for linked device
-  await hasTextMessageBeenDeleted(windowB, messageToDelete, 10000);
-  // Still should exist for user B
-  await waitForMatchingText(windowC, messageToDelete);
-});
+    // Check username change in window B
+    // Click on profile settings in window B
+    // Waiting for the username to change
+    await doWhileWithMax(
+      15000,
+      500,
+      'waiting for updated username in profile dialog',
+      async () => {
+        await clickOnTestIdWithText(aliceWindow2, 'leftpane-primary-avatar');
+        // Verify username has changed to new username
+        try {
+          await waitForTestIdWithText(
+            aliceWindow2,
+            'your-profile-name',
+            newUsername,
+            100,
+          );
+          return true;
+        } catch (e) {
+          // if waitForTestIdWithText doesn't find the right username, close the window and retry
+          return false;
+        } finally {
+          await clickOnElement({
+            window: aliceWindow2,
+            strategy: 'data-testid',
+            selector: 'modal-close-button',
+          });
+        }
+      },
+    );
+  },
+);
 
-test('Unsent message syncs', async () => {
-  const [windowA, windowC] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowC, 'Bob'),
-  ]);
-  const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const unsentMessage = 'Testing unsending functionality for linked device';
-  await createContact(windowA, windowC, userA, userB);
-  await sendMessage(windowA, unsentMessage);
-  // Navigate to conversation on linked device and for message from user A to user B
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userB.userName,
-  );
-  await Promise.all([
-    waitForTextMessage(windowB, unsentMessage),
-    waitForTextMessage(windowC, unsentMessage),
-  ]);
-  await clickOnTextMessage(windowA, unsentMessage, true);
-  await clickOnMatchingText(windowA, 'Delete');
-  await clickOnMatchingText(windowA, 'Delete for everyone');
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'session-confirm-ok-button',
-  });
-  await waitForTestIdWithText(windowA, 'session-toast', 'Deleted');
-  await hasTextMessageBeenDeleted(windowA, unsentMessage, 1000);
-  await waitForMatchingText(windowC, 'This message has been deleted');
-  // linked device for deleted message
-  await hasTextMessageBeenDeleted(windowB, unsentMessage, 1000);
-});
+test_Alice_2W(
+  'Profile picture syncs',
+  async ({ aliceWindow1, aliceWindow2 }, testinfo) => {
+    await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
+    // Click on current profile picture
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'copy-button-profile-update',
+      'Copy',
+    );
 
-test('Blocked user syncs', async () => {
-  const [windowA, windowC] = await openApp(2);
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowC, 'Bob'),
-  ]);
-  const [windowB] = await linkedDevice(userA.recoveryPhrase);
-  const testMessage = 'Testing blocking functionality for linked device';
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
+    await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
+    await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
 
-  await createContact(windowA, windowC, userA, userB);
-  await sendMessage(windowA, testMessage);
-  // Navigate to conversation on linked device and check for message from user A to user B
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userB.userName,
-    true,
-  );
-  // Select block
-  await clickOnMatchingText(windowB, 'Block');
-  // Verify toast notification 'blocked'
-  await waitForTestIdWithText(windowB, 'session-toast', 'Blocked');
-  // Verify the user was moved to the blocked contact list
-  // Click on settings tab
-  await waitForMatchingPlaceholder(
-    windowA,
-    'message-input-text-area',
-    'Unblock this contact to send a message.',
-  );
-  // reveal-blocked-user-settings is not updated once opened
-  // Check linked device for blocked contact in settings screen
-  await clickOnTestIdWithText(windowB, 'settings-section');
-  await clickOnTestIdWithText(windowB, 'conversations-settings-menu-item');
-  // a conf sync job can take 30s (if the last one failed) +  10s polling to show a change on a linked device.
-  await clickOnTestIdWithText(
-    windowB,
-    'reveal-blocked-user-settings',
-    undefined,
-    undefined,
-    50000,
-  );
-  // Check if user B is in blocked contact list
-  await waitForMatchingText(windowB, userB.userName);
-});
+    if (testinfo.config.updateSnapshots === 'all') {
+      await sleepFor(15000, true); // long time to be sure a poll happened when we want to update the snapshot
+    } else {
+      await sleepFor(2000); // short time as we will loop right below until the snapshot is what we expect
+    }
+    const leftpaneAvatarContainer = await waitForTestIdWithText(
+      aliceWindow2,
+      'leftpane-primary-avatar',
+    );
+    const start = Date.now();
+    let correctScreenshot = false;
+    let tryNumber = 0;
+    let lastError: Error | undefined;
+    do {
+      try {
+        await sleepFor(500);
+
+        const screenshot = await leftpaneAvatarContainer.screenshot({
+          type: 'jpeg',
+          // path: 'avatar-updated-blue',
+        });
+        expect(screenshot).toMatchSnapshot({
+          name: 'avatar-updated-blue.jpeg',
+        });
+        correctScreenshot = true;
+        console.warn(
+          `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+        );
+      } catch (e) {
+        lastError = e;
+      }
+      tryNumber++;
+    } while (Date.now() - start <= 20000 && !correctScreenshot);
+
+    if (!correctScreenshot) {
+      console.warn(
+        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+      );
+      throw new Error('waited 20s and still the screenshot is not right');
+    }
+  },
+);
+
+test_Alice_2W_Bob_1W(
+  'Contacts syncs',
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    // linked device (aliceWindow2)
+    await waitForTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    console.info('Contacts correctly synced');
+  },
+);
+
+test_Alice_2W_Bob_1W(
+  'Deleted message syncs',
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
+    const messageToDelete = 'Testing deletion functionality for linked device';
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await sendMessage(aliceWindow1, messageToDelete);
+    // Navigate to conversation on linked device and for message from user A to user B
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await Promise.all([
+      waitForTextMessage(aliceWindow2, messageToDelete),
+      waitForTextMessage(bobWindow1, messageToDelete),
+    ]);
+    await clickOnTextMessage(aliceWindow1, messageToDelete, true);
+    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      'Delete',
+    );
+    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await hasTextMessageBeenDeleted(aliceWindow1, messageToDelete, 6000);
+    // linked device for deleted message
+    // Waiting for message to be removed
+    // Check for linked device
+    await hasTextMessageBeenDeleted(aliceWindow2, messageToDelete, 10000);
+    // Still should exist for user B
+    await waitForMatchingText(bobWindow1, messageToDelete);
+  },
+);
+
+test_Alice_2W_Bob_1W(
+  'Unsent message syncs',
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
+    const unsentMessage = 'Testing unsending functionality for linked device';
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await sendMessage(aliceWindow1, unsentMessage);
+    // Navigate to conversation on linked device and for message from user A to user B
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await Promise.all([
+      waitForTextMessage(aliceWindow2, unsentMessage),
+      waitForTextMessage(bobWindow1, unsentMessage),
+    ]);
+    await clickOnTextMessage(aliceWindow1, unsentMessage, true);
+    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnElement({
+      window: aliceWindow1,
+      strategy: 'data-testid',
+      selector: 'session-confirm-ok-button',
+    });
+    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await hasTextMessageBeenDeleted(aliceWindow1, unsentMessage, 1000);
+    await waitForMatchingText(bobWindow1, 'This message has been deleted');
+    // linked device for deleted message
+    await hasTextMessageBeenDeleted(aliceWindow2, unsentMessage, 1000);
+  },
+);
+
+test_Alice_2W_Bob_1W(
+  'Blocked user syncs',
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
+    const testMessage = 'Testing blocking functionality for linked device';
+
+    await createContact(aliceWindow1, bobWindow1, alice, bob);
+    await sendMessage(aliceWindow1, testMessage);
+    // Navigate to conversation on linked device and check for message from user A to user B
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+      true,
+    );
+    // Select block
+    await clickOnMatchingText(aliceWindow2, 'Block');
+    // Verify toast notification 'blocked'
+    await waitForTestIdWithText(aliceWindow2, 'session-toast', 'Blocked');
+    // Verify the user was moved to the blocked contact list
+    // Click on settings tab
+    await waitForMatchingPlaceholder(
+      aliceWindow1,
+      'message-input-text-area',
+      'Unblock this contact to send a message.',
+    );
+    // reveal-blocked-user-settings is not updated once opened
+    // Check linked device for blocked contact in settings screen
+    await clickOnTestIdWithText(aliceWindow2, 'settings-section');
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'conversations-settings-menu-item',
+    );
+    // a conf sync job can take 30s (if the last one failed) +  10s polling to show a change on a linked device.
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'reveal-blocked-user-settings',
+      undefined,
+      undefined,
+      50000,
+    );
+    // Check if user B is in blocked contact list
+    await waitForMatchingText(aliceWindow2, bob.userName);
+  },
+);

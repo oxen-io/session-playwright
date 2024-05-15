@@ -14,11 +14,22 @@ export const setDisappearingMessages = async (
 ) => {
   const enforcedType: ConversationType = conversationType;
   await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  await clickOnElement({
-    window: windowA,
-    strategy: 'data-testid',
-    selector: 'disappearing-messages',
-  });
+  try {
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'disappearing-messages',
+      maxWait: 100,
+    });
+  } catch (e) {
+    await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
+    await clickOnElement({
+      window: windowA,
+      strategy: 'data-testid',
+      selector: 'disappearing-messages',
+    });
+  }
+
   if (enforcedType === '1:1') {
     await clickOnElement({
       window: windowA,
