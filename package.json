@@ -36,5 +36,5 @@
     "allure-create": "allure generate ./allure-results",
     "allure-open": "allure open ./allure-report"
   },
-  "dependencies": {}
+  "packageManager": "yarn@4.2.2"
 }
