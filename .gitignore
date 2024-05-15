@@ -10,3 +10,4 @@ allure-results
 
 playwright.config.js
 sessionReporter.js
+.yarn/
