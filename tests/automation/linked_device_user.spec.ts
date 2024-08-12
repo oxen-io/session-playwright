@@ -30,7 +30,7 @@ sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
   let aliceWindow2: Page | undefined;
   try {
     const userA = await newUser(aliceWindow1, 'Alice');
-    aliceWindow2 = await linkedDevice(userA.recoveryPhrase); // not using fixture here as we want to check the behavior finely
+    aliceWindow2 = await linkedDevice(userA.recoveryPassword); // not using fixture here as we want to check the behavior finely
     await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
     // Verify Username
     await waitForTestIdWithText(
@@ -42,7 +42,7 @@ sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
     await waitForTestIdWithText(
       aliceWindow1,
       'your-session-id',
-      userA.sessionid,
+      userA.accountid,
     );
     // exit profile modal
     await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');

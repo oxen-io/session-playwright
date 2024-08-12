@@ -149,9 +149,9 @@ function sessionTestGeneric<
           const link = links[index];
           console.info(
             'linking a window with ',
-            users[link - 1].recoveryPhrase,
+            users[link - 1].recoveryPassword,
           );
-          const linked = await linkedDevice(users[link - 1].recoveryPhrase);
+          const linked = await linkedDevice(users[link - 1].recoveryPassword);
           linkedWindows.push(linked);
         }
       }

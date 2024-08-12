@@ -19,7 +19,7 @@ async function expectRecoveryPhraseToBeVisible(
 ) {
   await waitForTestIdWithText(
     window,
-    'recovery-phrase-seed-modal',
+    'recovery-password-seed-modal',
     recoveryPhrase,
     1000,
   );
@@ -49,7 +49,7 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   await clickOnTestIdWithText(aliceWindow1, 'settings-section');
   await clickOnTestIdWithText(
     aliceWindow1,
-    'recovery-phrase-settings-menu-item',
+    'recovery-password-settings-menu-item',
   );
   await sleepFor(300, true);
 
@@ -59,7 +59,7 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   await clickOnMatchingText(aliceWindow1, 'Done');
 
   // check that the seed is visible now
-  await expectRecoveryPhraseToBeVisible(aliceWindow1, alice.recoveryPhrase);
+  await expectRecoveryPhraseToBeVisible(aliceWindow1, alice.recoveryPassword);
 
   // copy the seed phrase to the clipboard, also closes the dialog
   await clickOnMatchingText(aliceWindow1, 'Copy');
@@ -94,7 +94,7 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
 
 test_Alice_1W_no_network(
   'Wrong Password',
-  async ({ alice: { recoveryPhrase }, aliceWindow1 }) => {
+  async ({ alice: { recoveryPassword }, aliceWindow1 }) => {
     // Check if incorrect password works
     // Click on settings tab
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
@@ -115,14 +115,14 @@ test_Alice_1W_no_network(
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
     await clickOnTestIdWithText(
       aliceWindow1,
-      'recovery-phrase-settings-menu-item',
+      'recovery-password-settings-menu-item',
     );
     // Type password into input field
     await typeIntoInput(aliceWindow1, 'password-input', testPassword);
     // Confirm the password
     await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
     // this should print the recovery phrase
-    await expectRecoveryPhraseToBeVisible(aliceWindow1, recoveryPhrase);
+    await expectRecoveryPhraseToBeVisible(aliceWindow1, recoveryPassword);
 
     // copy the seed phrase to the clipboard, also closes the dialog
     await clickOnMatchingText(aliceWindow1, 'Copy');
@@ -133,7 +133,7 @@ test_Alice_1W_no_network(
     // Click on recovery phrase tab
     await clickOnTestIdWithText(
       aliceWindow1,
-      'recovery-phrase-settings-menu-item',
+      'recovery-password-settings-menu-item',
     );
     // Try with incorrect password
     await typeIntoInput(aliceWindow1, 'password-input', '000000');
@@ -145,8 +145,8 @@ test_Alice_1W_no_network(
     await hasElementPoppedUpThatShouldnt(
       aliceWindow1,
       'data-testid',
-      'recovery-phrase-seed-modal',
-      recoveryPhrase,
+      'recovery-password-seed-modal',
+      recoveryPassword,
     );
 
     //  invalid password banner showing?
@@ -160,7 +160,7 @@ test_Alice_1W_no_network(
     // Click on recovery phrase tab
     await clickOnTestIdWithText(
       aliceWindow1,
-      'recovery-phrase-settings-menu-item',
+      'recovery-password-settings-menu-item',
     );
     //  No password entered
     await clickOnMatchingText(aliceWindow1, 'Done');

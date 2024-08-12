@@ -13,7 +13,7 @@ export const createContact = async (
   const testMessage = `${userA.userName} to ${userB.userName}`;
   const testReply = `${userB.userName} to ${userA.userName}`;
   // User A sends message to User B
-  await sendNewMessage(windowA, userB.sessionid, testMessage);
+  await sendNewMessage(windowA, userB.accountid, testMessage);
   await clickOnElement({
     window: windowB,
     strategy: 'data-testid',

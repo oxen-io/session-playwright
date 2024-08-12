@@ -1,6 +1,6 @@
-import { clickOnMatchingText } from './utilities/utils';
 import { sessionTestOneWindow } from './setup/sessionTest';
+import { clickOnTestIdWithText } from './utilities/utils';
 
 sessionTestOneWindow('Tiny test', async ([windowA]) => {
-  await clickOnMatchingText(windowA, 'Create Session ID');
+  await clickOnTestIdWithText(windowA, 'create-account-button');
 });

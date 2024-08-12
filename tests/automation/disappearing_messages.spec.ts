@@ -167,7 +167,7 @@ test_Alice_2W(
     const controlMessageText =
       'set messages to disappear 10 seconds after they have been sent';
     // Open Note to self conversation
-    await sendNewMessage(aliceWindow1, alice.sessionid, testMessage);
+    await sendNewMessage(aliceWindow1, alice.accountid, testMessage);
     // Check messages are syncing across linked devices
     await clickOnTestIdWithText(
       aliceWindow2,

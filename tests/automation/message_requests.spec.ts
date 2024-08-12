@@ -14,7 +14,7 @@ test_Alice_1W_Bob_1W(
   async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
     const testMessage = `Sender: ${alice.userName} Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.accountid, `${testMessage}`);
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select message request from User A
@@ -41,7 +41,7 @@ test_Alice_1W_Bob_1W(
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
     const testReply = `Sender: ${bob.userName}, Receiver: ${alice.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.accountid, `${testMessage}`);
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select message request from User A
@@ -67,7 +67,7 @@ test_Alice_1W_Bob_1W(
   async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.accountid, `${testMessage}`);
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select message request from User A
@@ -94,7 +94,7 @@ test_Alice_1W_Bob_1W(
   async ({ alice, aliceWindow1, bob, bobWindow1 }) => {
     const testMessage = `Sender: ${alice.userName}, Receiver: ${bob.userName}`;
     // send a message to User B from User A
-    await sendNewMessage(aliceWindow1, bob.sessionid, `${testMessage}`);
+    await sendNewMessage(aliceWindow1, bob.accountid, `${testMessage}`);
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select 'Clear All' button

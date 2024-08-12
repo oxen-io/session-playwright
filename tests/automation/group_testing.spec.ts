@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { createGroup } from './setup/create_group';
 import { renameGroup } from './utilities/rename_group';
 import {
@@ -89,12 +88,12 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      `${dracula.sessionid} joined the group.`,
+      `${dracula.accountid} joined the group.`,
     );
     await waitForTestIdWithText(
       charlieWindow1,
       'group-update-message',
-      `${dracula.sessionid} joined the group.`,
+      `${dracula.accountid} joined the group.`,
     );
     await clickOnElement({
       window: draculaWindow1,
@@ -143,8 +142,9 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnTestIdWithText(aliceWindow1, 'edit-group-name');
     await typeIntoInput(aliceWindow1, 'group-name-input', '     ');
     await aliceWindow1.keyboard.press('Enter');
-    const errorMessage = aliceWindow1.locator('.error-message');
-    await expect(errorMessage).toContainText('Please enter a group name');
+    await waitForMatchingText(aliceWindow1, 'Please enter a group name');
+    // const errorMessage = aliceWindow1.locator('.error-message');
+    // await expect(errorMessage).toContainText('Please enter a group name');
     await clickOnMatchingText(aliceWindow1, 'Cancel');
     await clickOnTestIdWithText(
       aliceWindow1,

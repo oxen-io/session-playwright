@@ -32,22 +32,22 @@ export const createGroup = async (
   // Add contacts
   await sendNewMessage(
     windowA,
-    userThree.sessionid,
+    userThree.accountid,
     `${messageAC} Time: ${Date.now()}`,
   );
   await sendNewMessage(
     windowA,
-    userTwo.sessionid,
+    userTwo.accountid,
     `${messageAB} Time: ${Date.now()}`,
   );
   await sendNewMessage(
     windowB,
-    userOne.sessionid,
+    userOne.accountid,
     `${messageBA} Time: ${Date.now()}`,
   );
   await sendNewMessage(
     windowC,
-    userOne.sessionid,
+    userOne.accountid,
     `${messageCA} Time: ${Date.now()}`,
   );
   // Focus screen on window C to allow user C to become contact

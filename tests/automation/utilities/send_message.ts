@@ -12,6 +12,6 @@ export const sendNewMessage = async (
   // Enter session ID of USER B
   await typeIntoInput(window, 'new-session-conversation', sessionid);
   // click next
-  await clickOnTestIdWithText(window, 'next-new-conversation-button', 'Next');
+  await clickOnTestIdWithText(window, 'next-new-conversation-button');
   await sendMessage(window, message);
 };

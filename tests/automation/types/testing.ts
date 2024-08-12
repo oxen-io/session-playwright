@@ -2,8 +2,8 @@ import { Page } from '@playwright/test';
 
 export type User = {
   userName: string;
-  sessionid: string;
-  recoveryPhrase: string;
+  accountid: string;
+  recoveryPassword: string;
 };
 
 export type Group = {
@@ -63,7 +63,7 @@ export type Strategy = 'data-testid' | 'class' | ':has-text';
 export type DataTestId =
   | 'session-id-signup'
   | 'display-name-input'
-  | 'recovery-phrase-seed-modal'
+  | 'recovery-password-seed-modal'
   | 'path-light-container'
   | 'new-conversation-button'
   | 'chooser-new-conversation-button'
@@ -119,7 +119,7 @@ export type DataTestId =
   | 'password-input-confirm'
   | 'change-password-settings-button'
   | 'password-input-reconfirm'
-  | 'recovery-phrase-settings-menu-item'
+  | 'recovery-password-settings-menu-item'
   | 'messages-container'
   | 'chooser-new-group'
   | 'new-closed-group-name'
@@ -156,4 +156,7 @@ export type DataTestId =
   | 'time-option-1-day'
   | 'time-option-1-week'
   | 'time-option-2-weeks'
-  | 'leave-group-button';
+  | 'leave-group-button'
+  | 'create-account-button'
+  | 'continue-button'
+  | 'existing-account-button';

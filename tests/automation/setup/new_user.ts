@@ -3,9 +3,10 @@ import chalk from 'chalk';
 import { User } from '../types/testing';
 import {
   checkPathLight,
-  clickOnMatchingText,
   clickOnTestIdWithText,
+  grabTextFromElement,
   typeIntoInput,
+  waitForTestIdWithText,
 } from '../utilities/utils';
 
 export const newUser = async (
@@ -14,31 +15,38 @@ export const newUser = async (
   awaitOnionPath = true,
 ): Promise<User> => {
   // Create User
-  await clickOnMatchingText(window, 'Create Session ID');
-  await clickOnMatchingText(window, 'Continue');
+  await clickOnTestIdWithText(window, 'create-account-button');
+  // await clickOnMatchingText(window, 'Continue');
   // Input username = testuser
   await typeIntoInput(window, 'display-name-input', userName);
-  await clickOnMatchingText(window, 'Get started');
+  await clickOnTestIdWithText(window, 'continue-button');
   // save recovery phrase
   await clickOnTestIdWithText(window, 'reveal-recovery-phrase');
-  const recoveryPhrase = await window.innerText(
-    '[data-testid=recovery-phrase-seed-modal]',
+  await waitForTestIdWithText(window, 'recovery-password-seed-modal');
+  const recoveryPassword = await grabTextFromElement(
+    window,
+    'data-testid',
+    'recovery-password-seed-modal',
   );
-  await clickOnTestIdWithText(window, 'modal-close-button');
+  // const recoveryPhrase = await window.innerText(
+  //   '[data-testid=recovery-password-seed-modal]',
+  // );
+  // await clickOnTestIdWithText(window, 'modal-close-button');
   await clickOnTestIdWithText(window, 'leftpane-primary-avatar');
 
   // Save session ID to a variable
-  let sessionid = await window.innerText('[data-testid=your-session-id]');
-  sessionid = sessionid.replace(/(\r\n|\n|\r)/gm, ''); // remove the new line in the SessionID as it is rendered with one forced
+  let accountid = await window.innerText('[data-testid=your-session-id]');
+  accountid = accountid.replace(/(\r\n|\n|\r)/gm, ''); // remove the new line in the SessionID as it is rendered with one forced
 
   console.log(
-    `${userName}: Session ID: "${chalk.blue(
-      sessionid,
-    )}" and Recovery phrase: "${chalk.green(recoveryPhrase)}"`,
+    `${userName}: Account ID: "${chalk.blue(
+      accountid,
+    )}" and Recovery password: "${chalk.green(recoveryPassword)}"`,
   );
   await clickOnTestIdWithText(window, 'modal-close-button');
   if (awaitOnionPath) {
     await checkPathLight(window);
   }
-  return { userName, sessionid, recoveryPhrase };
+  await clickOnTestIdWithText(window, 'message-section');
+  return { userName, accountid, recoveryPassword };
 };

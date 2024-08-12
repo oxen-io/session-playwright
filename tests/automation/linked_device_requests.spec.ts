@@ -14,7 +14,7 @@ test_Alice_2W_Bob_1W(
   async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
     const testReply = `${alice.userName} accepting message request from ${bob.userName}`;
-    await sendNewMessage(bobWindow1, alice.sessionid, testMessage);
+    await sendNewMessage(bobWindow1, alice.accountid, testMessage);
     // Accept request in aliceWindow1
     await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
     await clickOnTestIdWithText(aliceWindow2, 'message-request-banner');
@@ -46,7 +46,7 @@ test_Alice_2W_Bob_1W(
   'Decline request syncs',
   async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
     const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
-    await sendNewMessage(bobWindow1, alice.sessionid, testMessage);
+    await sendNewMessage(bobWindow1, alice.accountid, testMessage);
     // Decline request in aliceWindow1
     await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
     await clickOnTestIdWithText(

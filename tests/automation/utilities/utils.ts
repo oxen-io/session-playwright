@@ -319,6 +319,16 @@ export async function doesTextIncludeString(
   }
 }
 
+export async function grabTextFromElement(
+  window: Page,
+  strategy: Strategy,
+  selector: string,
+) {
+  const builtSelector = `css=[${strategy}=${selector}]`;
+  const element = await window.waitForSelector(builtSelector);
+  return element.innerText();
+}
+
 export async function hasElementBeenDeleted(
   window: Page,
   strategy: Strategy,
@@ -394,6 +404,28 @@ export async function hasElementPoppedUpThatShouldnt(
   const elVisible = await window.isVisible(builtSelector);
   if (elVisible === true) {
     throw new Error(fakeError);
+  }
+  return builtSelector;
+}
+
+export async function doesElementExist(
+  window: Page,
+  strategy: Strategy,
+  selector: string,
+  text?: string,
+) {
+  const builtSelector = !text
+    ? `css=[${strategy}=${selector}]`
+    : `css=[${strategy}=${selector}]:has-text("${text.replace(/"/g, '\\"')}")`;
+
+  const fakeError = `Element ${selector} does not exist`;
+  const elVisible = await window.isVisible(builtSelector);
+  if (elVisible === false) {
+    console.log(fakeError);
+    return;
+  } else {
+    console.log(`Element ${selector} exists`);
+    return builtSelector;
   }
 }
 
