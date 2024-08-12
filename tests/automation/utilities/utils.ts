@@ -420,13 +420,12 @@ export async function doesElementExist(
 
   const fakeError = `Element ${selector} does not exist`;
   const elVisible = await window.isVisible(builtSelector);
-  if (elVisible === false) {
+  if (!elVisible) {
     console.log(fakeError);
     return;
-  } else {
-    console.log(`Element ${selector} exists`);
-    return builtSelector;
   }
+  console.log(`Element ${selector} exists`);
+  return builtSelector;
 }
 
 export async function measureSendingTime(window: Page, messageNumber: number) {

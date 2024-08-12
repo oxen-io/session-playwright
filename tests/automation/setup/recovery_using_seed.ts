@@ -19,8 +19,6 @@ export async function recoverFromSeed(window: Page, recoveryPhrase: string) {
   );
   if (displayName) {
     throw new Error(`Display name was not found when restoring from seed`);
-  } else {
-    console.log('Display name was found');
   }
 
   return { window };
