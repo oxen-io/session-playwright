@@ -1,14 +1,14 @@
 import { Page } from '@playwright/test';
+import { Group, User } from '../types/testing';
 import { sendMessage } from '../utilities/message';
 import { sendNewMessage } from '../utilities/send_message';
 import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  waitForControlMessageWithText,
   waitForTestIdWithText,
+  waitForTextMessage,
 } from '../utilities/utils';
-import { Group, User } from '../types/testing';
 
 export const createGroup = async (
   userName: string,
@@ -32,26 +32,24 @@ export const createGroup = async (
   // Add contacts
   await sendNewMessage(
     windowA,
-    userThree.sessionid,
+    userThree.accountid,
     `${messageAC} Time: ${Date.now()}`,
   );
-  await Promise.all([
-    sendNewMessage(
-      windowA,
-      userTwo.sessionid,
-      `${messageAB} Time: ${Date.now()}`,
-    ),
-    sendNewMessage(
-      windowB,
-      userOne.sessionid,
-      `${messageBA} Time: ${Date.now()}`,
-    ),
-    sendNewMessage(
-      windowC,
-      userOne.sessionid,
-      `${messageCA} Time: ${Date.now()}`,
-    ),
-  ]);
+  await sendNewMessage(
+    windowA,
+    userTwo.accountid,
+    `${messageAB} Time: ${Date.now()}`,
+  );
+  await sendNewMessage(
+    windowB,
+    userOne.accountid,
+    `${messageBA} Time: ${Date.now()}`,
+  );
+  await sendNewMessage(
+    windowC,
+    userOne.accountid,
+    `${messageCA} Time: ${Date.now()}`,
+  );
   // Focus screen on window C to allow user C to become contact
   await clickOnTestIdWithText(windowC, 'messages-container');
   // wait for user C to be contact before moving to create group
@@ -108,43 +106,32 @@ export const createGroup = async (
     })(),
   ]);
 
-  await Promise.all([
-    (async () => {
-      // Send message in group chat from user A
-      await sendMessage(windowA, msgAToGroup);
-      // Focus screen
-      await clickOnMatchingText(windowA, msgAToGroup);
-    })(),
-    (async () => {
-      // Send message in group chat from user B
-      await sendMessage(windowB, msgBToGroup);
-      await clickOnMatchingText(windowB, msgBToGroup);
-    })(),
-    (async () => {
-      // Send message from C to the group
-      await sendMessage(windowC, msgCToGroup);
-      await clickOnMatchingText(windowC, msgCToGroup);
-    })(),
-  ]);
+  // Send message in group chat from user A
+  await sendMessage(windowA, msgAToGroup);
+  // Focus screen
+  await clickOnMatchingText(windowA, msgAToGroup);
+
+  // Send message in group chat from user B
+  await sendMessage(windowB, msgBToGroup);
+  await clickOnMatchingText(windowB, msgBToGroup);
+
+  // Send message from C to the group
+  await sendMessage(windowC, msgCToGroup);
+  await clickOnMatchingText(windowC, msgCToGroup);
 
   // Verify that each messages was received by the other two accounts
-  await Promise.all([
-    (async () => {
-      // windowA should see the message from B and the message from C
-      await waitForControlMessageWithText(windowA, msgBToGroup);
-      await waitForControlMessageWithText(windowA, msgCToGroup);
-    })(),
-    (async () => {
-      // windowB should see the message from A and the message from C
-      await waitForControlMessageWithText(windowB, msgAToGroup);
-      await waitForControlMessageWithText(windowB, msgCToGroup);
-    })(),
-    (async () => {
-      // windowC must see the message from A and the message from B
-      await waitForControlMessageWithText(windowC, msgAToGroup);
-      await waitForControlMessageWithText(windowC, msgBToGroup);
-    })(),
-  ]);
+
+  // windowA should see the message from B and the message from C
+  await waitForTextMessage(windowA, msgBToGroup);
+  await waitForTextMessage(windowA, msgCToGroup);
+
+  // windowB should see the message from A and the message from C
+  await waitForTextMessage(windowB, msgAToGroup);
+  await waitForTextMessage(windowB, msgCToGroup);
+
+  // windowC must see the message from A and the message from B
+  await waitForTextMessage(windowC, msgAToGroup);
+  await waitForTextMessage(windowC, msgBToGroup);
 
   // Focus screen
   // await clickOnTestIdWithText(windowB, 'scroll-to-bottom-button');

@@ -1,7 +1,9 @@
+import { Page } from '@playwright/test';
+
 export type User = {
   userName: string;
-  sessionid: string;
-  recoveryPhrase: string;
+  accountid: string;
+  recoveryPassword: string;
 };
 
 export type Group = {
@@ -11,20 +13,64 @@ export type Group = {
   userThree: User;
 };
 
-export type Strategy = 'data-testid' | 'class' | ':has-text';
+export type ConversationType = '1:1' | 'group' | 'community' | 'note-to-self';
+
+export type DMTimeOption =
+  | 'input-10-seconds'
+  | 'time-option-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks';
+
+type DisappearOpts1o1 = [
+  '1:1',
+  'disappear-after-read-option' | 'disappear-after-send-option',
+  DMTimeOption,
+];
+
+type DisappearOptsGroup = [
+  'group' | 'note-to-self',
+  'disappear-after-send-option',
+  DMTimeOption,
+];
+
+export type DisappearOptions = DisappearOpts1o1 | DisappearOptsGroup;
+
+export type StrategyExtractionObj =
+  | {
+      strategy: Extract<Strategy, ':has-text' | 'class'>;
+      selector: string;
+    }
+  | {
+      strategy: Extract<Strategy, 'data-testid'>;
+      selector: DataTestId;
+    };
+
+export type WithPage = { window: Page };
+export type WithMaxWait = { maxWait?: number };
+export type WithRightButton = { rightButton?: boolean };
 
 export type loaderType = 'loading-animation' | 'loading-spinner';
 
+export type Strategy = 'data-testid' | 'class' | ':has-text';
+
+// Would be good to find a way to sort those with prettier
 export type DataTestId =
   | 'session-id-signup'
   | 'display-name-input'
-  | 'recovery-phrase-seed-modal'
+  | 'recovery-password-seed-modal'
   | 'path-light-container'
   | 'new-conversation-button'
   | 'chooser-new-conversation-button'
   | 'new-session-conversation'
   | 'next-new-conversation-button'
   | 'control-message'
+  | 'disappear-control-message'
   | 'disappearing-messages-indicator'
   | 'back-button-conversation-options'
   | 'conversation-options-avatar'
@@ -32,6 +78,7 @@ export type DataTestId =
   | 'clear-data-settings-menu-item'
   | 'message-requests-settings-menu-item'
   | 'restore-using-recovery'
+  | 'reveal-recovery-phrase'
   | 'recovery-phrase-input'
   | 'continue-session-button'
   | 'label-device_and_network'
@@ -52,6 +99,7 @@ export type DataTestId =
   | 'unblock-button-settings-screen'
   | 'leftpane-primary-avatar'
   | 'edit-profile-icon'
+  | 'edit-group-name'
   | 'profile-name-input'
   | 'image-upload-section'
   | 'save-button-profile-update'
@@ -71,9 +119,44 @@ export type DataTestId =
   | 'password-input-confirm'
   | 'change-password-settings-button'
   | 'password-input-reconfirm'
+  | 'recovery-password-settings-menu-item'
   | 'messages-container'
   | 'chooser-new-group'
   | 'new-closed-group-name'
   | 'next-button'
   | 'link-device'
-  | 'group-name-input';
+  | 'group-name-input'
+  | 'right-panel-group-name'
+  | 'header-conversation-name'
+  | 'copy-button-profile-update'
+  | 'loading-spinner'
+  | 'empty-conversation-notification'
+  | 'your-profile-name'
+  | 'your-session-id'
+  | 'mentions-popup-row'
+  | 'enable-read-receipts'
+  | 'disappear-set-button'
+  | 'disappear-after-read-option'
+  | 'disappearing-messages'
+  | 'disappear-after-send-option'
+  | 'time-option-1-minute'
+  | 'time-option-10-seconds'
+  | 'disappear-set-button'
+  | 'add-user-button'
+  | 'message-content'
+  | 'group-update-message'
+  | 'message-request-response-message'
+  | 'image-upload-click'
+  | 'input-10-seconds'
+  | 'time-option-30-seconds'
+  | 'time-option-1-minute'
+  | 'time-option-5-minutes'
+  | 'time-option-1-hour'
+  | 'time-option-12-hours'
+  | 'time-option-1-day'
+  | 'time-option-1-week'
+  | 'time-option-2-weeks'
+  | 'leave-group-button'
+  | 'create-account-button'
+  | 'continue-button'
+  | 'existing-account-button';

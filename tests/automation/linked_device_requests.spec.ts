@@ -1,7 +1,5 @@
 import { sleepFor } from '../promise_utils';
-import { newUser } from './setup/new_user';
-import { sessionTestTwoWindows } from './setup/sessionTest';
-import { linkedDevice } from './utilities/linked_device';
+import { test_Alice_2W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
 import {
@@ -11,68 +9,77 @@ import {
   waitForTextMessage,
 } from './utilities/utils';
 
-sessionTestTwoWindows('Accept request syncs', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const [windowC] = await linkedDevice(userB.recoveryPhrase);
+test_Alice_2W_Bob_1W(
+  'Accept request syncs',
+  async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
+    const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
+    const testReply = `${alice.userName} accepting message request from ${bob.userName}`;
+    await sendNewMessage(bobWindow1, alice.accountid, testMessage);
+    // Accept request in aliceWindow1
+    await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
+    await clickOnTestIdWithText(aliceWindow2, 'message-request-banner');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await clickOnTestIdWithText(aliceWindow1, 'accept-message-request');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'message-request-response-message',
+      `You have accepted ${bob.userName}'s message request`,
+    );
+    await waitForMatchingText(aliceWindow1, 'No pending message requests');
+    await waitForMatchingText(aliceWindow2, 'No pending message requests');
+    await sendMessage(aliceWindow1, testReply);
+    await waitForTextMessage(bobWindow1, testReply);
+    await clickOnTestIdWithText(aliceWindow2, 'new-conversation-button');
+    await waitForTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+  },
+);
 
-  const testMessage = `${userA.userName} sending message request to ${userB.userName}`;
-  const testReply = `${userB.userName} accepting message request from ${userA.userName}`;
-  await sendNewMessage(windowA, userB.sessionid, testMessage);
-  // Accept request in windowB
-  await clickOnTestIdWithText(windowB, 'message-request-banner');
-  await clickOnTestIdWithText(windowC, 'message-request-banner');
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-  await clickOnTestIdWithText(windowB, 'accept-message-request');
-  await waitForTestIdWithText(
-    windowB,
-    'control-message',
-    `You have accepted ${userA.userName}'s message request`,
-  );
-  await waitForMatchingText(windowB, 'No pending message requests');
-  await waitForMatchingText(windowC, 'No pending message requests');
-  await sendMessage(windowB, testReply);
-  await waitForTextMessage(windowA, testReply);
-  await clickOnTestIdWithText(windowC, 'new-conversation-button');
-  await waitForTestIdWithText(
-    windowC,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-});
+test_Alice_2W_Bob_1W(
+  'Decline request syncs',
+  async ({ alice, aliceWindow1, aliceWindow2, bob, bobWindow1 }) => {
+    const testMessage = `${bob.userName} sending message request to ${alice.userName}`;
+    await sendNewMessage(bobWindow1, alice.accountid, testMessage);
+    // Decline request in aliceWindow1
+    await clickOnTestIdWithText(aliceWindow1, 'message-request-banner');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await clickOnTestIdWithText(aliceWindow2, 'message-request-banner');
+    await waitForTestIdWithText(
+      aliceWindow2,
+      'module-conversation__user__profile-name',
+      bob.userName,
+    );
+    await sleepFor(1000);
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'decline-message-request',
+      'Decline',
+    );
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      'Decline',
+    );
 
-sessionTestTwoWindows('Decline request syncs', async ([windowA, windowB]) => {
-  const [userA, userB] = await Promise.all([
-    newUser(windowA, 'Alice'),
-    newUser(windowB, 'Bob'),
-  ]);
-  const [windowC] = await linkedDevice(userB.recoveryPhrase);
+    // Note: this test is broken currently but this is a known issue.
+    // It happens because we have a race condition between the update from libsession and the update from the swarm, both with the same seqno.
+    // See SES-1563
+    console.warn(
+      'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
+    );
 
-  const testMessage = `${userA.userName} sending message request to ${userB.userName}`;
-  await sendNewMessage(windowA, userB.sessionid, testMessage);
-  // Decline request in windowB
-  await clickOnTestIdWithText(windowB, 'message-request-banner');
-  await clickOnTestIdWithText(
-    windowB,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-  await clickOnTestIdWithText(windowC, 'message-request-banner');
-  await waitForTestIdWithText(
-    windowC,
-    'module-conversation__user__profile-name',
-    userA.userName,
-  );
-  await sleepFor(1000);
-  await clickOnTestIdWithText(windowB, 'decline-message-request');
-  await clickOnTestIdWithText(windowB, 'session-confirm-ok-button', 'Decline');
-
-  await waitForMatchingText(windowB, 'No pending message requests');
-  await waitForMatchingText(windowC, 'No pending message requests');
-});
+    await waitForMatchingText(aliceWindow1, 'No pending message requests');
+    await waitForMatchingText(aliceWindow2, 'No pending message requests');
+  },
+);

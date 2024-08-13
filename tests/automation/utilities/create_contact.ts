@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
 import { User } from '../types/testing';
+import { replyTo } from './reply_message';
 import { sendNewMessage } from './send_message';
-import { clickOnTestIdWithText, waitForTestIdWithText } from './utils';
-import { sleepFor } from '../../promise_utils';
+import { clickOnElement, clickOnTestIdWithText } from './utils';
 
 export const createContact = async (
   windowA: Page,
@@ -13,17 +13,28 @@ export const createContact = async (
   const testMessage = `${userA.userName} to ${userB.userName}`;
   const testReply = `${userB.userName} to ${userA.userName}`;
   // User A sends message to User B
-  await sendNewMessage(windowA, userB.sessionid, testMessage);
-  // User B sends message to User B to USER A
-  await sendNewMessage(windowB, userA.sessionid, testReply);
-
-  await clickOnTestIdWithText(windowA, 'new-conversation-button');
-  await sleepFor(2000);
-  await waitForTestIdWithText(
+  await sendNewMessage(windowA, userB.accountid, testMessage);
+  await clickOnElement({
+    window: windowB,
+    strategy: 'data-testid',
+    selector: 'message-request-banner',
+  });
+  await clickOnTestIdWithText(
     windowB,
     'module-conversation__user__profile-name',
     userA.userName,
   );
-  // Navigate to contacts tab in User A's window
-  await clickOnTestIdWithText(windowA, 'new-conversation-button');
+  await clickOnElement({
+    window: windowB,
+    strategy: 'data-testid',
+    selector: 'accept-message-request',
+  });
+  // Note: when creating a contact, we want to make sure both sides are friends when we finish this function,
+  // so passing the windowA here is very important, so we wait for windowA to have received the reply
+  await replyTo({
+    senderWindow: windowB,
+    textMessage: testMessage,
+    replyText: testReply,
+    receiverWindow: windowA,
+  });
 };

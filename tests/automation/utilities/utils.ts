@@ -3,14 +3,22 @@
 /* eslint-disable no-await-in-loop */
 import { ElementHandle, Page } from '@playwright/test';
 import { sleepFor } from '../../promise_utils';
-import { DataTestId, loaderType, Strategy } from '../types/testing';
+import {
+  DataTestId,
+  Strategy,
+  StrategyExtractionObj,
+  WithMaxWait,
+  WithPage,
+  WithRightButton,
+  loaderType,
+} from '../types/testing';
 import { sendMessage } from './message';
 
 // WAIT FOR FUNCTIONS
 
 export async function waitForTestIdWithText(
   window: Page,
-  dataTestId: string,
+  dataTestId: DataTestId,
   text?: string,
   maxWait?: number,
 ) {
@@ -53,7 +61,7 @@ export async function waitForTextMessage(
   text: string,
   maxWait?: number,
 ) {
-  let builtSelector = `css=[data-testid=control-message]:has-text("${text}")`;
+  let builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
   if (text) {
     // " =>  \\\"
     /* prettier-ignore */
@@ -73,7 +81,7 @@ export async function waitForControlMessageWithText(
   window: Page,
   text: string,
 ) {
-  return waitForTestIdWithText(window, 'control-message', text);
+  return waitForTestIdWithText(window, 'message-content', text);
 }
 
 export async function waitForMatchingText(
@@ -152,7 +160,7 @@ export async function waitForLoadingAnimationToFinish(
 }
 
 export async function checkPathLight(window: Page, maxWait?: number) {
-  const maxWaitTime = maxWait || 100000;
+  const maxWaitTime = maxWait || 500000;
   const waitPerLoop = 100;
   const start = Date.now();
   let pathColor: string | null = null;
@@ -178,18 +186,18 @@ export async function checkPathLight(window: Page, maxWait?: number) {
 
 // ACTIONS
 
-export async function clickOnElement(
-  window: Page,
-  strategy: Strategy,
-  selector: string,
-  maxWait?: number,
-  rightButton?: boolean,
-) {
-  const builtSelector = `css=[${strategy}=${selector}]`;
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
+export async function clickOnElement({
+  window,
+  maxWait,
+  rightButton,
+  ...obj
+}: WithPage & StrategyExtractionObj & WithMaxWait & WithRightButton) {
+  const builtSelector = `css=[${obj.strategy}=${obj.selector}]`;
+  console.info(`clickOnElement: looking for selector ${builtSelector}`);
+  const sharedOpts = { timeout: maxWait };
   await window.click(
     builtSelector,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
   );
 }
 
@@ -201,11 +209,12 @@ export async function lookForPartialTestId(
   maxWait?: number,
 ) {
   const builtSelector = `css=[data-testid^="${selector}"]`;
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
+  const sharedOpts = { timeout: maxWait };
+
   if (click) {
     await window.click(
       builtSelector,
-      rightButton ? { button: 'right' } : undefined,
+      rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
     );
   }
   return builtSelector;
@@ -232,6 +241,7 @@ export async function clickOnTestIdWithText(
   rightButton?: boolean,
   maxWait?: number,
 ) {
+  const sharedOpts = { timeout: maxWait, strict: true };
   console.info(
     `clickOnTestIdWithText with testId:${dataTestId} and text:${
       text || 'none'
@@ -242,10 +252,29 @@ export async function clickOnTestIdWithText(
     ? `css=[data-testid=${dataTestId}]`
     : `css=[data-testid=${dataTestId}]:has-text("${text}")`;
 
-  await window.waitForSelector(builtSelector, { timeout: maxWait });
-  return window.click(
+  await window.click(
     builtSelector,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
+  );
+  console.info(
+    `clickOnTestIdWithText:clicked! testId:${dataTestId} and text:${
+      text || 'none'
+    }`,
+  );
+}
+
+export async function clickOnTextMessage(
+  window: Page,
+  text: string,
+  rightButton?: boolean,
+  maxWait?: number,
+) {
+  const builtSelector = `css=[data-testid=message-content]:has-text("${text}")`;
+  const sharedOpts = { timeout: maxWait };
+
+  await window.click(
+    builtSelector,
+    rightButton ? { ...sharedOpts, button: 'right' } : sharedOpts,
   );
 }
 
@@ -290,6 +319,16 @@ export async function doesTextIncludeString(
   }
 }
 
+export async function grabTextFromElement(
+  window: Page,
+  strategy: Strategy,
+  selector: string,
+) {
+  const builtSelector = `css=[${strategy}=${selector}]`;
+  const element = await window.waitForSelector(builtSelector);
+  return element.innerText();
+}
+
 export async function hasElementBeenDeleted(
   window: Page,
   strategy: Strategy,
@@ -299,7 +338,7 @@ export async function hasElementBeenDeleted(
 ) {
   const start = Date.now();
 
-  let el: ElementHandle<SVGElement | HTMLElement> | undefined = undefined;
+  let el: ElementHandle<SVGElement | HTMLElement> | undefined;
   do {
     try {
       el = await waitForElement(window, strategy, selector, maxWait, text);
@@ -307,7 +346,7 @@ export async function hasElementBeenDeleted(
       console.info(`Element has been found, waiting for deletion`);
     } catch (e) {
       el = undefined;
-      console.info(`Something something`);
+      console.info(`Element has been deleted, woohoo!`);
     }
   } while (Date.now() - start <= maxWait && el);
   try {
@@ -327,20 +366,28 @@ export async function hasElementBeenDeleted(
 export async function hasTextMessageBeenDeleted(
   window: Page,
   text: string,
-  maxWait?: number,
-): Promise<boolean> {
-  try {
-    await waitForElement(
-      window,
-      'data-testid',
-      'control-message',
-      maxWait,
-      text,
-    );
-    return false; // Text message was found
-  } catch (e) {
-    return true; // Text message doesn't exist or wasn't found in time
-  }
+  maxWait: number = 5000,
+) {
+  await doWhileWithMax(
+    15000,
+    500,
+    'waiting for text message to be deleted',
+    async () => {
+      try {
+        await waitForElement(
+          window,
+          'data-testid',
+          'message-content',
+          maxWait,
+          text,
+        );
+        return false;
+      } catch (e) {
+        console.info(`Text message not found, yay!`);
+        return true;
+      }
+    },
+  );
 }
 
 export async function hasElementPoppedUpThatShouldnt(
@@ -358,6 +405,27 @@ export async function hasElementPoppedUpThatShouldnt(
   if (elVisible === true) {
     throw new Error(fakeError);
   }
+  return builtSelector;
+}
+
+export async function doesElementExist(
+  window: Page,
+  strategy: Strategy,
+  selector: string,
+  text?: string,
+) {
+  const builtSelector = !text
+    ? `css=[${strategy}=${selector}]`
+    : `css=[${strategy}=${selector}]:has-text("${text.replace(/"/g, '\\"')}")`;
+
+  const fakeError = `Element ${selector} does not exist`;
+  const elVisible = await window.isVisible(builtSelector);
+  if (!elVisible) {
+    console.log(fakeError);
+    return;
+  }
+  console.log(`Element ${selector} exists`);
+  return builtSelector;
 }
 
 export async function measureSendingTime(window: Page, messageNumber: number) {
@@ -391,6 +459,7 @@ export async function doWhileWithMax(
         e,
       );
     }
+    iteration++;
     await sleepFor(waitBetweenMs);
   } while (!wasSuccess && Date.now() - start < maxWaitMs);
 
