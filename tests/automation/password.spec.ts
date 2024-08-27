@@ -61,10 +61,6 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   // check that the seed is visible now
   await expectRecoveryPhraseToBeVisible(aliceWindow1, alice.recoveryPassword);
 
-  // copy the seed phrase to the clipboard, also closes the dialog
-  await clickOnMatchingText(aliceWindow1, 'Copy');
-  // Note: I did not find a way to get the clipboard content from the page/window/nodeJS for now.
-
   await clickOnTestIdWithText(aliceWindow1, 'settings-section');
 
   // Change password
@@ -124,8 +120,8 @@ test_Alice_1W_no_network(
     // this should print the recovery phrase
     await expectRecoveryPhraseToBeVisible(aliceWindow1, recoveryPassword);
 
-    // copy the seed phrase to the clipboard, also closes the dialog
-    await clickOnMatchingText(aliceWindow1, 'Copy');
+    // move away from the settings tab (otherwise the settings doesn't lock right away)
+    await clickOnTestIdWithText(aliceWindow1, 'message-section');
 
     //  Click on settings tab
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
@@ -136,12 +132,11 @@ test_Alice_1W_no_network(
       'recovery-password-settings-menu-item',
     );
     // Try with incorrect password
-    await typeIntoInput(aliceWindow1, 'password-input', '000000');
+    await typeIntoInput(aliceWindow1, 'password-input', newTestPassword);
     // Confirm the password
     await clickOnTestIdWithText(aliceWindow1, 'session-confirm-ok-button');
     // this should NOT print the recovery phrase
 
-    await sleepFor(100);
     await hasElementPoppedUpThatShouldnt(
       aliceWindow1,
       'data-testid',

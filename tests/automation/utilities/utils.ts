@@ -289,6 +289,9 @@ export async function typeIntoInput(
 ) {
   console.info(`typeIntoInput testId: ${dataTestId} : "${text}"`);
   const builtSelector = `css=[data-testid=${dataTestId}]`;
+  // the new input made with onboarding element needs a click to reveal the input in the DOM
+  await clickOnTestIdWithText(window, dataTestId);
+
   return window.fill(builtSelector, text);
 }
 
@@ -422,7 +425,7 @@ export async function doesElementExist(
   const elVisible = await window.isVisible(builtSelector);
   if (!elVisible) {
     console.log(fakeError);
-    return;
+    return undefined;
   }
   console.log(`Element ${selector} exists`);
   return builtSelector;
