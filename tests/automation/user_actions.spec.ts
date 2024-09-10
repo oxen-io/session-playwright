@@ -17,6 +17,7 @@ import {
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
+import { localize } from '../locale/localizedString';
 
 // Send message in one to one conversation with new contact
 sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
@@ -80,9 +81,16 @@ test_Alice_1W_Bob_1W(
       true,
     );
     // Select block
-    await clickOnMatchingText(aliceWindow1, 'Block');
-    // Verify toast notification 'blocked'
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Blocked');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'context-menu-item',
+      localize('block').toString(),
+    );
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      localize('block').toString(),
+    );
     // Verify the user was moved to the blocked contact list
     // Click on settings tab
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
@@ -97,8 +105,20 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(aliceWindow1, bob.userName);
     // Unblock user by clicking on unblock
     await clickOnTestIdWithText(aliceWindow1, 'unblock-button-settings-screen');
-    // Verify toast notification says unblocked
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Unblocked');
+    // make sure the confirm dialogs shows up
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'block-unblock-modal-description',
+      localize('blockUnblockName').strip().withArgs({ name: 'Bob' }).toString(),
+    );
+
+    // click on the unblock button
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      localize('blockUnblock').toString(),
+    );
+    // make sure no blocked contacts are listed
     await waitForMatchingText(aliceWindow1, 'No blocked contacts');
   },
 );
@@ -194,12 +214,16 @@ test_Alice_1W_Bob_1W(
       bob.userName,
       true,
     );
-    await clickOnMatchingText(aliceWindow1, 'Change Nickname');
+    await clickOnMatchingText(aliceWindow1, localize('nicknameSet').toString());
     await sleepFor(1000);
 
     await typeIntoInputSlow(aliceWindow1, 'nickname-input', nickname);
     await sleepFor(100);
-    await clickOnTestIdWithText(aliceWindow1, 'confirm-nickname', 'OK');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'confirm-nickname',
+      localize('okay').toString(),
+    );
     const headerUsername = await waitForTestIdWithText(
       aliceWindow1,
       'header-conversation-name',

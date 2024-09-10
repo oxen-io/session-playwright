@@ -9,10 +9,10 @@ export const NODE_ENV = 'production';
 export const MULTI_PREFIX = 'test-integration-';
 const multisAvailable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-function getAppRootPath() {
+export function getAppRootPath() {
   if (isEmpty(process.env.SESSION_DESKTOP_ROOT)) {
     throw new Error(
-      "You need to set the 'SESSION_DESKTOP_ROOT' env variable to the session folder you want to test first",
+      "You need to set the 'config.SESSION_DESKTOP_ROOT' in your .env file",
     );
   }
   return process.env.SESSION_DESKTOP_ROOT as string;

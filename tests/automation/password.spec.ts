@@ -9,6 +9,7 @@ import {
   typeIntoInput,
   waitForTestIdWithText,
 } from './utilities/utils';
+import { localize } from '../locale/localizedString';
 
 const testPassword = '123456';
 const newTestPassword = '789101112';
@@ -37,12 +38,12 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   // Confirm password
   await typeIntoInput(aliceWindow1, 'password-input-confirm', testPassword);
   // Click Done
-  await clickOnMatchingText(aliceWindow1, 'Done');
+  await clickOnMatchingText(aliceWindow1, localize('done').toString());
   // Check toast notification
   await waitForTestIdWithText(
     aliceWindow1,
     'session-toast',
-    'Your password has been set. Please keep it safe.',
+    localize('passwordSetDescription').toString(),
   );
   // Click on settings tab
   await sleepFor(300, true);
@@ -56,17 +57,14 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   // Type password into input field and validate it
   await typeIntoInput(aliceWindow1, 'password-input', testPassword);
   // Click Done
-  await clickOnMatchingText(aliceWindow1, 'Done');
+  await clickOnMatchingText(aliceWindow1, localize('done').toString());
 
   // check that the seed is visible now
   await expectRecoveryPhraseToBeVisible(aliceWindow1, alice.recoveryPassword);
-
   await clickOnTestIdWithText(aliceWindow1, 'settings-section');
-
   // Change password
   await clickOnTestIdWithText(aliceWindow1, 'change-password-settings-button');
 
-  console.warn('clicked Change Password');
   // Enter old password
   await typeIntoInput(aliceWindow1, 'password-input', testPassword);
   // Enter new password
@@ -84,7 +82,7 @@ test_Alice_1W_no_network('Set Password', async ({ alice, aliceWindow1 }) => {
   await waitForTestIdWithText(
     aliceWindow1,
     'session-toast',
-    'Your password has been changed. Please keep it safe.',
+    localize('passwordChangedDescription').toString(),
   );
 });
 
@@ -95,7 +93,10 @@ test_Alice_1W_no_network(
     // Click on settings tab
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
     // Click on privacy
-    await clickOnMatchingText(aliceWindow1, 'Privacy');
+    await clickOnMatchingText(
+      aliceWindow1,
+      localize('sessionPrivacy').toString(),
+    );
     // Click set password
     await clickOnTestIdWithText(aliceWindow1, 'set-password-button');
     // Enter password
@@ -103,7 +104,7 @@ test_Alice_1W_no_network(
     // Confirm password
     await typeIntoInput(aliceWindow1, 'password-input-confirm', testPassword);
     // Click Done
-    await clickOnMatchingText(aliceWindow1, 'Done');
+    await clickOnMatchingText(aliceWindow1, localize('done').toString());
     // Click on recovery phrase tab
     await sleepFor(100);
 
@@ -144,11 +145,11 @@ test_Alice_1W_no_network(
       recoveryPassword,
     );
 
-    //  invalid password banner showing?
+    //  Incorrect password banner showing?
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      'Invalid password',
+      localize('passwordIncorrect').toString(),
     );
     await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
     await sleepFor(100);
@@ -158,7 +159,7 @@ test_Alice_1W_no_network(
       'recovery-password-settings-menu-item',
     );
     //  No password entered
-    await clickOnMatchingText(aliceWindow1, 'Done');
+    await clickOnMatchingText(aliceWindow1, localize('done').toString());
     //  Banner should ask for password to be entered
     await waitForTestIdWithText(
       aliceWindow1,

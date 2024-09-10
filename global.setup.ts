@@ -4,6 +4,7 @@ import { join } from 'path';
 import { MULTI_PREFIX, NODE_ENV } from './tests/automation/setup/open';
 import { isLinux, isMacOS } from './tests/os_utils';
 import { isEmpty } from 'lodash';
+import 'dotenv/config';
 
 const getDirectoriesOfSessionDataPath = (source: string) =>
   readdirSync(source, { withFileTypes: true })
@@ -15,7 +16,7 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
 
 let needsClean = isEmpty(process.env.NO_CLEAN);
 
-export default async function cleanupPreviousTests() {
+export default async function globalSetup() {
   console.log('Cleaning up all previous tests configs...');
   if (!needsClean) {
     return;

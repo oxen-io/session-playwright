@@ -245,7 +245,7 @@ export async function clickOnTestIdWithText(
   console.info(
     `clickOnTestIdWithText with testId:${dataTestId} and text:${
       text || 'none'
-    }`,
+    }, rightButton:${!!rightButton}`,
   );
 
   const builtSelector = !text

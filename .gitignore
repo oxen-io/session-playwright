@@ -11,3 +11,4 @@ TODO.md
 
 playwright.config.js
 sessionReporter.js
+.env
