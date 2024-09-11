@@ -1,6 +1,5 @@
 import { en } from '../localization/locales';
 import { LocalizerDictionary } from './localizerType';
-import { timeLocaleMap } from './timeLocaleMap';
 
 let mappedBrowserLocaleDisplayed = false;
 let initialLocale: Locale | undefined;
@@ -31,11 +30,7 @@ export function getFallbackDictionary(): LocalizerDictionary {
   return en;
 }
 
-export type Locale = keyof typeof timeLocaleMap;
-
-export function getTimeLocaleDictionary() {
-  return timeLocaleMap[getLocale()];
-}
+export type Locale = 'en';
 
 /**
  * Returns the current locale.
