@@ -148,58 +148,65 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
 });
 
-test_Alice_1W_no_network('Change avatar', async ({ aliceWindow1 }) => {
-  // Open profile
-  await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
-  // Click on current profile picture
-  await waitForTestIdWithText(
-    aliceWindow1,
-    'copy-button-profile-update',
-    'Copy',
-  );
-
-  await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
-  await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
-  await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
-  await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
-
-  await sleepFor(500);
-  const leftpaneAvatarContainer = await waitForTestIdWithText(
-    aliceWindow1,
-    'leftpane-primary-avatar',
-  );
-  const start = Date.now();
-  let correctScreenshot = false;
-  let tryNumber = 0;
-  let lastError: Error | undefined;
-  do {
-    try {
-      await sleepFor(500);
-
-      const screenshot = await leftpaneAvatarContainer.screenshot({
-        type: 'jpeg',
-        // path: 'avatar-updated-blue',
-      });
-      expect(screenshot).toMatchSnapshot({
-        name: 'avatar-updated-blue.jpeg',
-      });
-      correctScreenshot = true;
-      console.info(
-        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
-      );
-    } catch (e) {
-      lastError = e;
-    }
-    tryNumber++;
-  } while (Date.now() - start <= 20000 && !correctScreenshot);
-
-  if (!correctScreenshot) {
-    console.info(
-      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+test_Alice_1W_no_network(
+  'Change avatar',
+  async ({ aliceWindow1 }, testInfo) => {
+    // Open profile
+    await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
+    // Click on current profile picture
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'copy-button-profile-update',
+      'Copy',
     );
-    throw new Error('waiting 20s and still the screenshot is not right');
-  }
-});
+
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
+    await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
+    await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
+
+    await sleepFor(500);
+    const leftpaneAvatarContainer = await waitForTestIdWithText(
+      aliceWindow1,
+      'leftpane-primary-avatar',
+    );
+    const start = Date.now();
+    let correctScreenshot = false;
+    let tryNumber = 0;
+    let lastError: Error | undefined;
+    do {
+      try {
+        // if we were asked to update the snapshots, make sure we wait for the change to be received before taking a screenshot.
+        if (testInfo.config.updateSnapshots === 'all') {
+          await sleepFor(15000);
+        } else {
+          await sleepFor(500);
+        }
+
+        const screenshot = await leftpaneAvatarContainer.screenshot({
+          type: 'jpeg',
+        });
+        expect(screenshot).toMatchSnapshot({
+          name: 'avatar-updated-blue.jpeg',
+        });
+        correctScreenshot = true;
+        console.info(
+          `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+        );
+      } catch (e) {
+        lastError = e;
+      }
+      tryNumber++;
+    } while (Date.now() - start <= 20000 && !correctScreenshot);
+
+    if (!correctScreenshot) {
+      console.info(
+        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+      );
+      throw new Error('waiting 20s and still the screenshot is not right');
+    }
+  },
+);
 
 test_Alice_1W_Bob_1W(
   'Set nickname',

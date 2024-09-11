@@ -154,11 +154,8 @@ test_Alice_2W(
     let lastError: Error | undefined;
     do {
       try {
-        await sleepFor(500);
-
         const screenshot = await leftpaneAvatarContainer.screenshot({
           type: 'jpeg',
-          // path: 'avatar-updated-blue',
         });
         expect(screenshot).toMatchSnapshot({
           name: 'avatar-updated-blue.jpeg',
