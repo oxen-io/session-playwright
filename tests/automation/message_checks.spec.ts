@@ -31,7 +31,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-image.png',
+      'fixtures/test-image.png',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -70,7 +70,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-video.mp4',
+      'fixtures/test-video.mp4',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     // give some time before we send the message, as the video preview takes some time to be added
@@ -108,7 +108,7 @@ test_Alice_1W_Bob_1W(
     await createContact(aliceWindow1, bobWindow1, alice, bob);
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-file.pdf',
+      'fixtures/test-file.pdf',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await sleepFor(100);
@@ -175,7 +175,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-gif.gif',
+      'fixtures/test-gif.gif',
     );
     await sleepFor(100);
     await clickOnElement({

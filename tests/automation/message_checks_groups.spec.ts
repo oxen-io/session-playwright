@@ -29,7 +29,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to image from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-image.png',
+      'fixtures/test-image.png',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -57,7 +57,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to video from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-video.mp4',
+      'fixtures/test-video.mp4',
     );
     await sleepFor(1000);
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
@@ -83,7 +83,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to document from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-file.pdf',
+      'fixtures/test-file.pdf',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -166,7 +166,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to GIF from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-gif.gif',
+      'fixtures/test-gif.gif',
     );
     await sleepFor(100);
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
