@@ -1,3 +1,4 @@
+import { localize } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { test_Alice_2W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
@@ -27,7 +28,12 @@ test_Alice_2W_Bob_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'message-request-response-message',
-      `You have accepted ${bob.userName}'s message request`,
+      localize('messageRequestYouHaveAccepted')
+        .strip()
+        .withArgs({
+          name: bob.userName,
+        })
+        .toString(),
     );
     await waitForMatchingText(aliceWindow1, 'No pending message requests');
     await waitForMatchingText(aliceWindow2, 'No pending message requests');
@@ -64,18 +70,18 @@ test_Alice_2W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow1,
       'decline-message-request',
-      'Decline',
+      localize('decline').toString(),
     );
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      'Decline',
+      localize('delete').toString(),
     );
 
     // Note: this test is broken currently but this is a known issue.
     // It happens because we have a race condition between the update from libsession and the update from the swarm, both with the same seqno.
     // See SES-1563
-    console.warn(
+    console.info(
       'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
     );
 

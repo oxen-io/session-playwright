@@ -94,7 +94,6 @@ class SessionReporter implements Reporter {
           `\t\tFinished test "${test.title}": ${result.status} with stdout/stderr`,
         )}`,
       );
-      result.stdout.map((t) => process.stdout.write(t.toString()));
       console.warn(`stdout:`);
       result.stdout.map((t) => process.stdout.write(t.toString()));
 

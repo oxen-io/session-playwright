@@ -1,3 +1,4 @@
+import { localize } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import {
   test_Alice_2W,
@@ -22,8 +23,11 @@ test_Alice_2W_Bob_1W(
   async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
     const testMessage =
       'Testing disappearing messages timer is working correctly';
-    const controlMessage =
-      'set your messages to disappear 10 seconds after they have been read';
+
+    const controlMessage = localize('disappearingMessagesSetYou')
+      .strip()
+      .withArgs({ time: '10 seconds', disappearing_messages_type: 'read' })
+      .toString();
     // Create Contact
     await createContact(aliceWindow1, bobWindow1, alice, bob);
     // Click on conversation in linked device
@@ -38,6 +42,7 @@ test_Alice_2W_Bob_1W(
       ['1:1', 'disappear-after-read-option', 'time-option-10-seconds'],
       bobWindow1,
     );
+
     // Check control message is visible
     await doesTextIncludeString(
       aliceWindow1,
@@ -75,8 +80,10 @@ test_Alice_2W_Bob_1W(
   async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
     const testMessage =
       'Testing disappearing messages timer is working correctly';
-    const controlMessage =
-      'set your messages to disappear 10 seconds after they have been sent';
+    const controlMessage = localize('disappearingMessagesSetYou')
+      .strip()
+      .withArgs({ time: '10 seconds', disappearing_messages_type: 'sent' })
+      .toString();
     // Create Contact
     await createContact(aliceWindow1, bobWindow1, alice, bob);
 
@@ -189,7 +196,6 @@ test_Alice_2W(
     );
     await sendMessage(aliceWindow1, testMessageDisappear);
     await waitForTextMessage(aliceWindow2, testMessageDisappear);
-    await sleepFor(10000);
     await Promise.all([
       hasTextMessageBeenDeleted(aliceWindow1, testMessageDisappear),
       hasTextMessageBeenDeleted(aliceWindow2, testMessageDisappear),

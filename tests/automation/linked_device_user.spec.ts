@@ -25,6 +25,7 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
+import { localize } from '../locale/localizedString';
 
 sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
   let aliceWindow2: Page | undefined;
@@ -163,7 +164,7 @@ test_Alice_2W(
           name: 'avatar-updated-blue.jpeg',
         });
         correctScreenshot = true;
-        console.warn(
+        console.info(
           `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
         );
       } catch (e) {
@@ -173,7 +174,7 @@ test_Alice_2W(
     } while (Date.now() - start <= 20000 && !correctScreenshot);
 
     if (!correctScreenshot) {
-      console.warn(
+      console.info(
         `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
       );
       throw new Error('waited 20s and still the screenshot is not right');
@@ -218,7 +219,11 @@ test_Alice_2W_Bob_1W(
       'session-confirm-ok-button',
       'Delete',
     );
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, messageToDelete, 6000);
     // linked device for deleted message
     // Waiting for message to be removed
@@ -246,16 +251,26 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, unsentMessage),
     ]);
     await clickOnTextMessage(aliceWindow1, unsentMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      localize('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, unsentMessage, 1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     // linked device for deleted message
     await hasTextMessageBeenDeleted(aliceWindow2, unsentMessage, 1000);
   },
@@ -276,11 +291,17 @@ test_Alice_2W_Bob_1W(
       true,
     );
     // Select block
-    await clickOnMatchingText(aliceWindow2, 'Block');
-    // Verify toast notification 'blocked'
-    await waitForTestIdWithText(aliceWindow2, 'session-toast', 'Blocked');
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'context-menu-item',
+      localize('block').toString(),
+    );
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'session-confirm-ok-button',
+      localize('block').toString(),
+    );
     // Verify the user was moved to the blocked contact list
-    // Click on settings tab
     await waitForMatchingPlaceholder(
       aliceWindow1,
       'message-input-text-area',
@@ -288,6 +309,7 @@ test_Alice_2W_Bob_1W(
     );
     // reveal-blocked-user-settings is not updated once opened
     // Check linked device for blocked contact in settings screen
+    // Click on settings tab
     await clickOnTestIdWithText(aliceWindow2, 'settings-section');
     await clickOnTestIdWithText(
       aliceWindow2,

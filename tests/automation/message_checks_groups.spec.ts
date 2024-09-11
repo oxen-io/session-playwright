@@ -1,3 +1,4 @@
+import { localize } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { test_group_Alice_1W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
@@ -225,17 +226,30 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await waitForTextMessage(bobWindow1, unsendMessage);
     await waitForTextMessage(charlieWindow1, unsendMessage);
     await clickOnTextMessage(aliceWindow1, unsendMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      localize('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await sleepFor(1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
-    await waitForMatchingText(charlieWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
+    await waitForMatchingText(
+      charlieWindow1,
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
   },
 );
 
@@ -247,14 +261,21 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await waitForTextMessage(bobWindow1, deletedMessage);
     await waitForTextMessage(charlieWindow1, deletedMessage);
     await clickOnTextMessage(aliceWindow1, deletedMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete just for me');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      localize('clearMessagesForMe').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, deletedMessage, 5000);
     // Should still be there for user B and C
     await waitForMatchingText(bobWindow1, deletedMessage);

@@ -18,6 +18,8 @@ import {
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { leaveGroup } from './utilities/leave_group';
+import { localize } from '../locale/localizedString';
+import { shortenWithBrackets } from '../Pubkey';
 
 // Note: Note using the group fixture here as we want to test it thoroughly
 sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
@@ -79,21 +81,30 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
     await clickOnMatchingText(aliceWindow1, dracula.userName);
-    await clickOnMatchingText(aliceWindow1, 'OK');
+    await clickOnMatchingText(aliceWindow1, localize('okay').toString());
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
-      `"${dracula.userName}" joined the group.`,
+      localize('legacyGroupMemberNew')
+        .strip()
+        .withArgs({ name: dracula.userName })
+        .toString(),
     );
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      `${dracula.accountid} joined the group.`,
+      localize('legacyGroupMemberNew')
+        .strip()
+        .withArgs({ name: shortenWithBrackets(dracula.accountid) })
+        .toString(),
     );
     await waitForTestIdWithText(
       charlieWindow1,
       'group-update-message',
-      `${dracula.accountid} joined the group.`,
+      localize('legacyGroupMemberNew')
+        .strip()
+        .withArgs({ name: shortenWithBrackets(dracula.accountid) })
+        .toString(),
     );
     await clickOnElement({
       window: draculaWindow1,
@@ -128,12 +139,18 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnMatchingText(bobWindow1, newGroupName);
     await waitForMatchingText(
       bobWindow1,
-      `Group name is now '${newGroupName}'.`,
+      localize('groupNameNew')
+        .strip()
+        .withArgs({ group_name: newGroupName })
+        .toString(),
     );
     await clickOnMatchingText(charlieWindow1, newGroupName);
     await waitForMatchingText(
       charlieWindow1,
-      `Group name is now '${newGroupName}'.`,
+      localize('groupNameNew')
+        .strip()
+        .withArgs({ group_name: newGroupName })
+        .toString(),
     );
     // Click on conversation options
     // Check to see that you can't change group name to empty string

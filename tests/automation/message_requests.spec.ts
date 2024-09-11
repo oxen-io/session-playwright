@@ -1,3 +1,4 @@
+import { localize } from '../locale/localizedString';
 import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
@@ -29,7 +30,12 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'message-request-response-message',
-      `You have accepted ${alice.userName}'s message request`,
+      localize('messageRequestYouHaveAccepted')
+        .strip()
+        .withArgs({
+          name: alice.userName,
+        })
+        .toString(),
     );
     await waitForMatchingText(bobWindow1, 'No pending message requests');
   },
@@ -56,7 +62,12 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'message-request-response-message',
-      `You have accepted ${alice.userName}'s message request`,
+      localize('messageRequestYouHaveAccepted')
+        .strip()
+        .withArgs({
+          name: alice.userName,
+        })
+        .toString(),
     );
     await waitForMatchingText(bobWindow1, 'No pending message requests');
   },
@@ -77,12 +88,16 @@ test_Alice_1W_Bob_1W(
       alice.userName,
     );
     // Check that using the accept button has intended use
-    await clickOnTestIdWithText(bobWindow1, 'decline-message-request');
+    await clickOnTestIdWithText(
+      bobWindow1,
+      'decline-message-request',
+      localize('decline').toString(),
+    );
     // Confirm decline
     await clickOnTestIdWithText(
       bobWindow1,
       'session-confirm-ok-button',
-      'Decline',
+      localize('delete').toString(),
     );
     // Check config message of message request acceptance
     await waitForMatchingText(bobWindow1, 'No pending message requests');
@@ -98,19 +113,26 @@ test_Alice_1W_Bob_1W(
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select 'Clear All' button
-    await clickOnMatchingText(bobWindow1, 'Clear All');
+    await clickOnMatchingText(bobWindow1, localize('clearAll').toString());
     // Confirm decline
-    await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button', 'OK');
+    await clickOnTestIdWithText(
+      bobWindow1,
+      'session-confirm-ok-button',
+      localize('clear').toString(),
+    );
     // Navigate back to message request folder to check
     await clickOnTestIdWithText(bobWindow1, 'settings-section');
 
     await clickOnTestIdWithText(
       bobWindow1,
       'message-requests-settings-menu-item',
-      'Message Requests',
+      localize('sessionMessageRequests').toString(),
     );
     // Check config message of message request acceptance
-    await waitForMatchingText(bobWindow1, 'No pending message requests');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
   },
 );
 

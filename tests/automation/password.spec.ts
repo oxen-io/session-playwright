@@ -164,7 +164,7 @@ test_Alice_1W_no_network(
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      'Please enter your password',
+      localize('passwordIncorrect').toString(),
     );
   },
 );

@@ -30,8 +30,8 @@ export async function waitForTestIdWithText(
     const escapedText = text.replace(/"/g, '\\\"');
 
     builtSelector += `:has-text("${escapedText}")`;
-    console.warn('builtSelector:', builtSelector);
-    // console.warn('Text is tiny bubble: ', escapedText);
+    console.info('builtSelector:', builtSelector);
+    // console.info('Text is tiny bubble: ', escapedText);
   }
   // console.info('looking for selector', builtSelector);
   const found = await window.waitForSelector(builtSelector, {
@@ -69,8 +69,8 @@ export async function waitForTextMessage(
     const escapedText = text.replace(/"/g, '\\\"');
 
     builtSelector += `:has-text("${escapedText}")`;
-    console.warn('builtSelector:', builtSelector);
-    // console.warn('Text is tiny bubble: ', escapedText);
+    console.info('builtSelector:', builtSelector);
+    // console.info('Text is tiny bubble: ', escapedText);
   }
   const el = await window.waitForSelector(builtSelector, { timeout: maxWait });
   console.info(`Text message found. Text: , ${text}`);
@@ -226,11 +226,14 @@ export async function clickOnMatchingText(
   window: Page,
   text: string,
   rightButton = false,
+  timeoutMs?: number,
 ) {
   console.info(`clickOnMatchingText: "${text}"`);
   return window.click(
     `"${text}"`,
-    rightButton ? { button: 'right' } : undefined,
+    rightButton
+      ? { button: 'right', timeout: timeoutMs }
+      : { timeout: timeoutMs },
   );
 }
 
@@ -291,19 +294,9 @@ export async function typeIntoInput(
   const builtSelector = `css=[data-testid=${dataTestId}]`;
   // the new input made with onboarding element needs a click to reveal the input in the DOM
   await clickOnTestIdWithText(window, dataTestId);
-
-  return window.fill(builtSelector, text);
-}
-
-export async function typeIntoInputSlow(
-  window: Page,
-  dataTestId: DataTestId,
-  text: string,
-) {
-  console.info(`typeIntoInput testId: ${dataTestId} : "${text}"`);
-  const builtSelector = `css=[data-testid=${dataTestId}]`;
-  await window.waitForSelector(builtSelector);
-  return window.type(builtSelector, text, { delay: 100 });
+  // reset the content to be empty before typing into the input
+  await window.fill(builtSelector, '');
+  return window.type(builtSelector, text);
 }
 
 export async function doesTextIncludeString(

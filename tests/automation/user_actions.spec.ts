@@ -13,7 +13,6 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  typeIntoInputSlow,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
@@ -31,7 +30,12 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   await waitForTestIdWithText(
     windowB,
     'message-request-response-message',
-    `You have accepted ${userA.userName}'s message request`,
+    localize('messageRequestYouHaveAccepted')
+      .strip()
+      .withArgs({
+        name: userA.userName,
+      })
+      .toString(),
   );
   await Promise.all([
     clickOnElement({
@@ -180,7 +184,7 @@ test_Alice_1W_no_network('Change avatar', async ({ aliceWindow1 }) => {
         name: 'avatar-updated-blue.jpeg',
       });
       correctScreenshot = true;
-      console.warn(
+      console.info(
         `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
       );
     } catch (e) {
@@ -190,7 +194,7 @@ test_Alice_1W_no_network('Change avatar', async ({ aliceWindow1 }) => {
   } while (Date.now() - start <= 20000 && !correctScreenshot);
 
   if (!correctScreenshot) {
-    console.warn(
+    console.info(
       `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
     );
     throw new Error('waiting 20s and still the screenshot is not right');
@@ -217,19 +221,21 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(aliceWindow1, localize('nicknameSet').toString());
     await sleepFor(1000);
 
-    await typeIntoInputSlow(aliceWindow1, 'nickname-input', nickname);
+    await typeIntoInput(aliceWindow1, 'nickname-input', nickname);
     await sleepFor(100);
     await clickOnTestIdWithText(
       aliceWindow1,
       'confirm-nickname',
-      localize('okay').toString(),
+      localize('save').toString(),
     );
+    await sleepFor(1000);
+
     const headerUsername = await waitForTestIdWithText(
       aliceWindow1,
       'header-conversation-name',
     );
     const headerUsernameText = await headerUsername.innerText();
-    console.warn('Innertext ', headerUsernameText);
+    console.info('Innertext ', headerUsernameText);
 
     expect(headerUsernameText).toBe(nickname);
     // Check conversation list name also

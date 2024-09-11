@@ -65,7 +65,7 @@ const isReplaceLocalizedStringsWithKeysEnabled = () => false;
 class LocalizedStringBuilder<
   Dict extends GenericLocalizedDictionary,
   T extends TokenString<Dict>,
-> extends String {
+> {
   private readonly token: T;
   private args?: StringArgsRecord<Dict[T]>;
   private isStripped = false;
@@ -75,7 +75,6 @@ class LocalizedStringBuilder<
     isReplaceLocalizedStringsWithKeysEnabled();
 
   constructor(token: T) {
-    super(token);
     this.token = token;
   }
 
@@ -199,11 +198,10 @@ class LocalizedStringBuilder<
       }
     }
 
-    const currentLocale = getLocale();
+    const currentLocale = this.forceEnglish() ? 'en' : getLocale();
     const cardinalRule = new Intl.PluralRules(currentLocale).select(num);
 
     const pluralString = getStringForCardinalRule(str, cardinalRule);
-
     if (!pluralString) {
       console.log(
         `Plural string not found for cardinal '${cardinalRule}': '${str}'`,

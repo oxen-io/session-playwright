@@ -5,6 +5,7 @@ import {
   clickOnTextMessage,
   waitForTextMessage,
 } from './utils';
+import { sleepFor } from '../../promise_utils';
 
 /**
  * Reply to a message and optionally wait for the reply to be received.
@@ -27,8 +28,20 @@ export const replyTo = async ({
   receiverWindow: Page | null;
 }) => {
   await waitForTextMessage(senderWindow, textMessage);
-  await clickOnTextMessage(senderWindow, textMessage, true);
-  await clickOnMatchingText(senderWindow, 'Reply');
+  // the right click context menu, for some reasons, often doesn't show up on the first try. Let's loop a few times
+
+  for (let index = 0; index < 5; index++) {
+    try {
+      await clickOnTextMessage(senderWindow, textMessage, true, 1000);
+      await clickOnMatchingText(senderWindow, 'Reply', false, 1000);
+      break;
+    } catch (e) {
+      console.info(
+        `failed to right click & reply to message attempt: ${index}.`,
+      );
+      await sleepFor(500, true);
+    }
+  }
   await sendMessage(senderWindow, replyText);
   if (receiverWindow) {
     await waitForTextMessage(receiverWindow, replyText);

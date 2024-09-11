@@ -1,3 +1,4 @@
 .prettierrc.json
 .eslintrc.js
 README.md
+tests/localization/*.ts

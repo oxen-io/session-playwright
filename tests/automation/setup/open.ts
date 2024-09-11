@@ -80,7 +80,7 @@ const openElectronAppOnly = async (multi: string) => {
     });
     return electronApp;
   } catch (e) {
-    console.warn(
+    console.info(
       chalk.redBright(
         `failed to start electron app with error: ${e.message}`,
         e,

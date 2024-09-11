@@ -1,3 +1,4 @@
+import { localize } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
@@ -40,7 +41,12 @@ test_Alice_1W_Bob_1W(
     });
     // Click on untrusted attachment in window B
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      localize('attachmentsClickToDownload')
+        .withArgs({ file_type: 'media' })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for image to change from loading state to loaded (takes a second)
@@ -75,7 +81,12 @@ test_Alice_1W_Bob_1W(
       strategy: 'data-testid',
       selector: 'send-message-button',
     });
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      localize('attachmentsClickToDownload')
+        .withArgs({ file_type: 'media' })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for video to change from loading state to loaded (takes a second)
@@ -107,7 +118,12 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      localize('attachmentsClickToDownload')
+        .withArgs({ file_type: 'file' })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for video to change from loading state to loaded (takes a second)
@@ -141,7 +157,12 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      localize('attachmentsClickToDownload')
+        .withArgs({ file_type: 'audio' })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
   },
 );
@@ -163,7 +184,12 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      localize('attachmentsClickToDownload')
+        .withArgs({ file_type: 'media' })
+        .toString(),
+    );
   },
 );
 
@@ -203,16 +229,26 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, unsendMessage);
     await waitForTextMessage(bobWindow1, unsendMessage);
     await clickOnTextMessage(aliceWindow1, unsendMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      localize('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await sleepFor(1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
   },
 );
 
@@ -230,7 +266,11 @@ test_Alice_1W_Bob_1W(
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, deletedMessage, 1000);
     // Still should exist in window B
     await waitForMatchingText(bobWindow1, deletedMessage);

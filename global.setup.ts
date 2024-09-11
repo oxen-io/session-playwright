@@ -4,7 +4,6 @@ import { join } from 'path';
 import { MULTI_PREFIX, NODE_ENV } from './tests/automation/setup/open';
 import { isLinux, isMacOS } from './tests/os_utils';
 import { isEmpty } from 'lodash';
-import 'dotenv/config';
 
 const getDirectoriesOfSessionDataPath = (source: string) =>
   readdirSync(source, { withFileTypes: true })
