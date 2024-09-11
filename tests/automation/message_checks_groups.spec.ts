@@ -152,7 +152,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await sleepFor(1000);
     await lookForPartialTestId(bobWindow1, 'audio-', true, true);
     await lookForPartialTestId(charlieWindow1, 'audio-');
-    await clickOnMatchingText(bobWindow1, 'Reply');
+    await clickOnMatchingText(bobWindow1, localize('reply').toString());
     await sendMessage(bobWindow1, testReply);
     await waitForTextMessage(aliceWindow1, testReply);
   },

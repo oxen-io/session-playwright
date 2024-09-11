@@ -26,7 +26,12 @@ test_Alice_2W_Bob_1W(
 
     const controlMessage = localize('disappearingMessagesSetYou')
       .strip()
-      .withArgs({ time: '10 seconds', disappearing_messages_type: 'read' })
+      .withArgs({
+        time: '10 seconds',
+        disappearing_messages_type: localize(
+          'disappearingMessagesTypeRead',
+        ).toString(),
+      })
       .toString();
     // Create Contact
     await createContact(aliceWindow1, bobWindow1, alice, bob);
@@ -82,7 +87,12 @@ test_Alice_2W_Bob_1W(
       'Testing disappearing messages timer is working correctly';
     const controlMessage = localize('disappearingMessagesSetYou')
       .strip()
-      .withArgs({ time: '10 seconds', disappearing_messages_type: 'sent' })
+      .withArgs({
+        time: '10 seconds',
+        disappearing_messages_type: localize(
+          'disappearingMessagesTypeSent',
+        ).toString(),
+      })
       .toString();
     // Create Contact
     await createContact(aliceWindow1, bobWindow1, alice, bob);
@@ -129,8 +139,15 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     charlieWindow1,
     groupCreated,
   }) => {
-    const controlMessageText =
-      'set messages to disappear 10 seconds after they have been sent';
+    const controlMessage = localize('disappearingMessagesSetYou')
+      .strip()
+      .withArgs({
+        time: '10 seconds',
+        disappearing_messages_type: localize(
+          'disappearingMessagesTypeSent',
+        ).toString(),
+      })
+      .toString();
     const testMessage = 'Testing disappearing messages in groups';
 
     await clickOnTestIdWithText(
@@ -147,7 +164,7 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     await doesTextIncludeString(
       aliceWindow1,
       'disappear-control-message',
-      controlMessageText,
+      controlMessage,
     );
     await sendMessage(aliceWindow1, testMessage);
     await Promise.all([
@@ -171,15 +188,22 @@ test_Alice_2W(
   async ({ alice, aliceWindow1, aliceWindow2 }) => {
     const testMessage = 'Message to test note to self';
     const testMessageDisappear = 'Message testing disappearing messages';
-    const controlMessageText =
-      'set messages to disappear 10 seconds after they have been sent';
+    const controlMessage = localize('disappearingMessagesSetYou')
+      .strip()
+      .withArgs({
+        time: '10 seconds',
+        disappearing_messages_type: localize(
+          'disappearingMessagesTypeSent',
+        ).toString(),
+      })
+      .toString();
     // Open Note to self conversation
     await sendNewMessage(aliceWindow1, alice.accountid, testMessage);
     // Check messages are syncing across linked devices
     await clickOnTestIdWithText(
       aliceWindow2,
       'module-conversation__user__profile-name',
-      'Note to Self',
+      localize('noteToSelf').toString(),
     );
     await waitForTextMessage(aliceWindow2, testMessage);
     // Enable disappearing messages
@@ -192,7 +216,7 @@ test_Alice_2W(
     await doesTextIncludeString(
       aliceWindow1,
       'disappear-control-message',
-      controlMessageText,
+      controlMessage,
     );
     await sendMessage(aliceWindow1, testMessageDisappear);
     await waitForTextMessage(aliceWindow2, testMessageDisappear);

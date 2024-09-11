@@ -123,7 +123,10 @@ test_Alice_1W_Bob_1W(
       localize('blockUnblock').toString(),
     );
     // make sure no blocked contacts are listed
-    await waitForMatchingText(aliceWindow1, 'No blocked contacts');
+    await waitForMatchingText(
+      aliceWindow1,
+      localize('blockBlockedNone').toString(),
+    );
   },
 );
 
@@ -139,7 +142,7 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   // Press enter to confirm username input
   await aliceWindow1.keyboard.press('Enter');
   // Wait for Copy button to appear to verify username change
-  await aliceWindow1.isVisible("'Copy'");
+  await aliceWindow1.isVisible(`'${localize('copy').toString()}'`);
   // verify name change
   expect(await aliceWindow1.innerText('[data-testid=your-profile-name]')).toBe(
     newUsername,
@@ -157,7 +160,7 @@ test_Alice_1W_no_network(
     await waitForTestIdWithText(
       aliceWindow1,
       'copy-button-profile-update',
-      'Copy',
+      localize('copy').toString(),
     );
 
     await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');

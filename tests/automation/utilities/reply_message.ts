@@ -6,6 +6,7 @@ import {
   waitForTextMessage,
 } from './utils';
 import { sleepFor } from '../../promise_utils';
+import { localize } from '../../locale/localizedString';
 
 /**
  * Reply to a message and optionally wait for the reply to be received.
@@ -33,7 +34,12 @@ export const replyTo = async ({
   for (let index = 0; index < 5; index++) {
     try {
       await clickOnTextMessage(senderWindow, textMessage, true, 1000);
-      await clickOnMatchingText(senderWindow, 'Reply', false, 1000);
+      await clickOnMatchingText(
+        senderWindow,
+        localize('reply').toString(),
+        false,
+        1000,
+      );
       break;
     } catch (e) {
       console.info(

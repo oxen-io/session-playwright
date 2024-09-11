@@ -7,6 +7,7 @@ import {
   doWhileWithMax,
   waitForElement,
 } from './utils';
+import { localize } from '../../locale/localizedString';
 
 export const setDisappearingMessages = async (
   windowA: Page,
@@ -35,8 +36,6 @@ export const setDisappearingMessages = async (
         'setDisappearingMessages doWhileWithMax action threw:',
         e.message,
       );
-
-
 
       return false;
     }
@@ -79,7 +78,10 @@ export const setDisappearingMessages = async (
     selector: 'disappear-set-button',
   });
   if (windowB) {
-    await clickOnMatchingText(windowB, 'Follow Setting');
+    await clickOnMatchingText(
+      windowB,
+      localize('disappearingMessagesFollowSetting').toString(),
+    );
     await clickOnElement({
       window: windowB,
       strategy: 'data-testid',

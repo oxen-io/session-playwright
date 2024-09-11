@@ -159,10 +159,13 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnTestIdWithText(aliceWindow1, 'edit-group-name');
     await typeIntoInput(aliceWindow1, 'group-name-input', '     ');
     await aliceWindow1.keyboard.press('Enter');
-    await waitForMatchingText(aliceWindow1, 'Please enter a group name');
+    await waitForMatchingText(
+      aliceWindow1,
+      localize('groupNameEnterPlease').toString(),
+    );
     // const errorMessage = aliceWindow1.locator('.error-message');
     // await expect(errorMessage).toContainText('Please enter a group name');
-    await clickOnMatchingText(aliceWindow1, 'Cancel');
+    await clickOnMatchingText(aliceWindow1, localize('cancel').toString());
     await clickOnTestIdWithText(
       aliceWindow1,
       'back-button-conversation-options',

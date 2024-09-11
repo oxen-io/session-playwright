@@ -131,7 +131,7 @@ test_Alice_2W(
     await waitForTestIdWithText(
       aliceWindow1,
       'copy-button-profile-update',
-      'Copy',
+      localize('copy').toString(),
     );
 
     await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
@@ -210,11 +210,11 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, messageToDelete),
     ]);
     await clickOnTextMessage(aliceWindow1, messageToDelete, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      'Delete',
+      localize('delete').toString(),
     );
     await waitForTestIdWithText(
       aliceWindow1,
@@ -302,7 +302,7 @@ test_Alice_2W_Bob_1W(
     await waitForMatchingPlaceholder(
       aliceWindow1,
       'message-input-text-area',
-      'Unblock this contact to send a message.',
+      localize('blockBlockedDescription').toString(),
     );
     // reveal-blocked-user-settings is not updated once opened
     // Check linked device for blocked contact in settings screen

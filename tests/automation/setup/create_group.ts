@@ -9,6 +9,7 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from '../utilities/utils';
+import { localize } from '../../locale/localizedString';
 
 export const createGroup = async (
   userName: string,
@@ -20,7 +21,10 @@ export const createGroup = async (
   windowC: Page,
 ): Promise<Group> => {
   const group: Group = { userName, userOne, userTwo, userThree };
-  const emptyStateGroupText = `You have no messages from ${group.userName}. Send a message to start the conversation!`;
+  const emptyStateGroupText = localize('groupNoMessages')
+    .strip()
+    .withArgs({ group_name: group.userName })
+    .toString();
 
   const messageAB = `${userOne.userName} to ${userTwo.userName}`;
   const messageBA = `${userTwo.userName} to ${userOne.userName}`;

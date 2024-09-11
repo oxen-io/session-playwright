@@ -70,7 +70,6 @@ export async function waitForTextMessage(
 
     builtSelector += `:has-text("${escapedText}")`;
     console.info('builtSelector:', builtSelector);
-    // console.info('Text is tiny bubble: ', escapedText);
   }
   const el = await window.waitForSelector(builtSelector, { timeout: maxWait });
   console.info(`Text message found. Text: , ${text}`);

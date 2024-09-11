@@ -35,8 +35,14 @@ test_Alice_2W_Bob_1W(
         })
         .toString(),
     );
-    await waitForMatchingText(aliceWindow1, 'No pending message requests');
-    await waitForMatchingText(aliceWindow2, 'No pending message requests');
+    await waitForMatchingText(
+      aliceWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
+    await waitForMatchingText(
+      aliceWindow2,
+      localize('messageRequestsNonePending').toString(),
+    );
     await sendMessage(aliceWindow1, testReply);
     await waitForTextMessage(bobWindow1, testReply);
     await clickOnTestIdWithText(aliceWindow2, 'new-conversation-button');
@@ -85,7 +91,13 @@ test_Alice_2W_Bob_1W(
       'This test is subject to a race condition and so is most of the times, broken. See SES-1563',
     );
 
-    await waitForMatchingText(aliceWindow1, 'No pending message requests');
-    await waitForMatchingText(aliceWindow2, 'No pending message requests');
+    await waitForMatchingText(
+      aliceWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
+    await waitForMatchingText(
+      aliceWindow2,
+      localize('messageRequestsNonePending').toString(),
+    );
   },
 );

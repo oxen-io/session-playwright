@@ -44,7 +44,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(
       bobWindow1,
       localize('attachmentsClickToDownload')
-        .withArgs({ file_type: 'media' })
+        .withArgs({ file_type: localize('media').toString().toLowerCase() })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -84,7 +84,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(
       bobWindow1,
       localize('attachmentsClickToDownload')
-        .withArgs({ file_type: 'media' })
+        .withArgs({ file_type: localize('media').toString().toLowerCase() })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -121,7 +121,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(
       bobWindow1,
       localize('attachmentsClickToDownload')
-        .withArgs({ file_type: 'file' })
+        .withArgs({ file_type: localize('file').toString().toLowerCase() })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -160,7 +160,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(
       bobWindow1,
       localize('attachmentsClickToDownload')
-        .withArgs({ file_type: 'audio' })
+        .withArgs({ file_type: localize('audio').toString().toLowerCase() })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -187,7 +187,7 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(
       bobWindow1,
       localize('attachmentsClickToDownload')
-        .withArgs({ file_type: 'media' })
+        .withArgs({ file_type: localize('media').toString().toLowerCase() })
         .toString(),
     );
   },
@@ -260,7 +260,7 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, deletedMessage);
     await waitForTextMessage(bobWindow1, deletedMessage);
     await clickOnTextMessage(aliceWindow1, deletedMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',

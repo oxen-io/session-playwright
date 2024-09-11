@@ -37,7 +37,10 @@ test_Alice_1W_Bob_1W(
         })
         .toString(),
     );
-    await waitForMatchingText(bobWindow1, 'No pending message requests');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
   },
 );
 
@@ -69,7 +72,10 @@ test_Alice_1W_Bob_1W(
         })
         .toString(),
     );
-    await waitForMatchingText(bobWindow1, 'No pending message requests');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
   },
 );
 
@@ -100,7 +106,10 @@ test_Alice_1W_Bob_1W(
       localize('delete').toString(),
     );
     // Check config message of message request acceptance
-    await waitForMatchingText(bobWindow1, 'No pending message requests');
+    await waitForMatchingText(
+      bobWindow1,
+      localize('messageRequestsNonePending').toString(),
+    );
   },
 );
 
