@@ -25,7 +25,7 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 
 sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
   let aliceWindow2: Page | undefined;
@@ -131,7 +131,7 @@ test_Alice_2W(
     await waitForTestIdWithText(
       aliceWindow1,
       'copy-button-profile-update',
-      localize('copy').toString(),
+      englishStrippedStr('copy').toString(),
     );
 
     await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
@@ -210,16 +210,21 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, messageToDelete),
     ]);
     await clickOnTextMessage(aliceWindow1, messageToDelete, true);
-    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      localize('delete').toString(),
+      englishStrippedStr('delete').toString(),
     );
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
     await hasTextMessageBeenDeleted(aliceWindow1, messageToDelete, 6000);
     // linked device for deleted message
@@ -248,10 +253,13 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, unsentMessage),
     ]);
     await clickOnTextMessage(aliceWindow1, unsentMessage, true);
-    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
     await clickOnMatchingText(
       aliceWindow1,
-      localize('clearMessagesForEveryone').toString(),
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForEveryone').toString(),
     );
     await clickOnElement({
       window: aliceWindow1,
@@ -261,12 +269,16 @@ test_Alice_2W_Bob_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
     await hasTextMessageBeenDeleted(aliceWindow1, unsentMessage, 1000);
     await waitForMatchingText(
       bobWindow1,
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
     // linked device for deleted message
     await hasTextMessageBeenDeleted(aliceWindow2, unsentMessage, 1000);
@@ -291,18 +303,18 @@ test_Alice_2W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow2,
       'context-menu-item',
-      localize('block').toString(),
+      englishStrippedStr('block').toString(),
     );
     await clickOnTestIdWithText(
       aliceWindow2,
       'session-confirm-ok-button',
-      localize('block').toString(),
+      englishStrippedStr('block').toString(),
     );
     // Verify the user was moved to the blocked contact list
     await waitForMatchingPlaceholder(
       aliceWindow1,
       'message-input-text-area',
-      localize('blockBlockedDescription').toString(),
+      englishStrippedStr('blockBlockedDescription').toString(),
     );
     // reveal-blocked-user-settings is not updated once opened
     // Check linked device for blocked contact in settings screen

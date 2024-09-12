@@ -1,4 +1,4 @@
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 import { test_group_Alice_2W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { leaveGroup } from './utilities/leave_group';
 import {
@@ -48,8 +48,7 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
-      localize('groupMemberLeft')
-        .strip()
+      englishStrippedStr('groupMemberLeft')
         .withArgs({
           name: charlie.userName,
         })
@@ -65,8 +64,7 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     await waitForTestIdWithText(
       aliceWindow2,
       'group-update-message',
-      localize('groupMemberLeft')
-        .strip()
+      englishStrippedStr('groupMemberLeft')
         .withArgs({
           name: charlie.userName,
         })
@@ -77,8 +75,7 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      localize('groupMemberLeft')
-        .strip()
+      englishStrippedStr('groupMemberLeft')
         .withArgs({
           name: charlie.userName,
         })

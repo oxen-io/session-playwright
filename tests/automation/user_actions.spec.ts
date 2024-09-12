@@ -16,7 +16,7 @@ import {
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 
 // Send message in one to one conversation with new contact
 sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
@@ -30,8 +30,7 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   await waitForTestIdWithText(
     windowB,
     'message-request-response-message',
-    localize('messageRequestYouHaveAccepted')
-      .strip()
+    englishStrippedStr('messageRequestYouHaveAccepted')
       .withArgs({
         name: userA.userName,
       })
@@ -88,12 +87,12 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow1,
       'context-menu-item',
-      localize('block').toString(),
+      englishStrippedStr('block').toString(),
     );
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      localize('block').toString(),
+      englishStrippedStr('block').toString(),
     );
     // Verify the user was moved to the blocked contact list
     // Click on settings tab
@@ -113,19 +112,21 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow1,
       'block-unblock-modal-description',
-      localize('blockUnblockName').strip().withArgs({ name: 'Bob' }).toString(),
+      englishStrippedStr('blockUnblockName')
+        .withArgs({ name: 'Bob' })
+        .toString(),
     );
 
     // click on the unblock button
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      localize('blockUnblock').toString(),
+      englishStrippedStr('blockUnblock').toString(),
     );
     // make sure no blocked contacts are listed
     await waitForMatchingText(
       aliceWindow1,
-      localize('blockBlockedNone').toString(),
+      englishStrippedStr('blockBlockedNone').toString(),
     );
   },
 );
@@ -142,7 +143,7 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   // Press enter to confirm username input
   await aliceWindow1.keyboard.press('Enter');
   // Wait for Copy button to appear to verify username change
-  await aliceWindow1.isVisible(`'${localize('copy').toString()}'`);
+  await aliceWindow1.isVisible(`'${englishStrippedStr('copy').toString()}'`);
   // verify name change
   expect(await aliceWindow1.innerText('[data-testid=your-profile-name]')).toBe(
     newUsername,
@@ -160,7 +161,7 @@ test_Alice_1W_no_network(
     await waitForTestIdWithText(
       aliceWindow1,
       'copy-button-profile-update',
-      localize('copy').toString(),
+      englishStrippedStr('copy').toString(),
     );
 
     await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
@@ -228,7 +229,10 @@ test_Alice_1W_Bob_1W(
       bob.userName,
       true,
     );
-    await clickOnMatchingText(aliceWindow1, localize('nicknameSet').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('nicknameSet').toString(),
+    );
     await sleepFor(1000);
 
     await typeIntoInput(aliceWindow1, 'nickname-input', nickname);
@@ -236,7 +240,7 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow1,
       'confirm-nickname',
-      localize('save').toString(),
+      englishStrippedStr('save').toString(),
     );
     await sleepFor(1000);
 

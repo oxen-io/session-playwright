@@ -1,4 +1,4 @@
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
@@ -43,8 +43,10 @@ test_Alice_1W_Bob_1W(
     await sleepFor(1000);
     await clickOnMatchingText(
       bobWindow1,
-      localize('attachmentsClickToDownload')
-        .withArgs({ file_type: localize('media').toString().toLowerCase() })
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -83,8 +85,10 @@ test_Alice_1W_Bob_1W(
     });
     await clickOnMatchingText(
       bobWindow1,
-      localize('attachmentsClickToDownload')
-        .withArgs({ file_type: localize('media').toString().toLowerCase() })
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -120,8 +124,10 @@ test_Alice_1W_Bob_1W(
     await sleepFor(1000);
     await clickOnMatchingText(
       bobWindow1,
-      localize('attachmentsClickToDownload')
-        .withArgs({ file_type: localize('file').toString().toLowerCase() })
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('file').toString().toLowerCase(),
+        })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -159,8 +165,10 @@ test_Alice_1W_Bob_1W(
     await sleepFor(1000);
     await clickOnMatchingText(
       bobWindow1,
-      localize('attachmentsClickToDownload')
-        .withArgs({ file_type: localize('audio').toString().toLowerCase() })
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('audio').toString().toLowerCase(),
+        })
         .toString(),
     );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
@@ -186,8 +194,10 @@ test_Alice_1W_Bob_1W(
     await sleepFor(1000);
     await clickOnMatchingText(
       bobWindow1,
-      localize('attachmentsClickToDownload')
-        .withArgs({ file_type: localize('media').toString().toLowerCase() })
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
         .toString(),
     );
   },
@@ -229,10 +239,13 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, unsendMessage);
     await waitForTextMessage(bobWindow1, unsendMessage);
     await clickOnTextMessage(aliceWindow1, unsendMessage, true);
-    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
     await clickOnMatchingText(
       aliceWindow1,
-      localize('clearMessagesForEveryone').toString(),
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForEveryone').toString(),
     );
     await clickOnElement({
       window: aliceWindow1,
@@ -242,12 +255,16 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
     await sleepFor(1000);
     await waitForMatchingText(
       bobWindow1,
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
   },
 );
@@ -260,7 +277,10 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, deletedMessage);
     await waitForTextMessage(bobWindow1, deletedMessage);
     await clickOnTextMessage(aliceWindow1, deletedMessage, true);
-    await clickOnMatchingText(aliceWindow1, localize('delete').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
@@ -269,7 +289,9 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'session-toast',
-      localize('deleteMessageDeleted').withArgs({ count: 1 }).toString(),
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
     );
     await hasTextMessageBeenDeleted(aliceWindow1, deletedMessage, 1000);
     // Still should exist in window B

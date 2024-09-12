@@ -1,4 +1,4 @@
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
 import { sendNewMessage } from './utilities/send_message';
@@ -30,8 +30,7 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'message-request-response-message',
-      localize('messageRequestYouHaveAccepted')
-        .strip()
+      englishStrippedStr('messageRequestYouHaveAccepted')
         .withArgs({
           name: alice.userName,
         })
@@ -39,7 +38,7 @@ test_Alice_1W_Bob_1W(
     );
     await waitForMatchingText(
       bobWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
   },
 );
@@ -65,8 +64,7 @@ test_Alice_1W_Bob_1W(
     await waitForTestIdWithText(
       bobWindow1,
       'message-request-response-message',
-      localize('messageRequestYouHaveAccepted')
-        .strip()
+      englishStrippedStr('messageRequestYouHaveAccepted')
         .withArgs({
           name: alice.userName,
         })
@@ -74,7 +72,7 @@ test_Alice_1W_Bob_1W(
     );
     await waitForMatchingText(
       bobWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
   },
 );
@@ -97,18 +95,18 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(
       bobWindow1,
       'decline-message-request',
-      localize('decline').toString(),
+      englishStrippedStr('decline').toString(),
     );
     // Confirm decline
     await clickOnTestIdWithText(
       bobWindow1,
       'session-confirm-ok-button',
-      localize('delete').toString(),
+      englishStrippedStr('delete').toString(),
     );
     // Check config message of message request acceptance
     await waitForMatchingText(
       bobWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
   },
 );
@@ -122,12 +120,15 @@ test_Alice_1W_Bob_1W(
     // Check the message request banner appears and click on it
     await clickOnTestIdWithText(bobWindow1, 'message-request-banner');
     // Select 'Clear All' button
-    await clickOnMatchingText(bobWindow1, localize('clearAll').toString());
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('clearAll').toString(),
+    );
     // Confirm decline
     await clickOnTestIdWithText(
       bobWindow1,
       'session-confirm-ok-button',
-      localize('clear').toString(),
+      englishStrippedStr('clear').toString(),
     );
     // Navigate back to message request folder to check
     await clickOnTestIdWithText(bobWindow1, 'settings-section');
@@ -135,12 +136,12 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(
       bobWindow1,
       'message-requests-settings-menu-item',
-      localize('sessionMessageRequests').toString(),
+      englishStrippedStr('sessionMessageRequests').toString(),
     );
     // Check config message of message request acceptance
     await waitForMatchingText(
       bobWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
   },
 );

@@ -9,7 +9,7 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from '../utilities/utils';
-import { localize } from '../../locale/localizedString';
+import { englishStrippedStr } from '../../locale/localizedString';
 
 export const createGroup = async (
   userName: string,
@@ -21,8 +21,7 @@ export const createGroup = async (
   windowC: Page,
 ): Promise<Group> => {
   const group: Group = { userName, userOne, userTwo, userThree };
-  const emptyStateGroupText = localize('groupNoMessages')
-    .strip()
+  const emptyStateGroupText = englishStrippedStr('groupNoMessages')
     .withArgs({ group_name: group.userName })
     .toString();
 

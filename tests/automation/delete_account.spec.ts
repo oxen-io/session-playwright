@@ -16,7 +16,7 @@ import {
   waitForLoadingAnimationToFinish,
 } from './utilities/utils';
 import { recoverFromSeed } from './setup/recovery_using_seed';
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 
 sessionTestTwoWindows(
   'Delete account from swarm',
@@ -41,17 +41,23 @@ sessionTestTwoWindows(
       await clickOnTestIdWithText(
         windowA,
         'clear-data-settings-menu-item',
-        localize('sessionClearData').toString(),
+        englishStrippedStr('sessionClearData').toString(),
       );
       // Select entire account
       await clickOnTestIdWithText(
         windowA,
         'label-device_and_network',
-        localize('clearDeviceAndNetwork').toString(),
+        englishStrippedStr('clearDeviceAndNetwork').toString(),
       );
       // Confirm deletion by clicking Clear, twice
-      await clickOnMatchingText(windowA, localize('clear').toString());
-      await clickOnMatchingText(windowA, localize('clear').toString());
+      await clickOnMatchingText(
+        windowA,
+        englishStrippedStr('clear').toString(),
+      );
+      await clickOnMatchingText(
+        windowA,
+        englishStrippedStr('clear').toString(),
+      );
       await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
       // await sleepFor(7500);
       // Wait for window to close and reopen
@@ -125,12 +131,18 @@ sessionTestTwoWindows(
       await clickOnTestIdWithText(
         windowA,
         'clear-data-settings-menu-item',
-        localize('sessionClearData').toString(),
+        englishStrippedStr('sessionClearData').toString(),
       );
       // Keep 'Clear Device only' selection
       // Confirm deletion by clicking Clear, twice
-      await clickOnMatchingText(windowA, localize('clear').toString());
-      await clickOnMatchingText(windowA, localize('clear').toString());
+      await clickOnMatchingText(
+        windowA,
+        englishStrippedStr('clear').toString(),
+      );
+      await clickOnMatchingText(
+        windowA,
+        englishStrippedStr('clear').toString(),
+      );
       await waitForLoadingAnimationToFinish(windowA, 'loading-spinner');
       // Wait for window to close and reopen
       // await windowA.close();

@@ -1,4 +1,4 @@
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { test_Alice_2W_Bob_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
@@ -28,8 +28,7 @@ test_Alice_2W_Bob_1W(
     await waitForTestIdWithText(
       aliceWindow1,
       'message-request-response-message',
-      localize('messageRequestYouHaveAccepted')
-        .strip()
+      englishStrippedStr('messageRequestYouHaveAccepted')
         .withArgs({
           name: bob.userName,
         })
@@ -37,11 +36,11 @@ test_Alice_2W_Bob_1W(
     );
     await waitForMatchingText(
       aliceWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
     await waitForMatchingText(
       aliceWindow2,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
     await sendMessage(aliceWindow1, testReply);
     await waitForTextMessage(bobWindow1, testReply);
@@ -76,12 +75,12 @@ test_Alice_2W_Bob_1W(
     await clickOnTestIdWithText(
       aliceWindow1,
       'decline-message-request',
-      localize('decline').toString(),
+      englishStrippedStr('decline').toString(),
     );
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      localize('delete').toString(),
+      englishStrippedStr('delete').toString(),
     );
 
     // Note: this test is broken currently but this is a known issue.
@@ -93,11 +92,11 @@ test_Alice_2W_Bob_1W(
 
     await waitForMatchingText(
       aliceWindow1,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
     await waitForMatchingText(
       aliceWindow2,
-      localize('messageRequestsNonePending').toString(),
+      englishStrippedStr('messageRequestsNonePending').toString(),
     );
   },
 );

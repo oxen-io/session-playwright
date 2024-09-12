@@ -6,13 +6,6 @@ let initialLocale: Locale | undefined;
 
 let translationDictionary: LocalizerDictionary | undefined;
 
-/**
- * Only exported for testing, reset the dictionary to use for translations and the locale set
- */
-export function resetLocaleAndTranslationDict() {
-  translationDictionary = undefined;
-  initialLocale = undefined;
-}
 
 /**
  * Returns the current dictionary to use for translations.

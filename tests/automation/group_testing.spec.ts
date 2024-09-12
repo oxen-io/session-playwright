@@ -18,8 +18,8 @@ import {
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { leaveGroup } from './utilities/leave_group';
-import { localize } from '../locale/localizedString';
-import { shortenWithBrackets } from '../Pubkey';
+import { shortenWithBrackets } from '../pubkey';
+import { englishStrippedStr } from '../locale/localizedString';
 
 // Note: Note using the group fixture here as we want to test it thoroughly
 sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
@@ -81,28 +81,28 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
     await clickOnMatchingText(aliceWindow1, dracula.userName);
-    await clickOnMatchingText(aliceWindow1, localize('okay').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('okay').toString(),
+    );
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
-      localize('legacyGroupMemberNew')
-        .strip()
+      englishStrippedStr('legacyGroupMemberNew')
         .withArgs({ name: dracula.userName })
         .toString(),
     );
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      localize('legacyGroupMemberNew')
-        .strip()
+      englishStrippedStr('legacyGroupMemberNew')
         .withArgs({ name: shortenWithBrackets(dracula.accountid) })
         .toString(),
     );
     await waitForTestIdWithText(
       charlieWindow1,
       'group-update-message',
-      localize('legacyGroupMemberNew')
-        .strip()
+      englishStrippedStr('legacyGroupMemberNew')
         .withArgs({ name: shortenWithBrackets(dracula.accountid) })
         .toString(),
     );
@@ -139,16 +139,14 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnMatchingText(bobWindow1, newGroupName);
     await waitForMatchingText(
       bobWindow1,
-      localize('groupNameNew')
-        .strip()
+      englishStrippedStr('groupNameNew')
         .withArgs({ group_name: newGroupName })
         .toString(),
     );
     await clickOnMatchingText(charlieWindow1, newGroupName);
     await waitForMatchingText(
       charlieWindow1,
-      localize('groupNameNew')
-        .strip()
+      englishStrippedStr('groupNameNew')
         .withArgs({ group_name: newGroupName })
         .toString(),
     );
@@ -161,11 +159,14 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await aliceWindow1.keyboard.press('Enter');
     await waitForMatchingText(
       aliceWindow1,
-      localize('groupNameEnterPlease').toString(),
+      englishStrippedStr('groupNameEnterPlease').toString(),
     );
     // const errorMessage = aliceWindow1.locator('.error-message');
     // await expect(errorMessage).toContainText('Please enter a group name');
-    await clickOnMatchingText(aliceWindow1, localize('cancel').toString());
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('cancel').toString(),
+    );
     await clickOnTestIdWithText(
       aliceWindow1,
       'back-button-conversation-options',

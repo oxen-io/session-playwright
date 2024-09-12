@@ -7,7 +7,7 @@ import {
   doWhileWithMax,
   waitForElement,
 } from './utils';
-import { localize } from '../../locale/localizedString';
+import { englishStrippedStr } from '../../locale/localizedString';
 
 export const setDisappearingMessages = async (
   windowA: Page,
@@ -80,7 +80,7 @@ export const setDisappearingMessages = async (
   if (windowB) {
     await clickOnMatchingText(
       windowB,
-      localize('disappearingMessagesFollowSetting').toString(),
+      englishStrippedStr('disappearingMessagesFollowSetting').toString(),
     );
     await clickOnElement({
       window: windowB,

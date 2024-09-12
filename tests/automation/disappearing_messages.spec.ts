@@ -1,4 +1,4 @@
-import { localize } from '../locale/localizedString';
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import {
   test_Alice_2W,
@@ -24,11 +24,10 @@ test_Alice_2W_Bob_1W(
     const testMessage =
       'Testing disappearing messages timer is working correctly';
 
-    const controlMessage = localize('disappearingMessagesSetYou')
-      .strip()
+    const controlMessage = englishStrippedStr('disappearingMessagesSetYou')
       .withArgs({
         time: '10 seconds',
-        disappearing_messages_type: localize(
+        disappearing_messages_type: englishStrippedStr(
           'disappearingMessagesTypeRead',
         ).toString(),
       })
@@ -85,11 +84,10 @@ test_Alice_2W_Bob_1W(
   async ({ alice, bob, aliceWindow1, aliceWindow2, bobWindow1 }) => {
     const testMessage =
       'Testing disappearing messages timer is working correctly';
-    const controlMessage = localize('disappearingMessagesSetYou')
-      .strip()
+    const controlMessage = englishStrippedStr('disappearingMessagesSetYou')
       .withArgs({
         time: '10 seconds',
-        disappearing_messages_type: localize(
+        disappearing_messages_type: englishStrippedStr(
           'disappearingMessagesTypeSent',
         ).toString(),
       })
@@ -139,11 +137,10 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
     charlieWindow1,
     groupCreated,
   }) => {
-    const controlMessage = localize('disappearingMessagesSetYou')
-      .strip()
+    const controlMessage = englishStrippedStr('disappearingMessagesSetYou')
       .withArgs({
         time: '10 seconds',
-        disappearing_messages_type: localize(
+        disappearing_messages_type: englishStrippedStr(
           'disappearingMessagesTypeSent',
         ).toString(),
       })
@@ -188,11 +185,10 @@ test_Alice_2W(
   async ({ alice, aliceWindow1, aliceWindow2 }) => {
     const testMessage = 'Message to test note to self';
     const testMessageDisappear = 'Message testing disappearing messages';
-    const controlMessage = localize('disappearingMessagesSetYou')
-      .strip()
+    const controlMessage = englishStrippedStr('disappearingMessagesSetYou')
       .withArgs({
         time: '10 seconds',
-        disappearing_messages_type: localize(
+        disappearing_messages_type: englishStrippedStr(
           'disappearingMessagesTypeSent',
         ).toString(),
       })
@@ -203,7 +199,7 @@ test_Alice_2W(
     await clickOnTestIdWithText(
       aliceWindow2,
       'module-conversation__user__profile-name',
-      localize('noteToSelf').toString(),
+      englishStrippedStr('noteToSelf').toString(),
     );
     await waitForTextMessage(aliceWindow2, testMessage);
     // Enable disappearing messages

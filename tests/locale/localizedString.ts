@@ -228,17 +228,12 @@ class LocalizedStringBuilder<
   }
 }
 
-export function localize<T extends TokenString<LocalizerDictionary>>(token: T) {
-  return new LocalizedStringBuilder<LocalizerDictionary, T>(
-    token,
-  ).forceEnglish();
+function localize<T extends TokenString<LocalizerDictionary>>(token: T) {
+  return new LocalizedStringBuilder<LocalizerDictionary, T>(token);
 }
 
-export function localizeFromOld<T extends TokenString<LocalizerDictionary>>(
+export function englishStrippedStr<T extends TokenString<LocalizerDictionary>>(
   token: T,
-  args: StringArgsRecord<LocalizerDictionary[T]>,
 ) {
-  return new LocalizedStringBuilder<LocalizerDictionary, T>(token)
-    .withArgs(args)
-    .forceEnglish();
+  return localize(token).forceEnglish().strip();
 }

@@ -6,7 +6,7 @@ import {
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utils';
-import { localize } from '../../locale/localizedString';
+import { englishStrippedStr } from '../../locale/localizedString';
 
 export const renameGroup = async (
   window: Page,
@@ -23,8 +23,7 @@ export const renameGroup = async (
   // Check config message
   await waitForMatchingText(
     window,
-    localize('groupNameNew')
-      .strip()
+    englishStrippedStr('groupNameNew')
       .withArgs({ group_name: newGroupName })
       .toString(),
   );
