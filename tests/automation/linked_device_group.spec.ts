@@ -44,7 +44,6 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
@@ -60,7 +59,6 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       aliceWindow2,
       'group-update-message',
@@ -71,7 +69,6 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
         .toString(),
     );
     // Check for user B
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
