@@ -1,3 +1,4 @@
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { test_Alice_1W_Bob_1W } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
@@ -22,7 +23,10 @@ test_Alice_1W_Bob_1W(
     await clickOnTestIdWithText(bobWindow1, 'session-toast');
     await clickOnTestIdWithText(bobWindow1, 'enable-calls');
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
-    await clickOnMatchingText(bobWindow1, 'Accept');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('accept').toString(),
+    );
     await sleepFor(5000);
     await clickOnTestIdWithText(aliceWindow1, 'end-call');
   },

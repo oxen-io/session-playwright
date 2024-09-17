@@ -1,3 +1,4 @@
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { newUser } from './setup/new_user';
 import {
@@ -30,7 +31,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-image.png',
+      'fixtures/test-image.png',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -40,7 +41,14 @@ test_Alice_1W_Bob_1W(
     });
     // Click on untrusted attachment in window B
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for image to change from loading state to loaded (takes a second)
@@ -64,7 +72,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-video.mp4',
+      'fixtures/test-video.mp4',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     // give some time before we send the message, as the video preview takes some time to be added
@@ -75,7 +83,14 @@ test_Alice_1W_Bob_1W(
       strategy: 'data-testid',
       selector: 'send-message-button',
     });
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for video to change from loading state to loaded (takes a second)
@@ -97,7 +112,7 @@ test_Alice_1W_Bob_1W(
     await createContact(aliceWindow1, bobWindow1, alice, bob);
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-file.pdf',
+      'fixtures/test-file.pdf',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await sleepFor(100);
@@ -107,7 +122,14 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('file').toString().toLowerCase(),
+        })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
     await waitForLoadingAnimationToFinish(bobWindow1, 'loading-animation');
     // Waiting for video to change from loading state to loaded (takes a second)
@@ -141,7 +163,14 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('audio').toString().toLowerCase(),
+        })
+        .toString(),
+    );
     await clickOnTestIdWithText(bobWindow1, 'session-confirm-ok-button');
   },
 );
@@ -154,7 +183,7 @@ test_Alice_1W_Bob_1W(
 
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-gif.gif',
+      'fixtures/test-gif.gif',
     );
     await sleepFor(100);
     await clickOnElement({
@@ -163,7 +192,14 @@ test_Alice_1W_Bob_1W(
       selector: 'send-message-button',
     });
     await sleepFor(1000);
-    await clickOnMatchingText(bobWindow1, 'Click to download media');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('attachmentsClickToDownload')
+        .withArgs({
+          file_type: englishStrippedStr('media').toString().toLowerCase(),
+        })
+        .toString(),
+    );
   },
 );
 
@@ -203,16 +239,33 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, unsendMessage);
     await waitForTextMessage(bobWindow1, unsendMessage);
     await clickOnTextMessage(aliceWindow1, unsendMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await sleepFor(1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
   },
 );
 
@@ -224,13 +277,22 @@ test_Alice_1W_Bob_1W(
     await sendMessage(aliceWindow1, deletedMessage);
     await waitForTextMessage(bobWindow1, deletedMessage);
     await clickOnTextMessage(aliceWindow1, deletedMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, deletedMessage, 1000);
     // Still should exist in window B
     await waitForMatchingText(bobWindow1, deletedMessage);

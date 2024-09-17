@@ -18,6 +18,8 @@ import {
 } from './setup/sessionTest';
 import { createContact } from './utilities/create_contact';
 import { leaveGroup } from './utilities/leave_group';
+import { shortenWithBrackets } from '../pubkey';
+import { englishStrippedStr } from '../locale/localizedString';
 
 // Note: Note using the group fixture here as we want to test it thoroughly
 sessionTestThreeWindows('Create group', async ([windowA, windowB, windowC]) => {
@@ -79,21 +81,30 @@ test_group_Alice_1W_Bob_1W_Charlie_1W_Dracula_1W(
     // Waiting for animation of right panel to appear
     await sleepFor(1000);
     await clickOnMatchingText(aliceWindow1, dracula.userName);
-    await clickOnMatchingText(aliceWindow1, 'OK');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('okay').toString(),
+    );
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
-      `"${dracula.userName}" joined the group.`,
+      englishStrippedStr('legacyGroupMemberNew')
+        .withArgs({ name: dracula.userName })
+        .toString(),
     );
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      `${dracula.accountid} joined the group.`,
+      englishStrippedStr('legacyGroupMemberNew')
+        .withArgs({ name: shortenWithBrackets(dracula.accountid) })
+        .toString(),
     );
     await waitForTestIdWithText(
       charlieWindow1,
       'group-update-message',
-      `${dracula.accountid} joined the group.`,
+      englishStrippedStr('legacyGroupMemberNew')
+        .withArgs({ name: shortenWithBrackets(dracula.accountid) })
+        .toString(),
     );
     await clickOnElement({
       window: draculaWindow1,
@@ -128,12 +139,16 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnMatchingText(bobWindow1, newGroupName);
     await waitForMatchingText(
       bobWindow1,
-      `Group name is now '${newGroupName}'.`,
+      englishStrippedStr('groupNameNew')
+        .withArgs({ group_name: newGroupName })
+        .toString(),
     );
     await clickOnMatchingText(charlieWindow1, newGroupName);
     await waitForMatchingText(
       charlieWindow1,
-      `Group name is now '${newGroupName}'.`,
+      englishStrippedStr('groupNameNew')
+        .withArgs({ group_name: newGroupName })
+        .toString(),
     );
     // Click on conversation options
     // Check to see that you can't change group name to empty string
@@ -142,10 +157,16 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await clickOnTestIdWithText(aliceWindow1, 'edit-group-name');
     await typeIntoInput(aliceWindow1, 'group-name-input', '     ');
     await aliceWindow1.keyboard.press('Enter');
-    await waitForMatchingText(aliceWindow1, 'Please enter a group name');
+    await waitForMatchingText(
+      aliceWindow1,
+      englishStrippedStr('groupNameEnterPlease').toString(),
+    );
     // const errorMessage = aliceWindow1.locator('.error-message');
     // await expect(errorMessage).toContainText('Please enter a group name');
-    await clickOnMatchingText(aliceWindow1, 'Cancel');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('cancel').toString(),
+    );
     await clickOnTestIdWithText(
       aliceWindow1,
       'back-button-conversation-options',

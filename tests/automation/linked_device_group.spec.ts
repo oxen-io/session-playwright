@@ -1,3 +1,4 @@
+import { englishStrippedStr } from '../locale/localizedString';
 import { test_group_Alice_2W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { leaveGroup } from './utilities/leave_group';
 import {
@@ -43,11 +44,14 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       aliceWindow1,
       'group-update-message',
-      `"${charlie.userName}" has left the group.`,
+      englishStrippedStr('groupMemberLeft')
+        .withArgs({
+          name: charlie.userName,
+        })
+        .toString(),
     );
     // Check for linked device (userA)
     await clickOnTestIdWithText(
@@ -55,18 +59,24 @@ test_group_Alice_2W_Bob_1W_Charlie_1W(
       'module-conversation__user__profile-name',
       groupCreated.userName,
     );
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       aliceWindow2,
       'group-update-message',
-      `"${charlie.userName}" has left the group.`,
+      englishStrippedStr('groupMemberLeft')
+        .withArgs({
+          name: charlie.userName,
+        })
+        .toString(),
     );
     // Check for user B
-    // Control-message needs to be changed to group-update-message (on disappearing messages branch)
     await waitForTestIdWithText(
       bobWindow1,
       'group-update-message',
-      `"${charlie.userName}" has left the group.`,
+      englishStrippedStr('groupMemberLeft')
+        .withArgs({
+          name: charlie.userName,
+        })
+        .toString(),
     );
   },
 );

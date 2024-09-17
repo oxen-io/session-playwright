@@ -1,3 +1,4 @@
+import { englishStrippedStr } from '../locale/localizedString';
 import { sleepFor } from '../promise_utils';
 import { test_group_Alice_1W_Bob_1W_Charlie_1W } from './setup/sessionTest';
 import { sendMessage } from './utilities/message';
@@ -28,7 +29,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to image from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-image.png',
+      'fixtures/test-image.png',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -56,7 +57,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to video from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-video.mp4',
+      'fixtures/test-video.mp4',
     );
     await sleepFor(1000);
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
@@ -82,7 +83,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to document from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-file.pdf',
+      'fixtures/test-file.pdf',
     );
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
     await clickOnElement({
@@ -151,7 +152,10 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await sleepFor(1000);
     await lookForPartialTestId(bobWindow1, 'audio-', true, true);
     await lookForPartialTestId(charlieWindow1, 'audio-');
-    await clickOnMatchingText(bobWindow1, 'Reply');
+    await clickOnMatchingText(
+      bobWindow1,
+      englishStrippedStr('reply').toString(),
+    );
     await sendMessage(bobWindow1, testReply);
     await waitForTextMessage(aliceWindow1, testReply);
   },
@@ -165,7 +169,7 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     const testReply = `${bob.userName} replying to GIF from ${alice.userName} in ${groupCreated.userName}`;
     await aliceWindow1.setInputFiles(
       "input[type='file']",
-      'tests/automation/fixtures/test-gif.gif',
+      'fixtures/test-gif.gif',
     );
     await sleepFor(100);
     await typeIntoInput(aliceWindow1, 'message-input-text-area', testMessage);
@@ -225,17 +229,39 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await waitForTextMessage(bobWindow1, unsendMessage);
     await waitForTextMessage(charlieWindow1, unsendMessage);
     await clickOnTextMessage(aliceWindow1, unsendMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await sleepFor(1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
-    await waitForMatchingText(charlieWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
+    await waitForMatchingText(
+      charlieWindow1,
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
   },
 );
 
@@ -247,14 +273,26 @@ test_group_Alice_1W_Bob_1W_Charlie_1W(
     await waitForTextMessage(bobWindow1, deletedMessage);
     await waitForTextMessage(charlieWindow1, deletedMessage);
     await clickOnTextMessage(aliceWindow1, deletedMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete just for me');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForMe').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, deletedMessage, 5000);
     // Should still be there for user B and C
     await waitForMatchingText(bobWindow1, deletedMessage);

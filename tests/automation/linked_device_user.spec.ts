@@ -25,6 +25,7 @@ import {
   waitForTestIdWithText,
   waitForTextMessage,
 } from './utilities/utils';
+import { englishStrippedStr } from '../locale/localizedString';
 
 sessionTestOneWindow('Link a device', async ([aliceWindow1]) => {
   let aliceWindow2: Page | undefined;
@@ -130,7 +131,7 @@ test_Alice_2W(
     await waitForTestIdWithText(
       aliceWindow1,
       'copy-button-profile-update',
-      'Copy',
+      englishStrippedStr('copy').toString(),
     );
 
     await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
@@ -153,17 +154,14 @@ test_Alice_2W(
     let lastError: Error | undefined;
     do {
       try {
-        await sleepFor(500);
-
         const screenshot = await leftpaneAvatarContainer.screenshot({
           type: 'jpeg',
-          // path: 'avatar-updated-blue',
         });
         expect(screenshot).toMatchSnapshot({
           name: 'avatar-updated-blue.jpeg',
         });
         correctScreenshot = true;
-        console.warn(
+        console.info(
           `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
         );
       } catch (e) {
@@ -173,7 +171,7 @@ test_Alice_2W(
     } while (Date.now() - start <= 20000 && !correctScreenshot);
 
     if (!correctScreenshot) {
-      console.warn(
+      console.info(
         `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
       );
       throw new Error('waited 20s and still the screenshot is not right');
@@ -212,13 +210,22 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, messageToDelete),
     ]);
     await clickOnTextMessage(aliceWindow1, messageToDelete, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
     await clickOnTestIdWithText(
       aliceWindow1,
       'session-confirm-ok-button',
-      'Delete',
+      englishStrippedStr('delete').toString(),
     );
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, messageToDelete, 6000);
     // linked device for deleted message
     // Waiting for message to be removed
@@ -246,16 +253,33 @@ test_Alice_2W_Bob_1W(
       waitForTextMessage(bobWindow1, unsentMessage),
     ]);
     await clickOnTextMessage(aliceWindow1, unsentMessage, true);
-    await clickOnMatchingText(aliceWindow1, 'Delete');
-    await clickOnMatchingText(aliceWindow1, 'Delete for everyone');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('delete').toString(),
+    );
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('clearMessagesForEveryone').toString(),
+    );
     await clickOnElement({
       window: aliceWindow1,
       strategy: 'data-testid',
       selector: 'session-confirm-ok-button',
     });
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Deleted');
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'session-toast',
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     await hasTextMessageBeenDeleted(aliceWindow1, unsentMessage, 1000);
-    await waitForMatchingText(bobWindow1, 'This message has been deleted');
+    await waitForMatchingText(
+      bobWindow1,
+      englishStrippedStr('deleteMessageDeleted')
+        .withArgs({ count: 1 })
+        .toString(),
+    );
     // linked device for deleted message
     await hasTextMessageBeenDeleted(aliceWindow2, unsentMessage, 1000);
   },
@@ -276,18 +300,25 @@ test_Alice_2W_Bob_1W(
       true,
     );
     // Select block
-    await clickOnMatchingText(aliceWindow2, 'Block');
-    // Verify toast notification 'blocked'
-    await waitForTestIdWithText(aliceWindow2, 'session-toast', 'Blocked');
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'context-menu-item',
+      englishStrippedStr('block').toString(),
+    );
+    await clickOnTestIdWithText(
+      aliceWindow2,
+      'session-confirm-ok-button',
+      englishStrippedStr('block').toString(),
+    );
     // Verify the user was moved to the blocked contact list
-    // Click on settings tab
     await waitForMatchingPlaceholder(
       aliceWindow1,
       'message-input-text-area',
-      'Unblock this contact to send a message.',
+      englishStrippedStr('blockBlockedDescription').toString(),
     );
     // reveal-blocked-user-settings is not updated once opened
     // Check linked device for blocked contact in settings screen
+    // Click on settings tab
     await clickOnTestIdWithText(aliceWindow2, 'settings-section');
     await clickOnTestIdWithText(
       aliceWindow2,

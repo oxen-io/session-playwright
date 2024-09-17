@@ -15,7 +15,7 @@ const getDirectoriesOfSessionDataPath = (source: string) =>
 
 let needsClean = isEmpty(process.env.NO_CLEAN);
 
-export default async function cleanupPreviousTests() {
+export default async function globalSetup() {
   console.log('Cleaning up all previous tests configs...');
   if (!needsClean) {
     return;

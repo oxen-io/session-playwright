@@ -13,10 +13,10 @@ import {
   clickOnMatchingText,
   clickOnTestIdWithText,
   typeIntoInput,
-  typeIntoInputSlow,
   waitForMatchingText,
   waitForTestIdWithText,
 } from './utilities/utils';
+import { englishStrippedStr } from '../locale/localizedString';
 
 // Send message in one to one conversation with new contact
 sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
@@ -30,7 +30,11 @@ sessionTestTwoWindows('Create contact', async ([windowA, windowB]) => {
   await waitForTestIdWithText(
     windowB,
     'message-request-response-message',
-    `You have accepted ${userA.userName}'s message request`,
+    englishStrippedStr('messageRequestYouHaveAccepted')
+      .withArgs({
+        name: userA.userName,
+      })
+      .toString(),
   );
   await Promise.all([
     clickOnElement({
@@ -80,9 +84,16 @@ test_Alice_1W_Bob_1W(
       true,
     );
     // Select block
-    await clickOnMatchingText(aliceWindow1, 'Block');
-    // Verify toast notification 'blocked'
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Blocked');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'context-menu-item',
+      englishStrippedStr('block').toString(),
+    );
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      englishStrippedStr('block').toString(),
+    );
     // Verify the user was moved to the blocked contact list
     // Click on settings tab
     await clickOnTestIdWithText(aliceWindow1, 'settings-section');
@@ -97,9 +108,26 @@ test_Alice_1W_Bob_1W(
     await clickOnMatchingText(aliceWindow1, bob.userName);
     // Unblock user by clicking on unblock
     await clickOnTestIdWithText(aliceWindow1, 'unblock-button-settings-screen');
-    // Verify toast notification says unblocked
-    await waitForTestIdWithText(aliceWindow1, 'session-toast', 'Unblocked');
-    await waitForMatchingText(aliceWindow1, 'No blocked contacts');
+    // make sure the confirm dialogs shows up
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'block-unblock-modal-description',
+      englishStrippedStr('blockUnblockName')
+        .withArgs({ name: 'Bob' })
+        .toString(),
+    );
+
+    // click on the unblock button
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'session-confirm-ok-button',
+      englishStrippedStr('blockUnblock').toString(),
+    );
+    // make sure no blocked contacts are listed
+    await waitForMatchingText(
+      aliceWindow1,
+      englishStrippedStr('blockBlockedNone').toString(),
+    );
   },
 );
 
@@ -115,7 +143,7 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   // Press enter to confirm username input
   await aliceWindow1.keyboard.press('Enter');
   // Wait for Copy button to appear to verify username change
-  await aliceWindow1.isVisible("'Copy'");
+  await aliceWindow1.isVisible(`'${englishStrippedStr('copy').toString()}'`);
   // verify name change
   expect(await aliceWindow1.innerText('[data-testid=your-profile-name]')).toBe(
     newUsername,
@@ -124,58 +152,65 @@ test_Alice_1W_no_network('Change username', async ({ aliceWindow1 }) => {
   await clickOnTestIdWithText(aliceWindow1, 'modal-close-button');
 });
 
-test_Alice_1W_no_network('Change avatar', async ({ aliceWindow1 }) => {
-  // Open profile
-  await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
-  // Click on current profile picture
-  await waitForTestIdWithText(
-    aliceWindow1,
-    'copy-button-profile-update',
-    'Copy',
-  );
-
-  await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
-  await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
-  await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
-  await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
-
-  await sleepFor(500);
-  const leftpaneAvatarContainer = await waitForTestIdWithText(
-    aliceWindow1,
-    'leftpane-primary-avatar',
-  );
-  const start = Date.now();
-  let correctScreenshot = false;
-  let tryNumber = 0;
-  let lastError: Error | undefined;
-  do {
-    try {
-      await sleepFor(500);
-
-      const screenshot = await leftpaneAvatarContainer.screenshot({
-        type: 'jpeg',
-        // path: 'avatar-updated-blue',
-      });
-      expect(screenshot).toMatchSnapshot({
-        name: 'avatar-updated-blue.jpeg',
-      });
-      correctScreenshot = true;
-      console.warn(
-        `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
-      );
-    } catch (e) {
-      lastError = e;
-    }
-    tryNumber++;
-  } while (Date.now() - start <= 20000 && !correctScreenshot);
-
-  if (!correctScreenshot) {
-    console.warn(
-      `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+test_Alice_1W_no_network(
+  'Change avatar',
+  async ({ aliceWindow1 }, testInfo) => {
+    // Open profile
+    await clickOnTestIdWithText(aliceWindow1, 'leftpane-primary-avatar');
+    // Click on current profile picture
+    await waitForTestIdWithText(
+      aliceWindow1,
+      'copy-button-profile-update',
+      englishStrippedStr('copy').toString(),
     );
-    throw new Error('waiting 20s and still the screenshot is not right');
-  }
-});
+
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-section');
+    await clickOnTestIdWithText(aliceWindow1, 'image-upload-click');
+    await clickOnTestIdWithText(aliceWindow1, 'save-button-profile-update');
+    await waitForTestIdWithText(aliceWindow1, 'loading-spinner');
+
+    await sleepFor(500);
+    const leftpaneAvatarContainer = await waitForTestIdWithText(
+      aliceWindow1,
+      'leftpane-primary-avatar',
+    );
+    const start = Date.now();
+    let correctScreenshot = false;
+    let tryNumber = 0;
+    let lastError: Error | undefined;
+    do {
+      try {
+        // if we were asked to update the snapshots, make sure we wait for the change to be received before taking a screenshot.
+        if (testInfo.config.updateSnapshots === 'all') {
+          await sleepFor(15000);
+        } else {
+          await sleepFor(500);
+        }
+
+        const screenshot = await leftpaneAvatarContainer.screenshot({
+          type: 'jpeg',
+        });
+        expect(screenshot).toMatchSnapshot({
+          name: 'avatar-updated-blue.jpeg',
+        });
+        correctScreenshot = true;
+        console.info(
+          `screenshot matching of "Check profile picture syncs" passed after "${tryNumber}" retries!`,
+        );
+      } catch (e) {
+        lastError = e;
+      }
+      tryNumber++;
+    } while (Date.now() - start <= 20000 && !correctScreenshot);
+
+    if (!correctScreenshot) {
+      console.info(
+        `screenshot matching of "Check profile picture syncs" try "${tryNumber}" failed with: ${lastError?.message}`,
+      );
+      throw new Error('waiting 20s and still the screenshot is not right');
+    }
+  },
+);
 
 test_Alice_1W_Bob_1W(
   'Set nickname',
@@ -194,18 +229,27 @@ test_Alice_1W_Bob_1W(
       bob.userName,
       true,
     );
-    await clickOnMatchingText(aliceWindow1, 'Change Nickname');
+    await clickOnMatchingText(
+      aliceWindow1,
+      englishStrippedStr('nicknameSet').toString(),
+    );
     await sleepFor(1000);
 
-    await typeIntoInputSlow(aliceWindow1, 'nickname-input', nickname);
+    await typeIntoInput(aliceWindow1, 'nickname-input', nickname);
     await sleepFor(100);
-    await clickOnTestIdWithText(aliceWindow1, 'confirm-nickname', 'OK');
+    await clickOnTestIdWithText(
+      aliceWindow1,
+      'confirm-nickname',
+      englishStrippedStr('save').toString(),
+    );
+    await sleepFor(1000);
+
     const headerUsername = await waitForTestIdWithText(
       aliceWindow1,
       'header-conversation-name',
     );
     const headerUsernameText = await headerUsername.innerText();
-    console.warn('Innertext ', headerUsernameText);
+    console.info('Innertext ', headerUsernameText);
 
     expect(headerUsernameText).toBe(nickname);
     // Check conversation list name also

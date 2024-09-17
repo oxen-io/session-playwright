@@ -4,8 +4,10 @@ import {
   clickOnElement,
   clickOnMatchingText,
   clickOnTestIdWithText,
+  doWhileWithMax,
   waitForElement,
 } from './utils';
+import { englishStrippedStr } from '../../locale/localizedString';
 
 export const setDisappearingMessages = async (
   windowA: Page,
@@ -13,22 +15,31 @@ export const setDisappearingMessages = async (
   windowB?: Page,
 ) => {
   const enforcedType: ConversationType = conversationType;
-  await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-  try {
-    await clickOnElement({
-      window: windowA,
-      strategy: 'data-testid',
-      selector: 'disappearing-messages',
-      maxWait: 100,
-    });
-  } catch (e) {
-    await clickOnTestIdWithText(windowA, 'conversation-options-avatar');
-    await clickOnElement({
-      window: windowA,
-      strategy: 'data-testid',
-      selector: 'disappearing-messages',
-    });
-  }
+  await doWhileWithMax(5000, 1000, 'setDisappearingMessages', async () => {
+    try {
+      await clickOnTestIdWithText(
+        windowA,
+        'conversation-options-avatar',
+        undefined,
+        undefined,
+        1000,
+      );
+      await clickOnElement({
+        window: windowA,
+        strategy: 'data-testid',
+        selector: 'disappearing-messages',
+        maxWait: 100,
+      });
+      return true;
+    } catch (e) {
+      console.log(
+        'setDisappearingMessages doWhileWithMax action threw:',
+        e.message,
+      );
+
+      return false;
+    }
+  });
 
   if (enforcedType === '1:1') {
     await clickOnElement({
@@ -49,7 +60,7 @@ export const setDisappearingMessages = async (
     }
     const checked = await defaultTime.isChecked();
     if (checked) {
-      console.warn('Timer default time is correct');
+      console.info('Timer default time is correct');
     } else {
       throw new Error('Default timer not set correctly');
     }
@@ -67,7 +78,10 @@ export const setDisappearingMessages = async (
     selector: 'disappear-set-button',
   });
   if (windowB) {
-    await clickOnMatchingText(windowB, 'Follow Setting');
+    await clickOnMatchingText(
+      windowB,
+      englishStrippedStr('disappearingMessagesFollowSetting').toString(),
+    );
     await clickOnElement({
       window: windowB,
       strategy: 'data-testid',

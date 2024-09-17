@@ -159,4 +159,6 @@ export type DataTestId =
   | 'leave-group-button'
   | 'create-account-button'
   | 'continue-button'
-  | 'existing-account-button';
+  | 'existing-account-button'
+  | 'context-menu-item'
+  | 'block-unblock-modal-description';
