@@ -1,0 +1,21 @@
+name: Run android regression tests
+on:
+  workflow_dispatch:
+    inputs:
+      PLAYWRIGHT_REPO:
+        description: 'Playwright repo to checkout'
+        required: true
+        type: choice
+        options:
+          - oxen-io/session-playwright
+          - burtonemily/session-playwright
+          - bilb/session-playwright
+        default: oxen-io/session-playwright
+
+jobs:
+  desktop-regression:
+    name: Desktop Regression Tests
+    runs-on: [self-hosted, linux, x64, qa-desktop]
+
+    steps:
+      - uses: actions/checkout@v4
