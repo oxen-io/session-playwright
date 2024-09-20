@@ -1,4 +1,4 @@
-name: Run android regression tests
+name: Run desktop regression tests
 on:
   workflow_dispatch:
     inputs:
@@ -12,10 +12,158 @@ on:
           - bilb/session-playwright
         default: oxen-io/session-playwright
 
+      BRANCH_TO_CHECKOUT_PW:
+        description: 'branch to checkout on session-playwright'
+        required: true
+        type: string
+        default: ci-desktop-regression-self-hosted
+
+      SESSION_DESKTOP_REPO:
+        description: 'Session desktop repo to checkout'
+        required: true
+        type: choice
+        options:
+          - oxen-io/session-desktop
+          - bilb/session-desktop
+          - yougotwill/session-desktop
+        default: oxen-io/session-desktop
+
+      BRANCH_TO_CHECKOUT_SESSION:
+        description: 'Branch to checkout on session-desktop'
+        required: true
+        type: string
+        default: unstable
+
+      PLAYWRIGHT_REPEAT_COUNT:
+        description: 'Repeats of each tests (0 to only run each once)'
+        required: true
+        type: number
+        default: 0
+
+      PLAYWRIGHT_RETRIES_COUNT:
+        description: 'Retries of each tests (0 to only run each once, 1 to run another attempt)'
+        required: true
+        type: number
+        default: 0
+
+      PLAYWRIGHT_WORKER_COUNT:
+        description: 'Playwright workers to start'
+        required: true
+        type: number
+        default: 4
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   desktop-regression:
     name: Desktop Regression Tests
     runs-on: [self-hosted, linux, x64, qa-desktop]
+    container:
+      image: mcr.microsoft.com/playwright:v1.47.1-noble
+      options: --cpus 8
+
+    env:
+      SESSION_DESKTOP_ROOT: '$GITHUB_WORKSPACE/desktop'
+      # PLAYWRIGHT_CUSTOM_REPORTER: 1
+      PLAYWRIGHT_REPEAT_COUNT: ${{ github.event.inputs.PLAYWRIGHT_REPEAT_COUNT }}
+      PLAYWRIGHT_RETRIES_COUNT: ${{ github.event.inputs.PLAYWRIGHT_RETRIES_COUNT }}
+      PLAYWRIGHT_WORKER_COUNT: ${{ github.event.inputs.PLAYWRIGHT_WORKER_COUNT }}
+      DESKTOP_CACHED_FOLDER: desktop/node_modules
 
     steps:
       - uses: actions/checkout@v4
+      - name: Runner Details
+        run: |
+          echo "SESSION_DESKTOP_ROOT ${{ env.SESSION_DESKTOP_ROOT }}"
+          echo "PLAYWRIGHT_REPO ${{ github.event.inputs.PLAYWRIGHT_REPO }}"
+          echo "BRANCH_TO_CHECKOUT_PW ${{ github.event.inputs.BRANCH_TO_CHECKOUT_PW }}"
+          echo "SESSION_DESKTOP_REPO ${{ github.event.inputs.SESSION_DESKTOP_REPO }}"
+          echo "BRANCH_TO_CHECKOUT_SESSION ${{ github.event.inputs.BRANCH_TO_CHECKOUT_SESSION }}"
+
+      - uses: actions/checkout@v4
+        name: 'Checkout playwright'
+        with:
+          repository: ${{ github.event.inputs.PLAYWRIGHT_REPO }}
+          ref: ${{ github.event.inputs.BRANCH_TO_CHECKOUT_PW }}
+          path: 'playwright'
+
+      - name: Install system deps
+        run: apt update && apt install -y git g++ build-essential cmake
+
+      - uses: actions/checkout@v4
+        name: 'Checkout Session desktop'
+        with:
+          repository: ${{ github.event.inputs.SESSION_DESKTOP_REPO }}
+          ref: ${{ github.event.inputs.BRANCH_TO_CHECKOUT_SESSION }}
+          path: 'desktop'
+
+      - name: Calculate desktop cache key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('desktop/package.json', 'desktop/yarn.lock', 'desktop/patches/**') }}" >> $GITHUB_ENV
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: 'desktop/.nvmrc'
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - uses: actions/cache/restore@v4
+        id: cache-desktop-modules
+        with:
+          path: ${{ env.DESKTOP_CACHED_FOLDER }}
+          key: ${{ env.CACHE_KEY }}
+
+      - name: Install yarn
+        run: |
+          npm install -g yarn
+
+      - name: List desktop folder
+        run: |
+          pwd
+          ls -la desktop
+
+      - name: List playwright folder
+        run: |
+          pwd
+          ls -la playwright
+
+      - name: Install desktop dependencies
+        shell: bash
+        if: steps.cache-desktop-modules.outputs.cache-hit != 'true'
+        run: cd $GITHUB_WORKSPACE/desktop && yarn install --frozen-lockfile --network-timeout 600000
+
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ${{ env.DESKTOP_CACHED_FOLDER }}
+          key: ${{ env.CACHE_KEY }}
+
+      - name: Build desktop
+        shell: bash
+        run: cd $GITHUB_WORKSPACE/desktop && yarn build-everything
+
+      - name: Install playwright dependencies
+        run: |
+          cd $GITHUB_WORKSPACE/playwright && yarn install --frozen-lockfile
+
+      - name: Build the Desktop tests
+        run: |
+          cd  $GITHUB_WORKSPACE/playwright
+          yarn tsc
+
+      - name: Run the Android tests
+        run: |
+          cd $GITHUB_WORKSPACE/playwright
+          yarn test -g "Create User"
+
+      - name: Kill all running electron app
+        if: always()
+        continue-on-error: true # just so we don't fail
+        shell: bash
+        run: |
+          killall electron;

@@ -18,14 +18,14 @@ export function getAppRootPath() {
   return process.env.SESSION_DESKTOP_ROOT as string;
 }
 
-function getSessionDesktopBinPath() {
-  if (isEmpty(process.env.SESSION_DESKTOP_BIN)) {
-    throw new Error(
-      "You need to set the 'SESSION_DESKTOP_BIN' env variable to the session-desktop bin you want to test first (maybe `/usr/bin/session-desktop` ?)",
-    );
-  }
-  return process.env.SESSION_DESKTOP_BIN as string;
-}
+// function getSessionDesktopBinPath() {
+//   if (isEmpty(process.env.SESSION_DESKTOP_BIN)) {
+//     throw new Error(
+//       "You need to set the 'SESSION_DESKTOP_BIN' env variable to the session-desktop bin you want to test first (maybe `/usr/bin/session-desktop` ?)",
+//     );
+//   }
+//   return process.env.SESSION_DESKTOP_BIN as string;
+// }
 
 export async function openApp(windowsToCreate: number) {
   if (windowsToCreate >= multisAvailable.length) {
@@ -56,20 +56,20 @@ const openElectronAppOnly = async (multi: string) => {
   process.env.NODE_APP_INSTANCE = `${MULTI_PREFIX}-devprod-${uniqueId}-${process.env.MULTI}`;
   process.env.NODE_ENV = NODE_ENV;
 
-  if (!isEmpty(process.env.CI)) {
-    const sessionBinPath = getSessionDesktopBinPath();
-    const fakeHome = `/tmp/${process.env.NODE_APP_INSTANCE}`;
+  // if (!isEmpty(process.env.CI)) {
+  //   const sessionBinPath = getSessionDesktopBinPath();
+  //   const fakeHome = `/tmp/${process.env.NODE_APP_INSTANCE}`;
 
-    console.info(`   CI RUN`);
-    console.info(`   SESSION_BIN_PATH=${sessionBinPath}`);
-    console.info(`   HOME="${fakeHome}"`);
+  //   console.info(`   CI RUN`);
+  //   console.info(`   SESSION_BIN_PATH=${sessionBinPath}`);
+  //   console.info(`   HOME="${fakeHome}"`);
 
-    process.env.HOME = fakeHome;
+  //   process.env.HOME = fakeHome;
 
-    return electron.launch({
-      executablePath: sessionBinPath,
-    });
-  }
+  //   return electron.launch({
+  //     executablePath: sessionBinPath,
+  //   });
+  // }
   console.info(`   NON CI RUN`);
   console.info('   NODE_ENV', process.env.NODE_ENV);
   console.info('   NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
